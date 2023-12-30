@@ -785,7 +785,7 @@ public class Ball {
     int j = 0;
     int k = 0;
     byte b1 = 0;
-    boolean bool1 = false;
+    boolean isGravity = false;
     if (this.ballState == 2) {
       this.popCntr--;
       if (this.popCntr == 0) {
@@ -816,12 +816,12 @@ public class Ball {
       j = 4;
     } 
     if (this.gravBonusCntr != 0) {
-      bool1 = true;
+      isGravity = true;
       k *= -1;
       j *= -1;
       this.gravBonusCntr--;
       if (this.gravBonusCntr == 0) {
-        bool1 = false;
+        isGravity = false;
         this.mGroundedFlag = false;
         k *= -1;
         j *= -1;
@@ -829,7 +829,7 @@ public class Ball {
     } 
     if (this.jumpBonusCntr != 0) {
       if (-1 * Math.abs(this.jumpOffset) > -80)
-        if (bool1) {
+        if (isGravity) {
           this.jumpOffset = 80;
         } else {
           this.jumpOffset = -80;
@@ -849,7 +849,7 @@ public class Ball {
     } else if (this.xSpeed > 150) {
       this.xSpeed = 150;
     } 
-    if (this.ySpeed < 10 && this.ySpeed > 0 && !bool2 && !bool1)
+    if (this.ySpeed < 10 && this.ySpeed > 0 && !bool2 && !isGravity)
       this.ySpeed = 10; 
     for (byte b2 = 0; b2 < Math.abs(this.ySpeed) / 10; b2++) {
       byte b = 0;
@@ -879,12 +879,12 @@ public class Ball {
             this.mCDRampFlag = false;
           } 
         } 
-        if (b > 0 || (bool1 && b < 0)) {
+        if (b > 0 || (isGravity && b < 0)) {
           this.ySpeed = this.ySpeed * -1 / 2;
           this.mGroundedFlag = true;
           if (this.mCDRubberFlag && (this.direction & 0x8) != 0) {
             this.mCDRubberFlag = false;
-            if (bool1) {
+            if (isGravity) {
               this.jumpOffset += 10;
             } else {
               this.jumpOffset += -10;
@@ -893,7 +893,7 @@ public class Ball {
             this.jumpOffset = 0;
           } 
           if (this.ySpeed < 10 && this.ySpeed > -10) {
-            if (bool1) {
+            if (isGravity) {
               this.ySpeed = -10;
               break;
             } 
@@ -901,15 +901,15 @@ public class Ball {
           } 
           break;
         } 
-        if (b < 0 || (bool1 && b > 0))
-          if (bool1) {
+        if (b < 0 || (isGravity && b > 0))
+          if (isGravity) {
             this.ySpeed = -20;
           } else {
             this.ySpeed = -this.ySpeed >> 1;
           }  
       } 
     } 
-    if (bool1) {
+    if (isGravity) {
       if (j == -2 && this.ySpeed < k) {
         this.ySpeed += j;
         if (this.ySpeed > k)
@@ -944,13 +944,13 @@ public class Ball {
       this.xSpeed += 4;
     } 
     if (this.mBallSize == 16 && this.jumpBonusCntr == 0)
-      if (bool1) {
+      if (isGravity) {
         this.jumpOffset += 5;
       } else {
         this.jumpOffset += -5;
       }  
     if (this.mGroundedFlag && (this.direction & 0x8) != 0) {
-      if (bool1) {
+      if (isGravity) {
         this.ySpeed = 67 + this.jumpOffset;
       } else {
         this.ySpeed = -67 + this.jumpOffset;
@@ -968,7 +968,7 @@ public class Ball {
       } else if (this.mCDRampFlag) {
         this.mCDRampFlag = false;
         byte b4 = 0;
-        if (bool1) {
+        if (isGravity) {
           b4 = 1;
         } else {
           b4 = -1;
