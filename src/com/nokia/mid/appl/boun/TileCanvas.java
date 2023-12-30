@@ -13,25 +13,25 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 public abstract class TileCanvas extends FullCanvas {
-  protected int l;
+  protected int tileX;
   
   protected int k;
   
-  protected int G;
+  protected int divTileX;
   
-  protected int Z;
+  protected int divisorLine;
   
   protected int v;
   
   protected boolean z;
   
-  protected Image E;
+  protected Image mGameBuffer;
   
   private Image[] Q;
   
-  private Image I;
+  private Image tmpTileImage;
   
-  private Graphics J;
+  private Graphics tmpTileImageG;
   
   public int mLevelNum = -1;
   
@@ -91,29 +91,29 @@ public abstract class TileCanvas extends FullCanvas {
   
   public boolean mOpenFlag;
   
-  protected int ag = 0;
+  protected int mWidth = 0;
   
-  protected int am = 0;
+  protected int mHeight = 0;
   
-  protected Display m;
+  protected Display mDisplay;
   
   public com.nokia.mid.appl.boun.g ab = null;
   
   public TileCanvas(Display paramDisplay) {
-    this.m = paramDisplay;
-    this.ag = getWidth();
-    this.am = getHeight();
+    this.mDisplay = paramDisplay;
+    this.mWidth = getWidth();
+    this.mHeight = getHeight();
     this.v = 0;
-    this.Z = 156;
-    this.E = Image.createImage(156, 96);
-    this.I = Image.createImage(12, 12);
-    this.J = this.I.getGraphics();
-    c();
+    this.divisorLine = 156;
+    this.mGameBuffer = Image.createImage(156, 96);
+    this.tmpTileImage = Image.createImage(12, 12);
+    this.tmpTileImageG = this.tmpTileImage.getGraphics();
+    loadTileImages();
     this.mLoadLevelFlag = false;
-    this.l = 0;
+    this.tileX = 0;
     this.k = 0;
     this.z = false;
-    this.G = this.l + 13;
+    this.divTileX = this.tileX + 13;
     this.tileMap = null;
   }
   
@@ -291,7 +291,7 @@ public abstract class TileCanvas extends FullCanvas {
   public void a(int paramInt1, int paramInt2, int paramInt3, int paramInt4) {
     int j;
     int k;
-    Graphics graphics = this.E.getGraphics();
+    Graphics graphics = this.mGameBuffer.getGraphics();
     if (paramInt1 < 0 || paramInt2 < 0 || paramInt1 >= this.mTileMapWidth || paramInt2 >= this.mTileMapHeight) {
       graphics.drawImage(this.Q[0], paramInt3, paramInt4, 20);
       return;
@@ -371,7 +371,7 @@ public abstract class TileCanvas extends FullCanvas {
         k = (paramInt2 - this.mTopLeftExitTileRow) * 12;
         graphics.setClip(paramInt3, paramInt4, 12, 12);
         graphics.drawImage(this.mExitTileImage, paramInt3 - j, paramInt4 - k, 20);
-        graphics.setClip(0, 0, this.E.getWidth(), this.E.getHeight());
+        graphics.setClip(0, 0, this.mGameBuffer.getWidth(), this.mGameBuffer.getHeight());
         this.z = true;
         break;
       case 10:
@@ -382,10 +382,10 @@ public abstract class TileCanvas extends FullCanvas {
           int n = this.mMOOffset[j][0] - k;
           int i1 = this.mMOOffset[j][1] - m;
           if ((n > -36 && n < 12) || (i1 > -36 && i1 < 12)) {
-            this.J.setColor(11591920);
-            this.J.fillRect(0, 0, 12, 12);
-            this.J.drawImage(this.L, n, i1, 20);
-            graphics.drawImage(this.I, paramInt3, paramInt4, 20);
+            this.tmpTileImageG.setColor(11591920);
+            this.tmpTileImageG.fillRect(0, 0, 12, 12);
+            this.tmpTileImageG.drawImage(this.L, n, i1, 20);
+            graphics.drawImage(this.tmpTileImage, paramInt3, paramInt4, 20);
             break;
           } 
           graphics.setColor(11591920);
@@ -518,7 +518,7 @@ public abstract class TileCanvas extends FullCanvas {
       for (int i1 = j; i1 < m; i1++) {
         int i2 = this.tileMap[i1][n] & 0xFFFFFFBF;
         if (i2 >= 13 && i2 <= 28) {
-          int i3 = (n - this.l) * 12 + paramInt4;
+          int i3 = (n - this.tileX) * 12 + paramInt4;
           int i4 = (i1 - this.k) * 12;
           paramGraphics.drawImage(this.Q[com.nokia.mid.appl.boun.BounceConst.b[i2 - 13]], i3, i4, 20);
         } 
@@ -529,16 +529,16 @@ public abstract class TileCanvas extends FullCanvas {
   public void f() {
     for (byte b1 = 0; b1 < 13; b1++) {
       for (byte b2 = 0; b2 < 8; b2++)
-        a(this.l + b1, this.k + b2, b1 * 12, b2 * 12); 
+        a(this.tileX + b1, this.k + b2, b1 * 12, b2 * 12); 
     } 
   }
   
   public void i() {
-    int i = this.l;
+    int i = this.tileX;
     int j = this.k;
     for (byte b1 = 0; b1 < 13; b1++) {
-      if (b1 * 12 >= this.Z && i >= this.l)
-        i = this.G - 13; 
+      if (b1 * 12 >= this.divisorLine && i >= this.tileX)
+        i = this.divTileX - 13; 
       for (byte b2 = 0; b2 < 8; b2++) {
         if ((this.tileMap[j][i] & 0x80) != 0)
           a(i, j, b1 * 12, b2 * 12); 
@@ -550,8 +550,8 @@ public abstract class TileCanvas extends FullCanvas {
   }
   
   public void scrollBuffer(int paramInt) {
-    int i = this.G - 13;
-    int j = this.G;
+    int i = this.divTileX - 13;
+    int j = this.divTileX;
     int k = paramInt - 64;
     if (k < 0) {
       k = 0;
@@ -559,40 +559,40 @@ public abstract class TileCanvas extends FullCanvas {
       k = (this.mTileMapWidth + 1) * 12 - 156;
     } 
     while (k / 12 < i) {
-      this.Z -= 12;
-      int m = this.Z;
-      this.G--;
+      this.divisorLine -= 12;
+      int m = this.divisorLine;
+      this.divTileX--;
       j--;
       i--;
-      if (this.Z <= 0) {
-        this.Z = 156;
-        this.l -= 13;
+      if (this.divisorLine <= 0) {
+        this.divisorLine = 156;
+        this.tileX -= 13;
       } 
       for (byte b1 = 0; b1 < 8; b1++)
-        a(this.G - 13, this.k + b1, m, b1 * 12); 
+        a(this.divTileX - 13, this.k + b1, m, b1 * 12); 
     } 
     while ((k + 128) / 12 >= j) {
-      if (this.Z >= 156) {
-        this.Z = 0;
-        this.l += 13;
+      if (this.divisorLine >= 156) {
+        this.divisorLine = 0;
+        this.tileX += 13;
       } 
-      int m = this.Z;
-      this.Z += 12;
-      this.G++;
+      int m = this.divisorLine;
+      this.divisorLine += 12;
+      this.divTileX++;
       j++;
       i++;
       for (byte b1 = 0; b1 < 8; b1++)
-        a(this.l + m / 12, this.k + b1, m, b1 * 12); 
+        a(this.tileX + m / 12, this.k + b1, m, b1 * 12); 
     } 
-    this.v = this.l * 12 - k;
+    this.v = this.tileX * 12 - k;
   }
   
   public int m() {
-    return this.l * 12 - this.v;
+    return this.tileX * 12 - this.v;
   }
   
   public int g() {
-    return this.l * 12 - this.v + 128;
+    return this.tileX * 12 - this.v + 128;
   }
   
   public Image a(Image paramImage) {
@@ -626,7 +626,7 @@ public abstract class TileCanvas extends FullCanvas {
     return image;
   }
   
-  public void c() {
+  public void loadTileImages() {
     Image image = a("/icons/objects_nm.png");
     this.Q = new Image[67];
     this.Q[0] = a(image, 1, 0);

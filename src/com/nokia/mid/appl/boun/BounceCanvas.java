@@ -126,7 +126,7 @@ public class BounceCanvas extends TileCanvas {
     this.mBall = new Ball(paramInt1, paramInt2, paramInt3, this);
     this.mBall.xSpeed = paramInt4;
     this.mBall.ySpeed = paramInt5;
-    this.l = 0;
+    this.tileX = 0;
     this.k = 0;
     e();
   }
@@ -138,10 +138,10 @@ public class BounceCanvas extends TileCanvas {
     } else if (i > this.mTileMapWidth * 12 - 156) {
       i = this.mTileMapWidth * 12 - 156;
     } 
-    this.l = i / 12;
-    this.v = this.l * 12 - i;
-    this.Z = 156;
-    this.G = this.l + 13;
+    this.tileX = i / 12;
+    this.v = this.tileX * 12 - i;
+    this.divisorLine = 156;
+    this.divTileX = this.tileX + 13;
     while (this.mBall.yPos - 6 < this.k * 12)
       this.k -= 7; 
     while (this.mBall.yPos + 6 > this.k * 12 + 96)
@@ -158,13 +158,13 @@ public class BounceCanvas extends TileCanvas {
     if (this.mFullScreenGraphics == null)
       this.mFullScreenGraphics = this.mFullScreenBuffer.getGraphics(); 
     this.mFullScreenGraphics.setClip(0, 0, 128, 96);
-    if (this.E != null) {
+    if (this.mGameBuffer != null) {
       i();
       if (this.v <= 0) {
-        this.mFullScreenGraphics.drawImage(this.E, this.v, 0, 20);
+        this.mFullScreenGraphics.drawImage(this.mGameBuffer, this.v, 0, 20);
       } else {
-        this.mFullScreenGraphics.drawImage(this.E, this.v, 0, 20);
-        this.mFullScreenGraphics.drawImage(this.E, this.v - 156, 0, 20);
+        this.mFullScreenGraphics.drawImage(this.mGameBuffer, this.v, 0, 20);
+        this.mFullScreenGraphics.drawImage(this.mGameBuffer, this.v - 156, 0, 20);
       }
     } 
     a(this.mFullScreenGraphics, this.v);
@@ -199,8 +199,8 @@ public class BounceCanvas extends TileCanvas {
     if (this.mSplashIndex != -1) {
       if (this.mSplashImage != null) {
         paramGraphics.setColor(0);
-        paramGraphics.fillRect(0, 0, this.ag, this.am);
-        paramGraphics.drawImage(this.mSplashImage, this.ag >> 1, this.am >> 1, 3);
+        paramGraphics.fillRect(0, 0, this.mWidth, this.mHeight);
+        paramGraphics.drawImage(this.mSplashImage, this.mWidth >> 1, this.mHeight >> 1, 3);
       } 
     } else {
       paramGraphics.drawImage(this.mFullScreenBuffer, 0, 0, 20);
@@ -215,7 +215,7 @@ public class BounceCanvas extends TileCanvas {
   public void a(Graphics paramGraphics, int paramInt) {
     if (this.mBall == null)
       return; 
-    int i = this.mBall.xPos - this.l * 12;
+    int i = this.mBall.xPos - this.tileX * 12;
     int j = this.mBall.yPos - this.k * 12;
     if (this.mBall.ballState == 2) {
       paramGraphics.drawImage(this.mBall.k, i - 6 + paramInt, j - 6, 20);
