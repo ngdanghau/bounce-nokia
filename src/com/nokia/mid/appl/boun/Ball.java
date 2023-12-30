@@ -560,8 +560,8 @@ public class Ball {
     	  // Dyn Thorn Axis
         k = this.mCanvas.b(xPos, yPos);
         if (k != -1) {
-          int m = this.mCanvas.P[k][0] * 12 + this.mCanvas.mMOOffset[k][0];
-          int n = this.mCanvas.P[k][1] * 12 + this.mCanvas.mMOOffset[k][1];
+          int m = this.mCanvas.mMOTopLeft[k][0] * 12 + this.mCanvas.mMOOffset[k][0];
+          int n = this.mCanvas.mMOTopLeft[k][1] * 12 + this.mCanvas.mMOOffset[k][1];
           if (a(paramInt1 - this.mHalfBallSize + 1, paramInt2 - this.mHalfBallSize + 1, paramInt1 + this.mHalfBallSize - 1, paramInt2 + this.mHalfBallSize - 1, m + 1, n + 1, m + 24 - 1, n + 24 - 1)) {
         	  paramBoolean = false;
             popBall();

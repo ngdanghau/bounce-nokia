@@ -117,7 +117,7 @@ public class BounceCanvas extends TileCanvas {
     this.numRings = 0;
     this.mLevelDisCntr = 120;
     this.mPaintUIFlag = true;
-    createBufferFocused(this.mStartCol * 12 + 6, this.mStartRow * 12 + 6, this.a, 0, 0);
+    createBufferFocused(this.mStartCol * 12 + 6, this.mStartRow * 12 + 6, this.mStartBallSize, 0, 0);
     this.mBall.setRespawn(this.mStartCol, this.mStartRow);
     this.mClearScreenFlag = true;
   }
@@ -287,7 +287,7 @@ public class BounceCanvas extends TileCanvas {
         updateMovingSpikeObj(); 
       if (this.numRings == this.totalRingInLevel)
         this.mOpenExitFlag = true; 
-      if (this.mOpenExitFlag && this.z && (this.W + 1) * 12 > m() && this.W * 12 < g()) {
+      if (this.mOpenExitFlag && this.z && (this.mExitPosX + 1) * 12 > m() && this.mExitPosX * 12 < g()) {
         if (this.mOpenFlag) {
           this.z = false;
           this.mOpenExitFlag = false;

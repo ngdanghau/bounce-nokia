@@ -45,11 +45,11 @@ public abstract class TileCanvas extends FullCanvas {
   
   protected int mStartRow;
   
-  public int a;
+  public int mStartBallSize;
   
-  protected int W;
+  protected int mExitPosX;
   
-  protected int V;
+  protected int mExitPosY;
   
   public short[][] tileMap;
   
@@ -61,19 +61,19 @@ public abstract class TileCanvas extends FullCanvas {
   
   public int mNumMoveObj;
   
-  public short[][] P;
+  public short[][] mMOTopLeft;
   
-  public short[][] O;
+  public short[][] mMOBotRight;
   
   public short[][] mMODirection;
   
   public short[][] mMOOffset;
   
-  public Image[] r;
+  public Image[] mMOImgPtr;
   
-  public Graphics[] an;
+  public Graphics[] mMOImgGraphics;
   
-  public Image L;
+  public Image mSpikeImgPtr;
   
   public Image A;
   
@@ -140,13 +140,13 @@ public abstract class TileCanvas extends FullCanvas {
       this.mStartRow = dataInputStream.read();
       int i = dataInputStream.read();
       if (i == 0) {
-        this.a = 12;
+        this.mStartBallSize = 12;
       } else {
-        this.a = 16;
+        this.mStartBallSize = 16;
       } 
-      this.W = dataInputStream.read();
-      this.V = dataInputStream.read();
-      a(this.W, this.V, this.Q[12]);
+      this.mExitPosX = dataInputStream.read();
+      this.mExitPosY = dataInputStream.read();
+      a(this.mExitPosX, this.mExitPosY, this.Q[12]);
       this.totalRingInLevel = dataInputStream.read();
       this.mTileMapWidth = dataInputStream.read();
       this.mTileMapHeight = dataInputStream.read();
@@ -157,12 +157,12 @@ public abstract class TileCanvas extends FullCanvas {
       } 
       this.mNumMoveObj = dataInputStream.read();
       if (this.mNumMoveObj != 0)
-        a(dataInputStream); 
+        createMovingObj(dataInputStream); 
       dataInputStream.close();
     } catch (IOException iOException) {}
   }
   
-  public static Image a(Image paramImage, int paramInt) {
+  public static Image manipulateImage(Image paramImage, int paramInt) {
     Image image = DirectUtils.createImage(paramImage.getWidth(), paramImage.getHeight(), 0);
     if (image == null)
       image = Image.createImage(paramImage.getWidth(), paramImage.getHeight()); 
@@ -192,18 +192,18 @@ public abstract class TileCanvas extends FullCanvas {
     return image;
   }
   
-  public void a(DataInputStream paramDataInputStream) throws IOException {
-    this.P = new short[this.mNumMoveObj][2];
-    this.O = new short[this.mNumMoveObj][2];
+  public void createMovingObj(DataInputStream paramDataInputStream) throws IOException {
+    this.mMOTopLeft = new short[this.mNumMoveObj][2];
+    this.mMOBotRight = new short[this.mNumMoveObj][2];
     this.mMODirection = new short[this.mNumMoveObj][2];
     this.mMOOffset = new short[this.mNumMoveObj][2];
-    this.r = new Image[this.mNumMoveObj];
-    this.an = new Graphics[this.mNumMoveObj];
+    this.mMOImgPtr = new Image[this.mNumMoveObj];
+    this.mMOImgGraphics = new Graphics[this.mNumMoveObj];
     for (byte b1 = 0; b1 < this.mNumMoveObj; b1++) {
-      this.P[b1][0] = (short)paramDataInputStream.read();
-      this.P[b1][1] = (short)paramDataInputStream.read();
-      this.O[b1][0] = (short)paramDataInputStream.read();
-      this.O[b1][1] = (short)paramDataInputStream.read();
+      this.mMOTopLeft[b1][0] = (short)paramDataInputStream.read();
+      this.mMOTopLeft[b1][1] = (short)paramDataInputStream.read();
+      this.mMOBotRight[b1][0] = (short)paramDataInputStream.read();
+      this.mMOBotRight[b1][1] = (short)paramDataInputStream.read();
       this.mMODirection[b1][0] = (short)paramDataInputStream.read();
       this.mMODirection[b1][1] = (short)paramDataInputStream.read();
       int i = paramDataInputStream.read();
@@ -211,35 +211,35 @@ public abstract class TileCanvas extends FullCanvas {
       this.mMOOffset[b1][0] = (short)i;
       this.mMOOffset[b1][1] = (short)j;
     } 
-    this.L = Image.createImage(24, 24);
-    Graphics graphics = this.L.getGraphics();
+    this.mSpikeImgPtr = Image.createImage(24, 24);
+    Graphics graphics = this.mSpikeImgPtr.getGraphics();
     graphics.drawImage(this.Q[46], 0, 0, 20);
-    graphics.drawImage(a(this.Q[46], 0), 12, 0, 20);
-    graphics.drawImage(a(this.Q[46], 4), 12, 12, 20);
-    graphics.drawImage(a(this.Q[46], 1), 0, 12, 20);
+    graphics.drawImage(manipulateImage(this.Q[46], 0), 12, 0, 20);
+    graphics.drawImage(manipulateImage(this.Q[46], 4), 12, 12, 20);
+    graphics.drawImage(manipulateImage(this.Q[46], 1), 0, 12, 20);
     graphics = null;
   }
   
   public void disposeLevel() {
     for (byte b1 = 0; b1 < this.mNumMoveObj; b1++) {
-      this.r[b1] = null;
-      this.an[b1] = null;
+      this.mMOImgPtr[b1] = null;
+      this.mMOImgGraphics[b1] = null;
     } 
-    this.r = null;
-    this.an = null;
+    this.mMOImgPtr = null;
+    this.mMOImgGraphics = null;
     this.tileMap = null;
     Runtime.getRuntime().gc();
   }
   
   public void updateMovingSpikeObj() {
     for (byte b1 = 0; b1 < this.mNumMoveObj; b1++) {
-      short s1 = this.P[b1][0];
-      short s2 = this.P[b1][1];
+      short s1 = this.mMOTopLeft[b1][0];
+      short s2 = this.mMOTopLeft[b1][1];
       short s3 = this.mMOOffset[b1][0];
       short s4 = this.mMOOffset[b1][1];
       this.mMOOffset[b1][0] = (short)(this.mMOOffset[b1][0] + this.mMODirection[b1][0]);
-      int n = (this.O[b1][0] - s1 - 2) * 12;
-      int i1 = (this.O[b1][1] - s2 - 2) * 12;
+      int n = (this.mMOBotRight[b1][0] - s1 - 2) * 12;
+      int i1 = (this.mMOBotRight[b1][1] - s2 - 2) * 12;
       if (this.mMOOffset[b1][0] < 0) {
         this.mMOOffset[b1][0] = 0;
       } else if (this.mMOOffset[b1][0] > n) {
@@ -282,7 +282,7 @@ public abstract class TileCanvas extends FullCanvas {
   
   public int b(int paramInt1, int paramInt2) {
     for (byte b1 = 0; b1 < this.mNumMoveObj; b1++) {
-      if (this.P[b1][0] <= paramInt1 && this.O[b1][0] > paramInt1 && this.P[b1][1] <= paramInt2 && this.O[b1][1] > paramInt2)
+      if (this.mMOTopLeft[b1][0] <= paramInt1 && this.mMOBotRight[b1][0] > paramInt1 && this.mMOTopLeft[b1][1] <= paramInt2 && this.mMOBotRight[b1][1] > paramInt2)
         return b1; 
     } 
     return -1;
@@ -377,14 +377,14 @@ public abstract class TileCanvas extends FullCanvas {
       case 10:
         j = b(paramInt1, paramInt2);
         if (j != -1) {
-          k = (paramInt1 - this.P[j][0]) * 12;
-          int m = (paramInt2 - this.P[j][1]) * 12;
+          k = (paramInt1 - this.mMOTopLeft[j][0]) * 12;
+          int m = (paramInt2 - this.mMOTopLeft[j][1]) * 12;
           int n = this.mMOOffset[j][0] - k;
           int i1 = this.mMOOffset[j][1] - m;
           if ((n > -36 && n < 12) || (i1 > -36 && i1 < 12)) {
             this.tmpTileImageG.setColor(11591920);
             this.tmpTileImageG.fillRect(0, 0, 12, 12);
-            this.tmpTileImageG.drawImage(this.L, n, i1, 20);
+            this.tmpTileImageG.drawImage(this.mSpikeImgPtr, n, i1, 20);
             graphics.drawImage(this.tmpTileImage, paramInt3, paramInt4, 20);
             break;
           } 
@@ -445,15 +445,15 @@ public abstract class TileCanvas extends FullCanvas {
         break;
       case 40:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(a(this.Q[50], 5), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.Q[50], 5), paramInt3, paramInt4, 20);
         break;
       case 41:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(a(this.Q[50], 4), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.Q[50], 4), paramInt3, paramInt4, 20);
         break;
       case 42:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(a(this.Q[50], 3), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.Q[50], 3), paramInt3, paramInt4, 20);
         break;
       case 43:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
@@ -461,27 +461,27 @@ public abstract class TileCanvas extends FullCanvas {
         break;
       case 44:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(a(this.Q[51], 5), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.Q[51], 5), paramInt3, paramInt4, 20);
         break;
       case 45:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(a(this.Q[51], 4), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.Q[51], 4), paramInt3, paramInt4, 20);
         break;
       case 46:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(a(this.Q[51], 3), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.Q[51], 3), paramInt3, paramInt4, 20);
         break;
       case 47:
         graphics.drawImage(this.Q[52], paramInt3, paramInt4, 20);
         break;
       case 48:
-        graphics.drawImage(a(this.Q[52], 5), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.Q[52], 5), paramInt3, paramInt4, 20);
         break;
       case 49:
-        graphics.drawImage(a(this.Q[52], 4), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.Q[52], 4), paramInt3, paramInt4, 20);
         break;
       case 50:
-        graphics.drawImage(a(this.Q[52], 3), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.Q[52], 3), paramInt3, paramInt4, 20);
         break;
       case 38:
         graphics.drawImage(this.Q[53], paramInt3, paramInt4, 20);
@@ -490,13 +490,13 @@ public abstract class TileCanvas extends FullCanvas {
         graphics.drawImage(this.Q[54], paramInt3, paramInt4, 20);
         break;
       case 52:
-        graphics.drawImage(a(this.Q[54], 5), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.Q[54], 5), paramInt3, paramInt4, 20);
         break;
       case 53:
-        graphics.drawImage(a(this.Q[54], 4), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.Q[54], 4), paramInt3, paramInt4, 20);
         break;
       case 54:
-        graphics.drawImage(a(this.Q[54], 3), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.Q[54], 3), paramInt3, paramInt4, 20);
         break;
     } 
   }
@@ -620,9 +620,9 @@ public abstract class TileCanvas extends FullCanvas {
     graphics.setColor(12747918);
     graphics.fillRect(10, 0, 4, 48);
     graphics.drawImage(paramImage, 0, 0, 20);
-    graphics.drawImage(a(paramImage, 0), 12, 0, 20);
-    graphics.drawImage(a(paramImage, 1), 0, 12, 20);
-    graphics.drawImage(a(paramImage, 2), 12, 12, 20);
+    graphics.drawImage(manipulateImage(paramImage, 0), 12, 0, 20);
+    graphics.drawImage(manipulateImage(paramImage, 1), 0, 12, 20);
+    graphics.drawImage(manipulateImage(paramImage, 2), 12, 12, 20);
     return image;
   }
   
@@ -632,48 +632,48 @@ public abstract class TileCanvas extends FullCanvas {
     this.Q[0] = a(image, 1, 0);
     this.Q[1] = a(image, 1, 2);
     this.Q[2] = a(image, 0, 3, -5185296);
-    this.Q[3] = a(this.Q[2], 1);
-    this.Q[4] = a(this.Q[2], 3);
-    this.Q[5] = a(this.Q[2], 5);
+    this.Q[3] = manipulateImage(this.Q[2], 1);
+    this.Q[4] = manipulateImage(this.Q[2], 3);
+    this.Q[5] = manipulateImage(this.Q[2], 5);
     this.Q[6] = a(image, 0, 3, -15703888);
-    this.Q[7] = a(this.Q[6], 1);
-    this.Q[8] = a(this.Q[6], 3);
-    this.Q[9] = a(this.Q[6], 5);
+    this.Q[7] = manipulateImage(this.Q[6], 1);
+    this.Q[8] = manipulateImage(this.Q[6], 3);
+    this.Q[9] = manipulateImage(this.Q[6], 5);
     this.Q[10] = a(image, 0, 4);
     this.Q[11] = a(image, 3, 4);
     this.Q[12] = b(a(image, 2, 3));
     this.Q[14] = a(image, 0, 5);
-    this.Q[13] = a(this.Q[14], 1);
-    this.Q[15] = a(this.Q[13], 0);
-    this.Q[16] = a(this.Q[14], 0);
+    this.Q[13] = manipulateImage(this.Q[14], 1);
+    this.Q[15] = manipulateImage(this.Q[13], 0);
+    this.Q[16] = manipulateImage(this.Q[14], 0);
     this.Q[18] = a(image, 1, 5);
-    this.Q[17] = a(this.Q[18], 1);
-    this.Q[19] = a(this.Q[17], 0);
-    this.Q[20] = a(this.Q[18], 0);
+    this.Q[17] = manipulateImage(this.Q[18], 1);
+    this.Q[19] = manipulateImage(this.Q[17], 0);
+    this.Q[20] = manipulateImage(this.Q[18], 0);
     this.Q[22] = a(image, 2, 5);
-    this.Q[21] = a(this.Q[22], 1);
-    this.Q[23] = a(this.Q[21], 0);
-    this.Q[24] = a(this.Q[22], 0);
+    this.Q[21] = manipulateImage(this.Q[22], 1);
+    this.Q[23] = manipulateImage(this.Q[21], 0);
+    this.Q[24] = manipulateImage(this.Q[22], 0);
     this.Q[26] = a(image, 3, 5);
-    this.Q[25] = a(this.Q[26], 1);
-    this.Q[27] = a(this.Q[25], 0);
-    this.Q[28] = a(this.Q[26], 0);
-    this.Q[29] = a(this.Q[14], 5);
-    this.Q[30] = a(this.Q[29], 1);
-    this.Q[31] = a(this.Q[29], 0);
-    this.Q[32] = a(this.Q[30], 0);
-    this.Q[33] = a(this.Q[18], 5);
-    this.Q[34] = a(this.Q[33], 1);
-    this.Q[35] = a(this.Q[33], 0);
-    this.Q[36] = a(this.Q[34], 0);
-    this.Q[37] = a(this.Q[22], 5);
-    this.Q[38] = a(this.Q[37], 1);
-    this.Q[39] = a(this.Q[37], 0);
-    this.Q[40] = a(this.Q[38], 0);
-    this.Q[41] = a(this.Q[26], 5);
-    this.Q[42] = a(this.Q[41], 1);
-    this.Q[43] = a(this.Q[41], 0);
-    this.Q[44] = a(this.Q[42], 0);
+    this.Q[25] = manipulateImage(this.Q[26], 1);
+    this.Q[27] = manipulateImage(this.Q[25], 0);
+    this.Q[28] = manipulateImage(this.Q[26], 0);
+    this.Q[29] = manipulateImage(this.Q[14], 5);
+    this.Q[30] = manipulateImage(this.Q[29], 1);
+    this.Q[31] = manipulateImage(this.Q[29], 0);
+    this.Q[32] = manipulateImage(this.Q[30], 0);
+    this.Q[33] = manipulateImage(this.Q[18], 5);
+    this.Q[34] = manipulateImage(this.Q[33], 1);
+    this.Q[35] = manipulateImage(this.Q[33], 0);
+    this.Q[36] = manipulateImage(this.Q[34], 0);
+    this.Q[37] = manipulateImage(this.Q[22], 5);
+    this.Q[38] = manipulateImage(this.Q[37], 1);
+    this.Q[39] = manipulateImage(this.Q[37], 0);
+    this.Q[40] = manipulateImage(this.Q[38], 0);
+    this.Q[41] = manipulateImage(this.Q[26], 5);
+    this.Q[42] = manipulateImage(this.Q[41], 1);
+    this.Q[43] = manipulateImage(this.Q[41], 0);
+    this.Q[44] = manipulateImage(this.Q[42], 0);
     this.Q[45] = a(image, 3, 3);
     this.Q[46] = a(image, 1, 3);
     this.Q[47] = a(image, 2, 0);
@@ -685,17 +685,17 @@ public abstract class TileCanvas extends FullCanvas {
     this.Q[53] = a(image, 1, 1);
     this.Q[54] = a(image, 2, 2);
     this.Q[55] = a(image, 0, 0, -5185296);
-    this.Q[56] = a(this.Q[55], 3);
-    this.Q[57] = a(this.Q[55], 4);
-    this.Q[58] = a(this.Q[55], 5);
+    this.Q[56] = manipulateImage(this.Q[55], 3);
+    this.Q[57] = manipulateImage(this.Q[55], 4);
+    this.Q[58] = manipulateImage(this.Q[55], 5);
     this.Q[59] = a(image, 0, 0, -15703888);
-    this.Q[60] = a(this.Q[59], 3);
-    this.Q[61] = a(this.Q[59], 4);
-    this.Q[62] = a(this.Q[59], 5);
+    this.Q[60] = manipulateImage(this.Q[59], 3);
+    this.Q[61] = manipulateImage(this.Q[59], 4);
+    this.Q[62] = manipulateImage(this.Q[59], 5);
     this.Q[63] = a(image, 0, 2);
-    this.Q[64] = a(this.Q[63], 3);
-    this.Q[65] = a(this.Q[63], 4);
-    this.Q[66] = a(this.Q[63], 5);
+    this.Q[64] = manipulateImage(this.Q[63], 3);
+    this.Q[65] = manipulateImage(this.Q[63], 4);
+    this.Q[66] = manipulateImage(this.Q[63], 5);
     this.A = a(image, 2, 1);
     this.D = a(image, 1, 4);
   }
