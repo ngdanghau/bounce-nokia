@@ -15,7 +15,6 @@ public class BounceCanvas extends TileCanvas {
   private int mSplashTimer;
   
   
-  // âm thanh 
   public Sound mSoundHoop;
   
   public Sound mSoundPickup;
@@ -30,7 +29,6 @@ public class BounceCanvas extends TileCanvas {
   
   public int numLives;
   
-  // diem số hiện tại
   public int mScore;
   
   public int bonusCntrValue;
@@ -43,11 +41,11 @@ public class BounceCanvas extends TileCanvas {
   
   public boolean mPaintUIFlag;
   
-  public final Font font = Font.getFont(32, 0, 8);
+  public final Font TEXT_FONT = Font.getFont(32, 0, 8);
   
-  public Image F;
+  public Image mFullScreenBuffer;
   
-  public Graphics X = null;
+  public Graphics mFullScreenGraphics = null;
   
   public boolean mClearScreenFlag;
   
@@ -69,7 +67,7 @@ public class BounceCanvas extends TileCanvas {
     this.mSoundHoop = loadSound("/sounds/up.ott");
     this.mSoundPickup = loadSound("/sounds/pickup.ott");
     this.mSoundPop = loadSound("/sounds/pop.ott");
-    this.F = Image.createImage(128, 128);
+    this.mFullScreenBuffer = Image.createImage(128, 128);
     this.mSplashIndex = 1;
     try {
       this.mSplashImage = Image.createImage(SPLASH_NAME[this.mSplashIndex]);
@@ -157,41 +155,41 @@ public class BounceCanvas extends TileCanvas {
   }
   
   public void paint2Buffer() {
-    if (this.X == null)
-      this.X = this.F.getGraphics(); 
-    this.X.setClip(0, 0, 128, 96);
+    if (this.mFullScreenGraphics == null)
+      this.mFullScreenGraphics = this.mFullScreenBuffer.getGraphics(); 
+    this.mFullScreenGraphics.setClip(0, 0, 128, 96);
     if (this.E != null) {
       i();
       if (this.v <= 0) {
-        this.X.drawImage(this.E, this.v, 0, 20);
+        this.mFullScreenGraphics.drawImage(this.E, this.v, 0, 20);
       } else {
-        this.X.drawImage(this.E, this.v, 0, 20);
-        this.X.drawImage(this.E, this.v - 156, 0, 20);
+        this.mFullScreenGraphics.drawImage(this.E, this.v, 0, 20);
+        this.mFullScreenGraphics.drawImage(this.E, this.v - 156, 0, 20);
       }
     } 
-    a(this.X, this.v);
-    a(this.X, this.mBall.xPos, this.mBall.yPos, this.mBall.mHalfBallSize, this.v);
-    this.X.setClip(0, 0, 128, 128);
+    a(this.mFullScreenGraphics, this.v);
+    a(this.mFullScreenGraphics, this.mBall.xPos, this.mBall.yPos, this.mBall.mHalfBallSize, this.v);
+    this.mFullScreenGraphics.setClip(0, 0, 128, 128);
     
     if (this.mPaintUIFlag) {
-      this.X.setColor(545706); // 0853AA = xanh dương
-      this.X.fillRect(0, 97, 128, 32);
+      this.mFullScreenGraphics.setColor(545706); // 0853AA = xanh dương
+      this.mFullScreenGraphics.fillRect(0, 97, 128, 32);
       // vẽ lại số lượng mạng sống còn lại
       for (byte b1 = 0; b1 < this.numLives; b1++)
-        this.X.drawImage(this.A, 5 + b1 * (this.A.getWidth() - 1), 99, 20);
+        this.mFullScreenGraphics.drawImage(this.A, 5 + b1 * (this.A.getWidth() - 1), 99, 20);
       
       // vẽ số lượng ring còn lại
       for (byte b2 = 0; b2 < this.totalRingInLevel - this.numRings; b2++)
-        this.X.drawImage(this.D, 5 + b2 * (this.D.getWidth() - 4), 112, 20); 
+        this.mFullScreenGraphics.drawImage(this.D, 5 + b2 * (this.D.getWidth() - 4), 112, 20); 
      
       // vẽ lại điểm số
-      this.X.setColor(16777214); // FFFFFE = trắng
-      this.X.setFont(this.font);
-      this.X.drawString(zeroString(this.mScore), 64, 100, 20);
+      this.mFullScreenGraphics.setColor(16777214); // FFFFFE = trắng
+      this.mFullScreenGraphics.setFont(this.TEXT_FONT);
+      this.mFullScreenGraphics.drawString(zeroString(this.mScore), 64, 100, 20);
       
       if (this.bonusCntrValue != 0) {
-        this.X.setColor(16750611);
-        this.X.fillRect(1, 128 - 3 * this.bonusCntrValue / 30, 5, 128);
+        this.mFullScreenGraphics.setColor(16750611);
+        this.mFullScreenGraphics.fillRect(1, 128 - 3 * this.bonusCntrValue / 30, 5, 128);
       } 
       this.mPaintUIFlag = false;
     } 
@@ -205,10 +203,10 @@ public class BounceCanvas extends TileCanvas {
         paramGraphics.drawImage(this.mSplashImage, this.ag >> 1, this.am >> 1, 3);
       } 
     } else {
-      paramGraphics.drawImage(this.F, 0, 0, 20);
+      paramGraphics.drawImage(this.mFullScreenBuffer, 0, 0, 20);
       if (this.mLevelDisCntr != 0) {
         paramGraphics.setColor(16777214);
-        paramGraphics.setFont(this.font);
+        paramGraphics.setFont(this.TEXT_FONT);
         paramGraphics.drawString(this.levelTitle, 44, 84, 20);
       } 
     } 

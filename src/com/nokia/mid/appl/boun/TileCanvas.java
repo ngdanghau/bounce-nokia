@@ -363,8 +363,8 @@ public abstract class TileCanvas extends FullCanvas {
       case 27:
       case 28:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(this.Q[com.nokia.mid.appl.boun.d.a[i - 13]], paramInt3, paramInt4, 20);
-        graphics.drawImage(this.Q[com.nokia.mid.appl.boun.d.b[i - 13]], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.Q[com.nokia.mid.appl.boun.BounceConst.a[i - 13]], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.Q[com.nokia.mid.appl.boun.BounceConst.b[i - 13]], paramInt3, paramInt4, 20);
         break;
       case 9:
         j = (paramInt1 - this.mTopLeftExitTileCol) * 12;
@@ -520,7 +520,7 @@ public abstract class TileCanvas extends FullCanvas {
         if (i2 >= 13 && i2 <= 28) {
           int i3 = (n - this.l) * 12 + paramInt4;
           int i4 = (i1 - this.k) * 12;
-          paramGraphics.drawImage(this.Q[com.nokia.mid.appl.boun.d.b[i2 - 13]], i3, i4, 20);
+          paramGraphics.drawImage(this.Q[com.nokia.mid.appl.boun.BounceConst.b[i2 - 13]], i3, i4, 20);
         } 
       } 
     } 

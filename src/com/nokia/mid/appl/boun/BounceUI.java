@@ -147,7 +147,6 @@ public class BounceUI implements CommandListener {
     this.mNewGameMenu = new List(Local.getText(11), 3, arrayOfString1, null); // 11 = New game
     this.mNewGameMenu.addCommand(this.mBackCmd);
     this.mNewGameMenu.setCommandListener(this);
-    // F la List Control
     this.mDisplay.setCurrent((Displayable)this.mNewGameMenu);
   }
   
