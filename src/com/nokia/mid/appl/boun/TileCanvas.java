@@ -97,7 +97,7 @@ public abstract class TileCanvas extends FullCanvas {
   
   protected Display mDisplay;
   
-  public com.nokia.mid.appl.boun.g mGameTimer = null;
+  public com.nokia.mid.appl.boun.GameTimer mGameTimer = null;
   
   public TileCanvas(Display paramDisplay) {
     this.mDisplay = paramDisplay;
@@ -760,44 +760,17 @@ public abstract class TileCanvas extends FullCanvas {
   public synchronized void start() {
     if (this.mGameTimer != null)
       return; 
-    this.mGameTimer = new com.nokia.mid.appl.boun.g(this, this);
+    this.mGameTimer = new com.nokia.mid.appl.boun.GameTimer(this, this);
   }
   
   public synchronized void stop() {
     if (this.mGameTimer == null)
       return; 
-    this.mGameTimer.a();
+    this.mGameTimer.stop();
     this.mGameTimer = null;
   }
   
-  protected void n() {
+  protected void timerTrigger() {
     run();
-  }
-  
-  protected class g extends TimerTask {
-    TileCanvas a;
-    
-    Timer c;
-    
-    private final TileCanvas b;
-    
-    public g(TileCanvas this$0, TileCanvas param1b1) {
-      this.b = this$0;
-      this.a = param1b1;
-      this.c = new Timer();
-      this.c.schedule(this, 0L, 40L);
-    }
-    
-    public void run() {
-      this.a.n();
-    }
-    
-    void a() {
-      if (this.c == null)
-        return; 
-      cancel();
-      this.c.cancel();
-      this.c = null;
-    }
   }
 }
