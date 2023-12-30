@@ -12,12 +12,12 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.List;
 import javax.microedition.rms.RecordStore;
 
-public class Game implements CommandListener {
+public class BounceUI implements CommandListener {
   public Bounce mIDlet;
   
   public Display m; // man hinh hien tai 
   
-  public MainScene mainScene;
+  public MainScene mCanvas;
   
   public int K = 2;
   
@@ -93,13 +93,13 @@ public class Game implements CommandListener {
   
   private String[] menu = new String[4];
   
-  public Game(Bounce paramBounce) {
+  public BounceUI(Bounce paramBounce) {
     this.mIDlet = paramBounce;
     ReadRMS();
-    this.mainScene = new MainScene(this, 1);
-    this.mainScene.d();
+    this.mCanvas = new MainScene(this, 1);
+    this.mCanvas.d();
     this.m = Display.getDisplay(this.mIDlet);
-    this.m.setCurrent((Displayable)this.mainScene);
+    this.m.setCurrent((Displayable)this.mCanvas);
     e();
   }
   
@@ -123,16 +123,16 @@ public class Game implements CommandListener {
       this.mainMenu.append(this.menu[b], null); 
     this.mainMenu.addCommand(this.EXIT);
     this.mainMenu.setCommandListener(this);
-    if (this.mainScene.ap != -1) {
-      this.mainScene.ap = -1;
-      this.mainScene.t = null;
+    if (this.mCanvas.ap != -1) {
+      this.mCanvas.ap = -1;
+      this.mCanvas.t = null;
     } 
     if (this.K == 1 || this.J == 1 || this.J == 2) {
       this.mainMenu.setSelectedIndex(0, true);
     } else {
       this.mainMenu.setSelectedIndex(this.N, true);
     } 
-    this.mainScene.j();
+    this.mCanvas.stop();
     this.m.setCurrent((Displayable)this.mainMenu);
   }
   
@@ -154,11 +154,11 @@ public class Game implements CommandListener {
   public void a(boolean paramBoolean, int paramInt) {
     if (paramBoolean) {
       this.isNewHighScore = false;
-      this.mainScene.a(paramInt, 0, 3);
+      this.mCanvas.a(paramInt, 0, 3);
     } 
-    this.mainScene.d();
-    this.mainScene.player.a();
-    this.m.setCurrent((Displayable)this.mainScene);
+    this.mCanvas.d();
+    this.mCanvas.player.a();
+    this.m.setCurrent((Displayable)this.mCanvas);
     this.K = 1;
   }
   
@@ -176,9 +176,9 @@ public class Game implements CommandListener {
   public void b() {
     this.displayForm = new Form(com.nokia.mid.appl.boun.c.a(8)); // 8 = Instructions
     String[] arrayOfString = { 
-    		this.mainScene.getKeyName(this.mainScene.getKeyCode(2)), // 2 = LEFT
-    		this.mainScene.getKeyName(this.mainScene.getKeyCode(5)),  // 5 = RIGHT
-    		this.mainScene.getKeyName(this.mainScene.getKeyCode(1)) // 1 = UP
+    		this.mCanvas.getKeyName(this.mCanvas.getKeyCode(2)), // 2 = LEFT
+    		this.mCanvas.getKeyName(this.mCanvas.getKeyCode(5)),  // 5 = RIGHT
+    		this.mCanvas.getKeyName(this.mCanvas.getKeyCode(1)) // 1 = UP
     };
     this.displayForm.append(com.nokia.mid.appl.boun.c.a(1, arrayOfString));
     this.displayForm.addCommand(this.BACK);
@@ -188,7 +188,7 @@ public class Game implements CommandListener {
   }
   
   public void a(boolean paramBoolean) {
-    this.mainScene.j();
+    this.mCanvas.stop();
     if (this.iOK == null)
       this.iOK = new Command(com.nokia.mid.appl.boun.c.a(13), 4, 1);  // 13 = OK
     this.displayForm = new Form(com.nokia.mid.appl.boun.c.a(6)); // 6 = Game over
@@ -211,13 +211,13 @@ public class Game implements CommandListener {
   
   // su kiem continue khi end 1 level
   public void d() {
-    this.mainScene.j();
+    this.mCanvas.stop();
     a(false, 0);
     this.K = 5;
     if (this.OK == null)
       this.OK = new Command(com.nokia.mid.appl.boun.c.a(4), 4, 1); // 4 = Continue
     this.displayForm = new Form("");
-    this.displayForm.append(this.mainScene.levelCompletedText);
+    this.displayForm.append(this.mCanvas.levelCompletedText);
     this.displayForm.append("\n\n");
     this.displayForm.append("" + this.sessionScore + "\n");
     this.displayForm.addCommand(this.OK);
@@ -236,16 +236,16 @@ public class Game implements CommandListener {
         this.N = this.mainMenu.getSelectedIndex();
         if (str.equals(this.menu[0])) {
           if (this.K == 1) {
-            a(false, this.mainScene.currentLevel);
+            a(false, this.mCanvas.currentLevel);
           } else if (this.J != 0) {
-            this.m.setCurrent((Displayable)this.mainScene);
+            this.m.setCurrent((Displayable)this.mCanvas);
             if (this.J == 1) {
-              this.mainScene.a(this.y, this.M);
+              this.mCanvas.a(this.y, this.M);
             } else {
-              this.mainScene.a(this.B, this.G, this.C);
+              this.mCanvas.a(this.B, this.G, this.C);
             } 
             this.u = null;
-            this.mainScene.d();
+            this.mCanvas.d();
             this.K = 1;
           } 
         } else if (str.equals(this.menu[1])) {
@@ -263,9 +263,9 @@ public class Game implements CommandListener {
         } else if (str.equals("Read RMS")) {
         	ReadRMS();
         } else if (str.equals("Write RMS")) {
-        	WriteRSM(1);
-        	WriteRSM(2);
-        	WriteRSM(3);
+        	saveGameData(1);
+        	saveGameData(2);
+        	saveGameData(3);
         } 
       } 
     } else if (paramCommand == this.BACK || paramCommand == this.EXIT || paramCommand == this.iOK) {
@@ -277,7 +277,7 @@ public class Game implements CommandListener {
       } 
     } else if (paramCommand == this.OK) {
       this.K = 1;
-      this.m.setCurrent((Displayable)this.mainScene);
+      this.m.setCurrent((Displayable)this.mCanvas);
     } 
   }
   
@@ -350,7 +350,7 @@ public class Game implements CommandListener {
   }
   
   // Ghi data vao Record Management System (RSM)
-  public void WriteRSM(int paramInt) {
+  public void saveGameData(int paramInt) {
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
     Object object = null;
@@ -369,7 +369,7 @@ public class Game implements CommandListener {
           dataOutputStream.writeInt(this.highScore);
           break;
         case 3:
-          if (this.mainScene == null || this.mainScene.player == null)
+          if (this.mCanvas == null || this.mCanvas.player == null)
             return; 
           b1 = 0;
           if (this.K == 1) {
@@ -379,29 +379,29 @@ public class Game implements CommandListener {
           } 
           dataOutputStream.writeLong(System.currentTimeMillis());
           dataOutputStream.writeByte(b1);
-          dataOutputStream.writeByte(this.mainScene.noOfLife);
-          dataOutputStream.writeByte(this.mainScene.noOfRingCollected);
-          dataOutputStream.writeByte(this.mainScene.currentLevel);
-          dataOutputStream.writeByte(this.mainScene.player.a);
-          dataOutputStream.writeInt(this.mainScene.sessionScore);
-          dataOutputStream.writeInt(this.mainScene.l);
-          dataOutputStream.writeInt(this.mainScene.k);
-          dataOutputStream.writeInt(this.mainScene.player.s);
-          dataOutputStream.writeInt(this.mainScene.player.r);
-          dataOutputStream.writeInt(this.mainScene.player.l);
-          dataOutputStream.writeInt(this.mainScene.player.o);
+          dataOutputStream.writeByte(this.mCanvas.noOfLife);
+          dataOutputStream.writeByte(this.mCanvas.noOfRingCollected);
+          dataOutputStream.writeByte(this.mCanvas.currentLevel);
+          dataOutputStream.writeByte(this.mCanvas.player.a);
+          dataOutputStream.writeInt(this.mCanvas.sessionScore);
+          dataOutputStream.writeInt(this.mCanvas.l);
+          dataOutputStream.writeInt(this.mCanvas.k);
+          dataOutputStream.writeInt(this.mCanvas.player.s);
+          dataOutputStream.writeInt(this.mCanvas.player.r);
+          dataOutputStream.writeInt(this.mCanvas.player.l);
+          dataOutputStream.writeInt(this.mCanvas.player.o);
           dataOutputStream.writeInt(0);
           dataOutputStream.writeInt(0);
-          dataOutputStream.writeInt(this.mainScene.player.d);
-          dataOutputStream.writeInt(this.mainScene.player.c);
-          dataOutputStream.writeInt(this.mainScene.player.h);
-          dataOutputStream.writeInt(this.mainScene.player.g);
-          dataOutputStream.writeInt(this.mainScene.player.y);
+          dataOutputStream.writeInt(this.mCanvas.player.d);
+          dataOutputStream.writeInt(this.mCanvas.player.c);
+          dataOutputStream.writeInt(this.mCanvas.player.h);
+          dataOutputStream.writeInt(this.mCanvas.player.g);
+          dataOutputStream.writeInt(this.mCanvas.player.y);
           arrayOfInt = new int[50][3];
           b2 = 0;
-          for (b3 = 0; b3 < this.mainScene.height; b3++) {
-            for (byte b = 0; b < this.mainScene.width; b++) {
-              byte b6 = (byte)(this.mainScene.map[b3][b] & 0xFF7F & 0xFFFFFFBF);
+          for (b3 = 0; b3 < this.mCanvas.height; b3++) {
+            for (byte b = 0; b < this.mCanvas.width; b++) {
+              byte b6 = (byte)(this.mCanvas.map[b3][b] & 0xFF7F & 0xFFFFFFBF);
               if (b6 == 7 || b6 == 29 || b6 == 13 || b6 == 14 || b6 == 21 || b6 == 22 || b6 == 15 || b6 == 16 || b6 == 23 || b6 == 24) {
                 arrayOfInt[b2][0] = b3;
                 arrayOfInt[b2][1] = b;
@@ -417,12 +417,12 @@ public class Game implements CommandListener {
             dataOutputStream.writeByte(arrayOfInt[b4][2]);
           } 
           arrayOfInt = null;
-          dataOutputStream.writeByte(this.mainScene.B);
-          for (b5 = 0; b5 < this.mainScene.B; b5++) {
-            dataOutputStream.writeShort(this.mainScene.w[b5][0]);
-            dataOutputStream.writeShort(this.mainScene.w[b5][1]);
-            dataOutputStream.writeShort(this.mainScene.ae[b5][0]);
-            dataOutputStream.writeShort(this.mainScene.ae[b5][1]);
+          dataOutputStream.writeByte(this.mCanvas.B);
+          for (b5 = 0; b5 < this.mCanvas.B; b5++) {
+            dataOutputStream.writeShort(this.mCanvas.w[b5][0]);
+            dataOutputStream.writeShort(this.mCanvas.w[b5][1]);
+            dataOutputStream.writeShort(this.mCanvas.ae[b5][0]);
+            dataOutputStream.writeShort(this.mCanvas.ae[b5][1]);
           } 
           dataOutputStream.writeLong(-559038737L);
           break;
@@ -434,22 +434,22 @@ public class Game implements CommandListener {
   }
   
   public void CompletedLevel() {
-    if (this.mainScene.currentLevel > this.unlockedLevel) {
-      this.unlockedLevel = Math.min(this.mainScene.currentLevel, 11); // 11 là level tối đa mà game có
-      WriteRSM(1);
+    if (this.mCanvas.currentLevel > this.unlockedLevel) {
+      this.unlockedLevel = Math.min(this.mCanvas.currentLevel, 11); // 11 là level tối đa mà game có
+      saveGameData(1);
     } 
-    if (this.mainScene.sessionScore > this.highScore) {
-      this.highScore = this.mainScene.sessionScore;
+    if (this.mCanvas.sessionScore > this.highScore) {
+      this.highScore = this.mCanvas.sessionScore;
       this.isNewHighScore = true;
-      WriteRSM(2);
+      saveGameData(2);
     } 
-    this.sessionScore = this.mainScene.sessionScore;
+    this.sessionScore = this.mCanvas.sessionScore;
   }
   
   public void b(boolean paramBoolean) {
     this.K = 3;
     this.J = 0;
-    this.mainScene.isPlaying = false;
+    this.mCanvas.isPlaying = false;
     a(paramBoolean);
   }
 }

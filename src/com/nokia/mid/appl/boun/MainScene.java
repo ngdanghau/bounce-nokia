@@ -22,7 +22,7 @@ public class MainScene extends b {
   
   public Sound popSFX;
   
-  public Game game;
+  public BounceUI game;
   
   public Player player;
   
@@ -63,7 +63,7 @@ public class MainScene extends b {
   
   private long K = System.currentTimeMillis();
   
-  public MainScene(Game parama, int paramInt) {
+  public MainScene(BounceUI parama, int paramInt) {
     super(parama.m);
     this.game = parama;
     this.upSFX = b("/sounds/up.ott");
@@ -273,7 +273,7 @@ public class MainScene extends b {
       if (this.player.z == 1) {
         if (this.noOfLife < 0) {
           this.game.CompletedLevel();
-          j();
+          stop();
           this.game.b(false);
           return;
         } 

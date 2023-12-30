@@ -763,7 +763,7 @@ public abstract class b extends FullCanvas {
     this.ab = new com.nokia.mid.appl.boun.g(this, this);
   }
   
-  public synchronized void j() {
+  public synchronized void stop() {
     if (this.ab == null)
       return; 
     this.ab.a();

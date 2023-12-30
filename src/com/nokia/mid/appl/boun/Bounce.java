@@ -6,11 +6,11 @@ import javax.microedition.lcdui.Display;
 import javax.microedition.midlet.MIDlet;
 
 public class Bounce extends MIDlet {
-	private Game game;
+	private BounceUI mUI;
 	
 	public Bounce() {
-		if (this.game == null){
-		  this.game = new Game(this); 
+		if (this.mUI == null){
+		  this.mUI = new BounceUI(this); 
 		}
 	}
 	
@@ -21,11 +21,11 @@ public class Bounce extends MIDlet {
 	protected void pauseApp() {}
 	
 	public void destroyApp(boolean paramBoolean) {
-		if (this.game != null && this.game.mainScene != null) {
-		  this.game.WriteRSM(3);
-		  this.game.mainScene.j();
+		if (this.mUI != null && this.mUI.mCanvas != null) {
+		  this.mUI.saveGameData(3);
+		  this.mUI.mCanvas.stop();
 		} 
 		Display.getDisplay(this).setCurrent(null);
-		this.game = null;
+		this.mUI = null;
 	}
 }
