@@ -31,37 +31,37 @@ public class BounceUI implements CommandListener {
   
   public byte J = 0;
   
-  public byte C;
+  public byte mSavedLives;
   
-  public byte t;
+  public byte mSavedRings;
   
-  public byte B;
+  public byte mSavedLevel;
   
-  public byte A;
+  public byte mSavedSize;
   
-  public int G;
+  public int mSavedScore;
   
   public int I;
   
   public int H;
   
-  public int a;
+  public int mSavedXSpeed;
   
-  public int g;
+  public int mSavedYSpeed;
   
   public int y;
   
   public int M;
   
-  public int e;
+  public int mSavedRespawnX;
   
   public int b;
   
-  public int w;
+  public int mSavedSpeedBonus;
   
-  public int z;
+  public int mSavedGravBonus;
   
-  public int n;
+  public int mSavedJumpBonus;
   
   public int mSavedTileCount;
   
@@ -242,7 +242,7 @@ public class BounceUI implements CommandListener {
             if (this.J == 1) {
               this.mCanvas.a(this.y, this.M);
             } else {
-              this.mCanvas.tileNotSavedAsActive(this.B, this.G, this.C);
+              this.mCanvas.tileNotSavedAsActive(this.mSavedLevel, this.mSavedScore, this.mSavedLives);
             } 
             this.mSavedTiles = null;
             this.mCanvas.d();
@@ -306,24 +306,24 @@ public class BounceUI implements CommandListener {
         dataInputStream = new DataInputStream(byteArrayInputStream);
         this.o = dataInputStream.readLong();
         this.J = dataInputStream.readByte();
-        this.C = dataInputStream.readByte();
-        this.t = dataInputStream.readByte();
-        this.B = dataInputStream.readByte();
-        this.A = dataInputStream.readByte();
-        this.G = dataInputStream.readInt();
+        this.mSavedLives = dataInputStream.readByte();
+        this.mSavedRings = dataInputStream.readByte();
+        this.mSavedLevel = dataInputStream.readByte();
+        this.mSavedSize = dataInputStream.readByte();
+        this.mSavedScore = dataInputStream.readInt();
         this.I = dataInputStream.readInt();
         this.H = dataInputStream.readInt();
         this.y = dataInputStream.readInt();
         this.M = dataInputStream.readInt();
-        this.a = dataInputStream.readInt();
-        this.g = dataInputStream.readInt();
+        this.mSavedXSpeed = dataInputStream.readInt();
+        this.mSavedYSpeed = dataInputStream.readInt();
         dataInputStream.readInt();
         dataInputStream.readInt();
-        this.e = dataInputStream.readInt();
+        this.mSavedRespawnX = dataInputStream.readInt();
         this.b = dataInputStream.readInt();
-        this.w = dataInputStream.readInt();
-        this.z = dataInputStream.readInt();
-        this.n = dataInputStream.readInt();
+        this.mSavedSpeedBonus = dataInputStream.readInt();
+        this.mSavedGravBonus = dataInputStream.readInt();
+        this.mSavedJumpBonus = dataInputStream.readInt();
         this.mSavedTileCount = dataInputStream.readByte();
         this.mSavedTiles = new int[this.mSavedTileCount][3];
         for (byte b1 = 0; b1 < this.mSavedTileCount; b1++) {

@@ -41,9 +41,9 @@ public abstract class TileCanvas extends FullCanvas {
   
   public boolean mLoadLevelFlag;
   
-  protected int s;
+  protected int mStartCol;
   
-  protected int S;
+  protected int mStartRow;
   
   public int a;
   
@@ -136,8 +136,8 @@ public abstract class TileCanvas extends FullCanvas {
     try {
       inputStream = getClass().getResourceAsStream("/levels/J2MElvl." + str);
       dataInputStream = new DataInputStream(inputStream);
-      this.s = dataInputStream.read();
-      this.S = dataInputStream.read();
+      this.mStartCol = dataInputStream.read();
+      this.mStartRow = dataInputStream.read();
       int i = dataInputStream.read();
       if (i == 0) {
         this.a = 12;
@@ -220,7 +220,7 @@ public abstract class TileCanvas extends FullCanvas {
     graphics = null;
   }
   
-  public void r() {
+  public void disposeLevel() {
     for (byte b1 = 0; b1 < this.mNumMoveObj; b1++) {
       this.r[b1] = null;
       this.an[b1] = null;

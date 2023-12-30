@@ -49,7 +49,7 @@ public class BounceCanvas extends TileCanvas {
   
   public Graphics X = null;
   
-  public boolean T;
+  public boolean mClearScreenFlag;
   
   private boolean mCheat = false;
   
@@ -87,44 +87,44 @@ public class BounceCanvas extends TileCanvas {
     this.mLeaveGame = false;
     this.mOpenExitFlag = false;
     createNewLevel();
-    this.T = true;
+    this.mClearScreenFlag = true;
   }
   
   public void a(int paramInt1, int paramInt2) {
-    this.mLevelNum = this.mUI.B;
-    this.numRings = this.mUI.t;
-    this.numLives = this.mUI.C;
-    this.mScore = this.mUI.G;
-    r();
+    this.mLevelNum = this.mUI.mSavedLevel;
+    this.numRings = this.mUI.mSavedRings;
+    this.numLives = this.mUI.mSavedLives;
+    this.mScore = this.mUI.mSavedScore;
+    disposeLevel();
     ReadLevelMap(this.mLevelNum);
-    k();
+    resetTiles();
     resetSpikes();
     this.mLevelDisCntr = 120;
     this.mPaintUIFlag = true;
-    if (this.mUI.e != this.s && this.mUI.b != this.S)
-      this.tileMap[this.mUI.b][this.mUI.e] = (short)(0x8 | this.tileMap[this.mUI.b][this.mUI.e] & 0x40); 
-    a(paramInt1, paramInt2, this.mUI.A, this.mUI.a, this.mUI.g);
+    if (this.mUI.mSavedRespawnX != this.mStartCol && this.mUI.b != this.mStartRow)
+      this.tileMap[this.mUI.b][this.mUI.mSavedRespawnX] = (short)(0x8 | this.tileMap[this.mUI.b][this.mUI.mSavedRespawnX] & 0x40); 
+    createBufferFocused(paramInt1, paramInt2, this.mUI.mSavedSize, this.mUI.mSavedXSpeed, this.mUI.mSavedYSpeed);
     synchronized (this.mBall) {
-      this.mBall.a(this.mUI.e, this.mUI.b);
-      this.mBall.speedBonusCntr = this.mUI.w;
-      this.mBall.gravBonusCntr = this.mUI.z;
-      this.mBall.jumpBonusCntr = this.mUI.n;
-      this.T = true;
+      this.mBall.setRespawn(this.mUI.mSavedRespawnX, this.mUI.b);
+      this.mBall.speedBonusCntr = this.mUI.mSavedSpeedBonus;
+      this.mBall.gravBonusCntr = this.mUI.mSavedGravBonus;
+      this.mBall.jumpBonusCntr = this.mUI.mSavedJumpBonus;
+      this.mClearScreenFlag = true;
     } 
   }
   
   private void createNewLevel() {
-    r();
+    disposeLevel();
     ReadLevelMap(this.mLevelNum);
     this.numRings = 0;
     this.mLevelDisCntr = 120;
     this.mPaintUIFlag = true;
-    a(this.s * 12 + 6, this.S * 12 + 6, this.a, 0, 0);
-    this.mBall.a(this.s, this.S);
-    this.T = true;
+    createBufferFocused(this.mStartCol * 12 + 6, this.mStartRow * 12 + 6, this.a, 0, 0);
+    this.mBall.setRespawn(this.mStartCol, this.mStartRow);
+    this.mClearScreenFlag = true;
   }
   
-  public void a(int paramInt1, int paramInt2, int paramInt3, int paramInt4, int paramInt5) {
+  public void createBufferFocused(int paramInt1, int paramInt2, int paramInt3, int paramInt4, int paramInt5) {
     this.mBall = new Ball(paramInt1, paramInt2, paramInt3, this);
     this.mBall.xSpeed = paramInt4;
     this.mBall.ySpeed = paramInt5;
@@ -280,7 +280,7 @@ public class BounceCanvas extends TileCanvas {
         int i = this.mBall.respawnX;
         int j = this.mBall.respawnY;
         int k = this.mBall.respawnSize;
-        a(this.mBall.respawnX * 12 + 6, this.mBall.respawnY * 12 + 6, this.mBall.respawnSize, 0, 0);
+        createBufferFocused(this.mBall.respawnX * 12 + 6, this.mBall.respawnY * 12 + 6, this.mBall.respawnSize, 0, 0);
         this.mBall.respawnX = i;
         this.mBall.respawnY = j;
         this.mBall.respawnSize = k;
@@ -498,7 +498,7 @@ public class BounceCanvas extends TileCanvas {
     this.mUI.mSavedSpikeCount = 0;
   }
   
-  public void k() {
+  public void resetTiles() {
     for (byte b1 = 0; b1 < this.mTileMapHeight; b1++) {
       for (byte b2 = 0; b2 < this.mTileMapWidth; b2++) {
         byte b3 = (byte)(this.tileMap[b1][b2] & 0xFF7F & 0xFFFFFFBF);

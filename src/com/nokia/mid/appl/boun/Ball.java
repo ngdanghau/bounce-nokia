@@ -174,7 +174,7 @@ public class Ball {
     } 
   }
   
-  public void a(int paramInt1, int paramInt2) {
+  public void setRespawn(int paramInt1, int paramInt2) {
     this.respawnX = paramInt1;
     this.respawnY = paramInt2;
     this.respawnSize = this.mBallSize;
@@ -585,7 +585,7 @@ public class Ball {
     	 // checkpoint item
         this.mCanvas.add2Score(200);
         this.mCanvas.tileMap[this.respawnY][this.respawnX] = 128;
-        a(xPos, yPos);
+        setRespawn(xPos, yPos);
         this.mCanvas.tileMap[yPos][xPos] = 136;
         sound = this.mCanvas.mSoundPop;
         break;
