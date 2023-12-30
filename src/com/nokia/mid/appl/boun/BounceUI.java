@@ -63,9 +63,9 @@ public class BounceUI implements CommandListener {
   
   public int n;
   
-  public int p;
+  public int mSavedTileCount;
   
-  public int[][] u;
+  public int[][] mSavedTiles;
   
   public int mSavedSpikeCount;
   
@@ -123,9 +123,9 @@ public class BounceUI implements CommandListener {
       this.mainMenu.append(this.menu[b], null); 
     this.mainMenu.addCommand(this.EXIT);
     this.mainMenu.setCommandListener(this);
-    if (this.mCanvas.ap != -1) {
-      this.mCanvas.ap = -1;
-      this.mCanvas.t = null;
+    if (this.mCanvas.mSplashIndex != -1) {
+      this.mCanvas.mSplashIndex = -1;
+      this.mCanvas.mSplashImage = null;
     } 
     if (this.K == 1 || this.J == 1 || this.J == 2) {
       this.mainMenu.setSelectedIndex(0, true);
@@ -210,7 +210,7 @@ public class BounceUI implements CommandListener {
   }
   
   // su kiem continue khi end 1 level
-  public void d() {
+  public void displayLevelComplete() {
     this.mCanvas.stop();
     a(false, 0);
     this.K = 5;
@@ -236,15 +236,15 @@ public class BounceUI implements CommandListener {
         this.N = this.mainMenu.getSelectedIndex();
         if (str.equals(this.menu[0])) {
           if (this.K == 1) {
-            a(false, this.mCanvas.currentLevel);
+            a(false, this.mCanvas.mLevelNum);
           } else if (this.J != 0) {
             this.m.setCurrent((Displayable)this.mCanvas);
             if (this.J == 1) {
               this.mCanvas.a(this.y, this.M);
             } else {
-              this.mCanvas.a(this.B, this.G, this.C);
+              this.mCanvas.tileNotSavedAsActive(this.B, this.G, this.C);
             } 
-            this.u = null;
+            this.mSavedTiles = null;
             this.mCanvas.d();
             this.K = 1;
           } 
@@ -324,12 +324,12 @@ public class BounceUI implements CommandListener {
         this.w = dataInputStream.readInt();
         this.z = dataInputStream.readInt();
         this.n = dataInputStream.readInt();
-        this.p = dataInputStream.readByte();
-        this.u = new int[this.p][3];
-        for (byte b1 = 0; b1 < this.p; b1++) {
-          this.u[b1][0] = dataInputStream.readShort();
-          this.u[b1][1] = dataInputStream.readShort();
-          this.u[b1][2] = dataInputStream.readByte();
+        this.mSavedTileCount = dataInputStream.readByte();
+        this.mSavedTiles = new int[this.mSavedTileCount][3];
+        for (byte b1 = 0; b1 < this.mSavedTileCount; b1++) {
+          this.mSavedTiles[b1][0] = dataInputStream.readShort();
+          this.mSavedTiles[b1][1] = dataInputStream.readShort();
+          this.mSavedTiles[b1][2] = dataInputStream.readByte();
         } 
         this.mSavedSpikeCount = dataInputStream.readByte();
         this.mSavedSpikeOffset = new short[this.mSavedSpikeCount][2];
@@ -381,7 +381,7 @@ public class BounceUI implements CommandListener {
           dataOutputStream.writeByte(b1);
           dataOutputStream.writeByte(this.mCanvas.numLives);
           dataOutputStream.writeByte(this.mCanvas.numRings);
-          dataOutputStream.writeByte(this.mCanvas.currentLevel);
+          dataOutputStream.writeByte(this.mCanvas.mLevelNum);
           dataOutputStream.writeByte(this.mCanvas.mBall.mBallSize);
           dataOutputStream.writeInt(this.mCanvas.mScore);
           dataOutputStream.writeInt(this.mCanvas.l);
@@ -392,8 +392,8 @@ public class BounceUI implements CommandListener {
           dataOutputStream.writeInt(this.mCanvas.mBall.ySpeed);
           dataOutputStream.writeInt(0);
           dataOutputStream.writeInt(0);
-          dataOutputStream.writeInt(this.mCanvas.mBall.d);
-          dataOutputStream.writeInt(this.mCanvas.mBall.c);
+          dataOutputStream.writeInt(this.mCanvas.mBall.respawnX);
+          dataOutputStream.writeInt(this.mCanvas.mBall.respawnY);
           dataOutputStream.writeInt(this.mCanvas.mBall.speedBonusCntr);
           dataOutputStream.writeInt(this.mCanvas.mBall.gravBonusCntr);
           dataOutputStream.writeInt(this.mCanvas.mBall.jumpBonusCntr);
@@ -417,8 +417,8 @@ public class BounceUI implements CommandListener {
             dataOutputStream.writeByte(arrayOfInt[b4][2]);
           } 
           arrayOfInt = null;
-          dataOutputStream.writeByte(this.mCanvas.B);
-          for (b5 = 0; b5 < this.mCanvas.B; b5++) {
+          dataOutputStream.writeByte(this.mCanvas.mNumMoveObj);
+          for (b5 = 0; b5 < this.mCanvas.mNumMoveObj; b5++) {
             dataOutputStream.writeShort(this.mCanvas.mMOOffset[b5][0]);
             dataOutputStream.writeShort(this.mCanvas.mMOOffset[b5][1]);
             dataOutputStream.writeShort(this.mCanvas.mMODirection[b5][0]);
@@ -433,9 +433,9 @@ public class BounceUI implements CommandListener {
     } catch (Exception exception) {}
   }
   
-  public void CompletedLevel() {
-    if (this.mCanvas.currentLevel > this.unlockedLevel) {
-      this.unlockedLevel = Math.min(this.mCanvas.currentLevel, 11); // 11 là level tối đa mà game có
+  public void checkData() {
+    if (this.mCanvas.mLevelNum > this.unlockedLevel) {
+      this.unlockedLevel = Math.min(this.mCanvas.mLevelNum, 11); // 11 là level tối đa mà game có
       saveGameData(1);
     } 
     if (this.mCanvas.mScore > this.highScore) {
@@ -446,7 +446,7 @@ public class BounceUI implements CommandListener {
     this.sessionScore = this.mCanvas.mScore;
   }
   
-  public void b(boolean paramBoolean) {
+  public void gameOver(boolean paramBoolean) {
     this.K = 3;
     this.J = 0;
     this.mCanvas.mIncomingCall = false;

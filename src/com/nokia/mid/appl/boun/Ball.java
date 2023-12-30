@@ -21,11 +21,11 @@ public class Ball {
   
   public int mHalfBallSize;
   
-  public int d;
+  public int respawnX;
   
-  public int c;
+  public int respawnY;
   
-  public int b;
+  public int respawnSize;
   
   public int ballState;
   
@@ -175,9 +175,9 @@ public class Ball {
   }
   
   public void a(int paramInt1, int paramInt2) {
-    this.d = paramInt1;
-    this.c = paramInt2;
-    this.b = this.mBallSize;
+    this.respawnX = paramInt1;
+    this.respawnY = paramInt2;
+    this.respawnSize = this.mBallSize;
   }
   
   public void move(int paramInt) {
@@ -185,7 +185,7 @@ public class Ball {
       this.x |= paramInt; 
   }
   
-  public void a(int paramInt) {
+  public void releaseDirection(int paramInt) {
     if (paramInt == 8 || paramInt == 4 || paramInt == 2 || paramInt == 1)
       this.x &= paramInt ^ 0xFFFFFFFF; 
   }
@@ -584,7 +584,7 @@ public class Ball {
       case 7:
     	 // checkpoint item
         this.mCanvas.add2Score(200);
-        this.mCanvas.tileMap[this.c][this.d] = 128;
+        this.mCanvas.tileMap[this.respawnY][this.respawnX] = 128;
         a(xPos, yPos);
         this.mCanvas.tileMap[yPos][xPos] = 136;
         sound = this.mCanvas.mSoundPop;

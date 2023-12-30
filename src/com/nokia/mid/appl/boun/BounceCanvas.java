@@ -8,11 +8,11 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 public class BounceCanvas extends TileCanvas {
-  public int ap;
+  public int mSplashIndex;
   
-  public Image t;
+  public Image mSplashImage;
   
-  private int n;
+  private int mSplashTimer;
   
   
   // âm thanh 
@@ -70,33 +70,33 @@ public class BounceCanvas extends TileCanvas {
     this.mSoundPickup = loadSound("/sounds/pickup.ott");
     this.mSoundPop = loadSound("/sounds/pop.ott");
     this.F = Image.createImage(128, 128);
-    this.ap = 1;
+    this.mSplashIndex = 1;
     try {
-      this.t = Image.createImage(SPLASH_NAME[this.ap]);
+      this.mSplashImage = Image.createImage(SPLASH_NAME[this.mSplashIndex]);
     } catch (IOException iOException) {
-      this.t = Image.createImage(1, 1);
+      this.mSplashImage = Image.createImage(1, 1);
     } 
     d();
   }
   
   public void a(int paramInt1, int paramInt2, int paramInt3) {
-    this.currentLevel = paramInt1;
+    this.mLevelNum = paramInt1;
     this.numRings = 0;
     this.numLives = paramInt3;
     this.mScore = paramInt2;
     this.mLeaveGame = false;
     this.mOpenExitFlag = false;
-    l();
+    createNewLevel();
     this.T = true;
   }
   
   public void a(int paramInt1, int paramInt2) {
-    this.currentLevel = this.mUI.B;
+    this.mLevelNum = this.mUI.B;
     this.numRings = this.mUI.t;
     this.numLives = this.mUI.C;
     this.mScore = this.mUI.G;
     r();
-    ReadLevelMap(this.currentLevel);
+    ReadLevelMap(this.mLevelNum);
     k();
     resetSpikes();
     this.mLevelDisCntr = 120;
@@ -113,9 +113,9 @@ public class BounceCanvas extends TileCanvas {
     } 
   }
   
-  private void l() {
+  private void createNewLevel() {
     r();
-    ReadLevelMap(this.currentLevel);
+    ReadLevelMap(this.mLevelNum);
     this.numRings = 0;
     this.mLevelDisCntr = 120;
     this.mPaintUIFlag = true;
@@ -156,7 +156,7 @@ public class BounceCanvas extends TileCanvas {
     this.mPaintUIFlag = true;
   }
   
-  public void q() {
+  public void paint2Buffer() {
     if (this.X == null)
       this.X = this.F.getGraphics(); 
     this.X.setClip(0, 0, 128, 96);
@@ -198,11 +198,11 @@ public class BounceCanvas extends TileCanvas {
   }
   
   public void paint(Graphics paramGraphics) {
-    if (this.ap != -1) {
-      if (this.t != null) {
+    if (this.mSplashIndex != -1) {
+      if (this.mSplashImage != null) {
         paramGraphics.setColor(0);
         paramGraphics.fillRect(0, 0, this.ag, this.am);
-        paramGraphics.drawImage(this.t, this.ag >> 1, this.am >> 1, 3);
+        paramGraphics.drawImage(this.mSplashImage, this.ag >> 1, this.am >> 1, 3);
       } 
     } else {
       paramGraphics.drawImage(this.F, 0, 0, 20);
@@ -226,38 +226,38 @@ public class BounceCanvas extends TileCanvas {
     } 
   }
   
-  public void a() {
-    if (this.isCheatLevel) {
-      l();
+  public void run() {
+    if (this.mLoadLevelFlag) {
+      createNewLevel();
       repaint();
       return;
     } 
-    if (this.ap != -1) {
-      if (this.t == null || this.t == null) {
+    if (this.mSplashIndex != -1) {
+      if (this.mSplashImage == null || this.mSplashImage == null) {
         this.mIncomingCall = false;
         this.mUI.displayMainMenu();
-      } else if (this.n > 30) {
-        this.t = null;
+      } else if (this.mSplashTimer > 30) {
+        this.mSplashImage = null;
         Runtime.getRuntime().gc();
-        switch (this.ap) {
+        switch (this.mSplashIndex) {
           case 0:
-            this.ap = 1;
+            this.mSplashIndex = 1;
             try {
-              this.t = Image.createImage(SPLASH_NAME[this.ap]);
+              this.mSplashImage = Image.createImage(SPLASH_NAME[this.mSplashIndex]);
             } catch (IOException iOException) {
-              this.t = Image.createImage(1, 1);
+              this.mSplashImage = Image.createImage(1, 1);
             } 
             repaint();
             break;
           case 1:
-            this.ap = -1;
+            this.mSplashIndex = -1;
             this.mIncomingCall = false;
             this.mUI.displayMainMenu();
             break;
         } 
-        this.n = 0;
+        this.mSplashTimer = 0;
       } else {
-        this.n++;
+        this.mSplashTimer++;
       } 
       repaint();
       return;
@@ -272,21 +272,21 @@ public class BounceCanvas extends TileCanvas {
       } 
       if (this.mBall.ballState == 1) {
         if (this.numLives < 0) {
-          this.mUI.CompletedLevel();
+          this.mUI.checkData();
           stop();
-          this.mUI.b(false);
+          this.mUI.gameOver(false);
           return;
         } 
-        int i = this.mBall.d;
-        int j = this.mBall.c;
-        int k = this.mBall.b;
-        a(this.mBall.d * 12 + 6, this.mBall.c * 12 + 6, this.mBall.b, 0, 0);
-        this.mBall.d = i;
-        this.mBall.c = j;
-        this.mBall.b = k;
+        int i = this.mBall.respawnX;
+        int j = this.mBall.respawnY;
+        int k = this.mBall.respawnSize;
+        a(this.mBall.respawnX * 12 + 6, this.mBall.respawnY * 12 + 6, this.mBall.respawnSize, 0, 0);
+        this.mBall.respawnX = i;
+        this.mBall.respawnY = j;
+        this.mBall.respawnSize = k;
       } 
-      if (this.B != 0)
-        o(); 
+      if (this.mNumMoveObj != 0)
+        updateMovingSpikeObj(); 
       if (this.numRings == this.totalRingInLevel)
         this.mOpenExitFlag = true; 
       if (this.mOpenExitFlag && this.z && (this.W + 1) * 12 > m() && this.W * 12 < g()) {
@@ -313,21 +313,21 @@ public class BounceCanvas extends TileCanvas {
           this.mPaintUIFlag = true; 
       } 
     } 
-    c(this.mBall.xPos);
-    q();
+    scrollBuffer(this.mBall.xPos);
+    paint2Buffer();
     repaint();
     if (this.mLeaveGame) {
       this.mLeaveGame = false;
       this.mOpenExitFlag = false;
-      this.isCheatLevel = true;
-      this.currentLevel = 1 + this.currentLevel;
+      this.mLoadLevelFlag = true;
+      this.mLevelNum = 1 + this.mLevelNum;
       add2Score(5000);
-      this.mUI.CompletedLevel();
-      if (this.currentLevel > 11) {
-        this.mUI.b(true);
+      this.mUI.checkData();
+      if (this.mLevelNum > 11) {
+        this.mUI.gameOver(true);
       } else {
         this.mIncomingCall = false;
-        this.mUI.d();
+        this.mUI.displayLevelComplete();
         repaint();
       } 
     } 
@@ -335,8 +335,8 @@ public class BounceCanvas extends TileCanvas {
   
   // hàm chính nè
   public void keyPressed(int keyCode) {
-    if (this.ap != -1) {
-      this.n = 31;
+    if (this.mSplashIndex != -1) {
+      this.mSplashTimer = 31;
       return;
     } 
     if (this.mBall == null)
@@ -344,14 +344,14 @@ public class BounceCanvas extends TileCanvas {
     synchronized (this.mBall) {
       switch (keyCode) {
         case KEY_NUM1:
-          this.isCheatLevel = true;
-          if (this.mCheat && --this.currentLevel < 1)
-            this.currentLevel = 11; 
+          this.mLoadLevelFlag = true;
+          if (this.mCheat && --this.mLevelNum < 1)
+            this.mLevelNum = 11; 
           break;
         case KEY_NUM3:
-          this.isCheatLevel = true;
-          if (this.mCheat && ++this.currentLevel > 11)
-            this.currentLevel = 1; 
+          this.mLoadLevelFlag = true;
+          if (this.mCheat && ++this.mLevelNum > 11)
+            this.mLevelNum = 1; 
           break;
         case KEY_NUM7:
           if (this.mCheatSeq == 0 || this.mCheatSeq == 2) {
@@ -425,16 +425,16 @@ public class BounceCanvas extends TileCanvas {
     synchronized (this.mBall) {
       switch (getGameAction(keyCode)) {
         case 1:
-          this.mBall.a(8);
+          this.mBall.releaseDirection(8);
           break;
         case 6:
-          this.mBall.a(4);
+          this.mBall.releaseDirection(4);
           break;
         case 2:
-          this.mBall.a(1);
+          this.mBall.releaseDirection(1);
           break;
         case 5:
-          this.mBall.a(2);
+          this.mBall.releaseDirection(2);
           break;
       } 
     } 
@@ -505,51 +505,51 @@ public class BounceCanvas extends TileCanvas {
         switch (b3) {
           case 7:
           case 29:
-            if (a(b1, b2, b3))
+            if (tileNotSavedAsActive(b1, b2, b3))
               this.tileMap[b1][b2] = (short)(0x0 | this.tileMap[b1][b2] & 0x40); 
             break;
           case 13:
-            if (a(b1, b2, b3))
+            if (tileNotSavedAsActive(b1, b2, b3))
               this.tileMap[b1][b2] = (short)(0x11 | this.tileMap[b1][b2] & 0x40); 
             break;
           case 14:
-            if (a(b1, b2, b3))
+            if (tileNotSavedAsActive(b1, b2, b3))
               this.tileMap[b1][b2] = (short)(0x12 | this.tileMap[b1][b2] & 0x40); 
             break;
           case 21:
-            if (a(b1, b2, b3))
+            if (tileNotSavedAsActive(b1, b2, b3))
               this.tileMap[b1][b2] = (short)(0x19 | this.tileMap[b1][b2] & 0x40); 
             break;
           case 22:
-            if (a(b1, b2, b3))
+            if (tileNotSavedAsActive(b1, b2, b3))
               this.tileMap[b1][b2] = (short)(0x1A | this.tileMap[b1][b2] & 0x40); 
             break;
           case 15:
-            if (a(b1, b2, b3))
+            if (tileNotSavedAsActive(b1, b2, b3))
               this.tileMap[b1][b2] = (short)(0x13 | this.tileMap[b1][b2] & 0x40); 
             break;
           case 16:
-            if (a(b1, b2, b3))
+            if (tileNotSavedAsActive(b1, b2, b3))
               this.tileMap[b1][b2] = (short)(0x14 | this.tileMap[b1][b2] & 0x40); 
             break;
           case 23:
-            if (a(b1, b2, b3))
+            if (tileNotSavedAsActive(b1, b2, b3))
               this.tileMap[b1][b2] = (short)(0x1B | this.tileMap[b1][b2] & 0x40); 
             break;
           case 24:
-            if (a(b1, b2, b3))
+            if (tileNotSavedAsActive(b1, b2, b3))
               this.tileMap[b1][b2] = (short)(0x1C | this.tileMap[b1][b2] & 0x40); 
             break;
         } 
       } 
     } 
-    this.mUI.u = null;
-    this.mUI.p = 0;
+    this.mUI.mSavedTiles = null;
+    this.mUI.mSavedTileCount = 0;
   }
   
-  public boolean a(int paramInt1, int paramInt2, byte paramByte) {
-    for (byte b1 = 0; b1 < this.mUI.p; b1++) {
-      if (this.mUI.u[b1][0] == paramInt1 && this.mUI.u[b1][1] == paramInt2)
+  public boolean tileNotSavedAsActive(int paramInt1, int paramInt2, byte paramByte) {
+    for (byte b1 = 0; b1 < this.mUI.mSavedTileCount; b1++) {
+      if (this.mUI.mSavedTiles[b1][0] == paramInt1 && this.mUI.mSavedTiles[b1][1] == paramInt2)
         return false; 
     } 
     return true;

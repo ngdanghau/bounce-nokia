@@ -33,13 +33,13 @@ public abstract class TileCanvas extends FullCanvas {
   
   private Graphics J;
   
-  public int currentLevel = -1;
+  public int mLevelNum = -1;
   
   public String levelTitle;
   
   public String levelCompletedText;
   
-  public boolean isCheatLevel;
+  public boolean mLoadLevelFlag;
   
   protected int s;
   
@@ -59,7 +59,7 @@ public abstract class TileCanvas extends FullCanvas {
   
   public int totalRingInLevel;
   
-  public int B;
+  public int mNumMoveObj;
   
   public short[][] P;
   
@@ -109,7 +109,7 @@ public abstract class TileCanvas extends FullCanvas {
     this.I = Image.createImage(12, 12);
     this.J = this.I.getGraphics();
     c();
-    this.isCheatLevel = false;
+    this.mLoadLevelFlag = false;
     this.l = 0;
     this.k = 0;
     this.z = false;
@@ -120,10 +120,10 @@ public abstract class TileCanvas extends FullCanvas {
   public void ReadLevelMap(int paramInt) {
     InputStream inputStream = null;
     DataInputStream dataInputStream = null;
-    this.isCheatLevel = false;
+    this.mLoadLevelFlag = false;
     String str = "";
     String[] arrayOfString = new String[1];
-    arrayOfString[0] = (new Integer(this.currentLevel)).toString();
+    arrayOfString[0] = (new Integer(this.mLevelNum)).toString();
     this.levelTitle = com.nokia.mid.appl.boun.Local.getText(9, arrayOfString); // Level {}
     this.levelCompletedText = com.nokia.mid.appl.boun.Local.getText(10, arrayOfString); // Level {} completed!
     arrayOfString[0] = null;
@@ -155,8 +155,8 @@ public abstract class TileCanvas extends FullCanvas {
         for (byte b2 = 0; b2 < this.mTileMapWidth; b2++)
           this.tileMap[b1][b2] = (short)dataInputStream.read(); 
       } 
-      this.B = dataInputStream.read();
-      if (this.B != 0)
+      this.mNumMoveObj = dataInputStream.read();
+      if (this.mNumMoveObj != 0)
         a(dataInputStream); 
       dataInputStream.close();
     } catch (IOException iOException) {}
@@ -193,13 +193,13 @@ public abstract class TileCanvas extends FullCanvas {
   }
   
   public void a(DataInputStream paramDataInputStream) throws IOException {
-    this.P = new short[this.B][2];
-    this.O = new short[this.B][2];
-    this.mMODirection = new short[this.B][2];
-    this.mMOOffset = new short[this.B][2];
-    this.r = new Image[this.B];
-    this.an = new Graphics[this.B];
-    for (byte b1 = 0; b1 < this.B; b1++) {
+    this.P = new short[this.mNumMoveObj][2];
+    this.O = new short[this.mNumMoveObj][2];
+    this.mMODirection = new short[this.mNumMoveObj][2];
+    this.mMOOffset = new short[this.mNumMoveObj][2];
+    this.r = new Image[this.mNumMoveObj];
+    this.an = new Graphics[this.mNumMoveObj];
+    for (byte b1 = 0; b1 < this.mNumMoveObj; b1++) {
       this.P[b1][0] = (short)paramDataInputStream.read();
       this.P[b1][1] = (short)paramDataInputStream.read();
       this.O[b1][0] = (short)paramDataInputStream.read();
@@ -221,7 +221,7 @@ public abstract class TileCanvas extends FullCanvas {
   }
   
   public void r() {
-    for (byte b1 = 0; b1 < this.B; b1++) {
+    for (byte b1 = 0; b1 < this.mNumMoveObj; b1++) {
       this.r[b1] = null;
       this.an[b1] = null;
     } 
@@ -231,8 +231,8 @@ public abstract class TileCanvas extends FullCanvas {
     Runtime.getRuntime().gc();
   }
   
-  public void o() {
-    for (byte b1 = 0; b1 < this.B; b1++) {
+  public void updateMovingSpikeObj() {
+    for (byte b1 = 0; b1 < this.mNumMoveObj; b1++) {
       short s1 = this.P[b1][0];
       short s2 = this.P[b1][1];
       short s3 = this.mMOOffset[b1][0];
@@ -281,7 +281,7 @@ public abstract class TileCanvas extends FullCanvas {
   }
   
   public int b(int paramInt1, int paramInt2) {
-    for (byte b1 = 0; b1 < this.B; b1++) {
+    for (byte b1 = 0; b1 < this.mNumMoveObj; b1++) {
       if (this.P[b1][0] <= paramInt1 && this.O[b1][0] > paramInt1 && this.P[b1][1] <= paramInt2 && this.O[b1][1] > paramInt2)
         return b1; 
     } 
@@ -549,7 +549,7 @@ public abstract class TileCanvas extends FullCanvas {
     } 
   }
   
-  public void c(int paramInt) {
+  public void scrollBuffer(int paramInt) {
     int i = this.G - 13;
     int j = this.G;
     int k = paramInt - 64;
@@ -755,7 +755,7 @@ public abstract class TileCanvas extends FullCanvas {
     p();
   }
   
-  public abstract void a();
+  public abstract void run();
   
   public synchronized void d() {
     if (this.ab != null)
@@ -771,7 +771,7 @@ public abstract class TileCanvas extends FullCanvas {
   }
   
   protected void n() {
-    a();
+    run();
   }
   
   protected class g extends TimerTask {
