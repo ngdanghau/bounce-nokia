@@ -4,22 +4,22 @@ import com.nokia.mid.sound.Sound;
 import javax.microedition.lcdui.Image;
 
 public class Ball {
-  private boolean j = true;
+  private boolean mDebugCD = true;
   
-  public int s;
+  public int xPos;
   
-  public int r;
+  public int yPos;
   
-  public int l;
+  public int xSpeed;
   
-  public int o;
+  public int ySpeed;
   
   // tọa độ x của player
   public int x;
   
-  public int a;
+  public int mBallSize;
   
-  public int p;
+  public int mHalfBallSize;
   
   public int d;
   
@@ -137,7 +137,7 @@ public class Ball {
         0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 
         1, 0, 0, 0, 0, 0 } };
   
-  public BounceCanvas mainScene;
+  public BounceCanvas mCanvas;
   
   public Image i;
   
@@ -150,11 +150,11 @@ public class Ball {
   private int q;
   
   public Ball(int paramInt1, int paramInt2, int paramInt3, BounceCanvas parame) {
-    this.s = paramInt1;
-    this.r = paramInt2;
-    this.l = 0;
-    this.o = 0;
-    this.mainScene = parame;
+    this.xPos = paramInt1;
+    this.yPos = paramInt2;
+    this.xSpeed = 0;
+    this.ySpeed = 0;
+    this.mCanvas = parame;
     this.t = 0;
     this.m = false;
     this.v = false;
@@ -166,7 +166,7 @@ public class Ball {
     this.C = 0;
     this.z = 0;
     this.x = 0;
-    this.mainScene.a(this);
+    this.mCanvas.setBallImages(this);
     if (paramInt3 == 12) {
       c();
     } else {
@@ -177,7 +177,7 @@ public class Ball {
   public void a(int paramInt1, int paramInt2) {
     this.d = paramInt1;
     this.c = paramInt2;
-    this.b = this.a;
+    this.b = this.mBallSize;
   }
   
   public void move(int paramInt) {
@@ -195,10 +195,10 @@ public class Ball {
   }
   
   public boolean b(int paramInt1, int paramInt2) {
-    int i = (paramInt1 - this.p) / 12;
-    int j = (paramInt2 - this.p) / 12;
-    int k = (paramInt1 - 1 + this.p) / 12 + 1;
-    int m = (paramInt2 - 1 + this.p) / 12 + 1;
+    int i = (paramInt1 - this.mHalfBallSize) / 12;
+    int j = (paramInt2 - this.mHalfBallSize) / 12;
+    int k = (paramInt1 - 1 + this.mHalfBallSize) / 12 + 1;
+    int m = (paramInt2 - 1 + this.mHalfBallSize) / 12 + 1;
     for (int n = i; n < k; n++) {
       for (int i1 = j; i1 < m; i1++) {
         if (!OnCollisionEnter(paramInt1, paramInt2, i1, n))
@@ -209,38 +209,38 @@ public class Ball {
   }
   
   public void f() {
-    this.a = 16;
-    this.p = 8;
+    this.mBallSize = 16;
+    this.mHalfBallSize = 8;
     this.i = this.B;
     boolean bool = false;
     for (byte b = 1; !bool; b++) {
       bool = true;
-      if (b(this.s, this.r - b)) {
-        this.r -= b;
+      if (b(this.xPos, this.yPos - b)) {
+        this.yPos -= b;
         continue;
       } 
-      if (b(this.s - b, this.r - b)) {
-        this.s -= b;
-        this.r -= b;
+      if (b(this.xPos - b, this.yPos - b)) {
+        this.xPos -= b;
+        this.yPos -= b;
         continue;
       } 
-      if (b(this.s + b, this.r - b)) {
-        this.s += b;
-        this.r -= b;
+      if (b(this.xPos + b, this.yPos - b)) {
+        this.xPos += b;
+        this.yPos -= b;
         continue;
       } 
-      if (b(this.s, this.r + b)) {
-        this.r += b;
+      if (b(this.xPos, this.yPos + b)) {
+        this.yPos += b;
         continue;
       } 
-      if (b(this.s - b, this.r + b)) {
-        this.s -= b;
-        this.r += b;
+      if (b(this.xPos - b, this.yPos + b)) {
+        this.xPos -= b;
+        this.yPos += b;
         continue;
       } 
-      if (b(this.s + b, this.r + b)) {
-        this.s += b;
-        this.r += b;
+      if (b(this.xPos + b, this.yPos + b)) {
+        this.xPos += b;
+        this.yPos += b;
         continue;
       } 
       bool = false;
@@ -248,66 +248,66 @@ public class Ball {
   }
   
   public void c() {
-    this.a = 12;
-    this.p = 6;
+    this.mBallSize = 12;
+    this.mHalfBallSize = 6;
     this.i = this.A;
   }
   
   public void e() {
-    if (!this.mainScene.mInvincible) {
+    if (!this.mCanvas.mInvincible) {
       this.q = 7;
       this.z = 2;
-      this.mainScene.numLives--;
+      this.mCanvas.numLives--;
       this.h = 0;
       this.g = 0;
       this.y = 0;
-      this.mainScene.mPaintUIFlag = true;
-      this.mainScene.mSoundPop.play(1);
+      this.mCanvas.mPaintUIFlag = true;
+      this.mCanvas.mSoundPop.play(1);
     } 
   }
   
   
   // chạm ring
-  public void OnRingCollisionEnter() {
-    this.mainScene.addSessionScore(500);
-    this.mainScene.numRings++;
-    this.mainScene.mPaintUIFlag = true;
+  public void addRing() {
+    this.mCanvas.add2Score(500);
+    this.mCanvas.numRings++;
+    this.mCanvas.mPaintUIFlag = true;
   }
   
-  public void b(int paramInt) {
-    int i = this.l;
+  public void redirectBall(int paramInt) {
+    int i = this.xSpeed;
     switch (paramInt) {
       case 35:
-        this.l = (this.l > -this.o) ? this.l : this.o;
-        this.o = i;
+        this.xSpeed = (this.xSpeed > -this.ySpeed) ? this.xSpeed : this.ySpeed;
+        this.ySpeed = i;
         break;
       case 37:
-        this.l = (-this.l > this.o) ? this.l : this.o;
-        this.o = i;
+        this.xSpeed = (-this.xSpeed > this.ySpeed) ? this.xSpeed : this.ySpeed;
+        this.ySpeed = i;
         break;
       case 34:
-        this.l = (this.l < this.o) ? this.l : -this.o;
-        this.o = -i;
+        this.xSpeed = (this.xSpeed < this.ySpeed) ? this.xSpeed : -this.ySpeed;
+        this.ySpeed = -i;
         break;
       case 36:
-        this.l = (this.l > this.o) ? this.l : -this.o;
-        this.o = -i;
+        this.xSpeed = (this.xSpeed > this.ySpeed) ? this.xSpeed : -this.ySpeed;
+        this.ySpeed = -i;
         break;
       case 31:
-        this.l = (this.l > -this.o) ? this.l : (this.o >> 1);
-        this.o = i;
+        this.xSpeed = (this.xSpeed > -this.ySpeed) ? this.xSpeed : (this.ySpeed >> 1);
+        this.ySpeed = i;
         break;
       case 33:
-        this.l = (-this.l > this.o) ? this.l : (this.o >> 1);
-        this.o = i;
+        this.xSpeed = (-this.xSpeed > this.ySpeed) ? this.xSpeed : (this.ySpeed >> 1);
+        this.ySpeed = i;
         break;
       case 30:
-        this.l = (this.l < this.o) ? this.l : -(this.o >> 1);
-        this.o = -i;
+        this.xSpeed = (this.xSpeed < this.ySpeed) ? this.xSpeed : -(this.ySpeed >> 1);
+        this.ySpeed = -i;
         break;
       case 32:
-        this.l = (this.l > this.o) ? this.l : -(this.o >> 1);
-        this.o = -i;
+        this.xSpeed = (this.xSpeed > this.ySpeed) ? this.xSpeed : -(this.ySpeed >> 1);
+        this.ySpeed = -i;
         break;
     } 
   }
@@ -320,23 +320,23 @@ public class Ball {
     byte[][] arrayOfByte;
     int i = paramInt4 * 12;
     int j = paramInt3 * 12;
-    int k = paramInt1 - this.p - i;
-    int m = paramInt2 - this.p - j;
+    int k = paramInt1 - this.mHalfBallSize - i;
+    int m = paramInt2 - this.mHalfBallSize - j;
     if (k >= 0) {
       b1 = (byte) k;
       n = 12;
     } else {
       b1 = 0;
-      n = this.a + k;
+      n = this.mBallSize + k;
     } 
     if (m >= 0) {
       b2 = (byte) m;
       i1 = 12;
     } else {
       b2 = 0;
-      i1 = this.a + m;
+      i1 = this.mBallSize + m;
     } 
-    if (this.a == 16) {
+    if (this.mBallSize == 16) {
       arrayOfByte = xByte;
     } else {
       arrayOfByte = e;
@@ -362,8 +362,8 @@ public class Ball {
     byte[][] arrayOfByte;
     int i = paramInt4 * 12;
     int j = paramInt3 * 12;
-    int k = paramInt1 - this.p - i;
-    int m = paramInt2 - this.p - j;
+    int k = paramInt1 - this.mHalfBallSize - i;
+    int m = paramInt2 - this.mHalfBallSize - j;
     byte b1 = 0;
     byte b2 = 0;
     switch (paramInt5) {
@@ -386,16 +386,16 @@ public class Ball {
       n = 12;
     } else {
       b3 = 0;
-      n = this.a + k;
+      n = this.mBallSize + k;
     } 
     if (m >= 0) {
       b4 = (byte) m;
       i1 = 12;
     } else {
       b4 = 0;
-      i1 = this.a + m;
+      i1 = this.mBallSize + m;
     } 
-    if (this.a == 16) {
+    if (this.mBallSize == 16) {
       arrayOfByte = xByte;
     } else {
       arrayOfByte = e;
@@ -408,7 +408,7 @@ public class Ball {
       for (byte b = b4; b < i1; b++) {
         if ((f[Math.abs(b - b2)][Math.abs(b5 - b1)] & arrayOfByte[b - m][b5 - k]) != 0) {
           if (!this.m)
-            b(paramInt5); 
+            redirectBall(paramInt5); 
           return true;
         } 
       } 
@@ -450,7 +450,7 @@ public class Ball {
         m -= 4;
         break;
     } 
-    return a(paramInt1 - this.p, paramInt2 - this.p, paramInt1 + this.p - 1, paramInt2 + this.p - 1, i, j, k - 1, m - 1);
+    return a(paramInt1 - this.mHalfBallSize, paramInt2 - this.mHalfBallSize, paramInt1 + this.mHalfBallSize - 1, paramInt2 + this.mHalfBallSize - 1, i, j, k - 1, m - 1);
   }
   
   public boolean a(int paramInt1, int paramInt2, int paramInt3, int paramInt4, int paramInt5) {
@@ -497,24 +497,24 @@ public class Ball {
         j += 11;
         break;
     } 
-    return a(paramInt1 - this.p, paramInt2 - this.p, paramInt1 + this.p, paramInt2 + this.p, i, j, k, m);
+    return a(paramInt1 - this.mHalfBallSize, paramInt2 - this.mHalfBallSize, paramInt1 + this.mHalfBallSize, paramInt2 + this.mHalfBallSize, i, j, k, m);
   }
   
   public boolean OnCollisionEnter(int paramInt1, int paramInt2, int yPos, int xPos) {
     int k;
-    if (yPos >= this.mainScene.height || yPos < 0 || xPos >= this.mainScene.width || xPos < 0)
+    if (yPos >= this.mCanvas.height || yPos < 0 || xPos >= this.mCanvas.width || xPos < 0)
       return false; 
     if (this.z == 2)
       return false; 
-    boolean isCollisionBlueGround = true;
-    int i = this.mainScene.map[yPos][xPos] & 0x40;
-    int j = this.mainScene.map[yPos][xPos] & 0xFFFFFFBF & 0xFFFFFF7F;
+    boolean paramBoolean = true;
+    int i = this.mCanvas.tileMap[yPos][xPos] & 0x40;
+    int j = this.mCanvas.tileMap[yPos][xPos] & 0xFFFFFFBF & 0xFFFFFF7F;
     Sound sound = null;
     switch (j) {
       case 1:
     	  // nền đất đỏ
         if (b(paramInt1, paramInt2, yPos, xPos)) {
-        	isCollisionBlueGround = false;
+        	paramBoolean = false;
           this.u = true;
           break;
         } 
@@ -524,7 +524,7 @@ public class Ball {
     	  // nền đất xanh full
         if (b(paramInt1, paramInt2, yPos, xPos)) {
           this.v = true;
-          isCollisionBlueGround = false;
+          paramBoolean = false;
           break;
         } 
         this.u = true;
@@ -539,7 +539,7 @@ public class Ball {
     	// nền đất xanh Bottom Left
         if (c(paramInt1, paramInt2, yPos, xPos, j)) {
           this.v = true;
-          isCollisionBlueGround = false;
+          paramBoolean = false;
           this.u = true;
         } 
         break;
@@ -552,18 +552,18 @@ public class Ball {
       case 33:
     	// nền đất đỏ Bottom Left
         if (c(paramInt1, paramInt2, yPos, xPos, j)) {
-        	isCollisionBlueGround = false;
+        	paramBoolean = false;
           this.u = true;
         } 
         break;
       case 10:
     	  // Dyn Thorn Axis
-        k = this.mainScene.b(xPos, yPos);
+        k = this.mCanvas.b(xPos, yPos);
         if (k != -1) {
-          int m = this.mainScene.P[k][0] * 12 + this.mainScene.w[k][0];
-          int n = this.mainScene.P[k][1] * 12 + this.mainScene.w[k][1];
-          if (a(paramInt1 - this.p + 1, paramInt2 - this.p + 1, paramInt1 + this.p - 1, paramInt2 + this.p - 1, m + 1, n + 1, m + 24 - 1, n + 24 - 1)) {
-        	  isCollisionBlueGround = false;
+          int m = this.mCanvas.P[k][0] * 12 + this.mCanvas.w[k][0];
+          int n = this.mCanvas.P[k][1] * 12 + this.mCanvas.w[k][1];
+          if (a(paramInt1 - this.mHalfBallSize + 1, paramInt2 - this.mHalfBallSize + 1, paramInt1 + this.mHalfBallSize - 1, paramInt2 + this.mHalfBallSize - 1, m + 1, n + 1, m + 24 - 1, n + 24 - 1)) {
+        	  paramBoolean = false;
             e();
           } 
         } 
@@ -577,169 +577,169 @@ public class Ball {
       case 6:
     	  // Thorn 90
         if (b(paramInt1, paramInt2, yPos, xPos, j)) {
-        	isCollisionBlueGround = false;
+        	paramBoolean = false;
           e();
         } 
         break;
       case 7:
     	 // checkpoint item
-        this.mainScene.addSessionScore(200);
-        this.mainScene.map[this.c][this.d] = 128;
+        this.mCanvas.add2Score(200);
+        this.mCanvas.tileMap[this.c][this.d] = 128;
         a(xPos, yPos);
-        this.mainScene.map[yPos][xPos] = 136;
-        sound = this.mainScene.mSoundPop;
+        this.mCanvas.tileMap[yPos][xPos] = 136;
+        sound = this.mCanvas.mSoundPop;
         break;
       case 23:
     	  // Left Big Ring
         if (b(paramInt1, paramInt2, yPos, xPos, j)) {
           if (a(paramInt1, paramInt2, yPos, xPos, j)) {
-        	  isCollisionBlueGround = false;
+        	  paramBoolean = false;
             break;
           } 
-          OnRingCollisionEnter();
-          this.mainScene.map[yPos][xPos] = (short)(0x9B | i);
-          this.mainScene.map[yPos][xPos + 1] = (short)(0x9C | i);
-          sound = this.mainScene.mSoundHoop;
+          addRing();
+          this.mCanvas.tileMap[yPos][xPos] = (short)(0x9B | i);
+          this.mCanvas.tileMap[yPos][xPos + 1] = (short)(0x9C | i);
+          sound = this.mCanvas.mSoundHoop;
         } 
         break;
       case 15:
     	// Left Small Ring 
         if (b(paramInt1, paramInt2, yPos, xPos, j)) {
-          if (this.a == 16) {
-        	  isCollisionBlueGround = false;
+          if (this.mBallSize == 16) {
+        	  paramBoolean = false;
             break;
           } 
           if (a(paramInt1, paramInt2, yPos, xPos, j))
-        	  isCollisionBlueGround = false; 
-          OnRingCollisionEnter();
-          this.mainScene.map[yPos][xPos] = (short)(0x93 | i);
-          this.mainScene.map[yPos][xPos + 1] = (short)(0x94 | i);
-          sound = this.mainScene.mSoundHoop;
+        	  paramBoolean = false; 
+          addRing();
+          this.mCanvas.tileMap[yPos][xPos] = (short)(0x93 | i);
+          this.mCanvas.tileMap[yPos][xPos + 1] = (short)(0x94 | i);
+          sound = this.mCanvas.mSoundHoop;
         } 
         break;
       case 24:
     	// Right Big Ring
         if (b(paramInt1, paramInt2, yPos, xPos, j)) {
           if (a(paramInt1, paramInt2, yPos, xPos, j))
-        	  isCollisionBlueGround = false; 
-          OnRingCollisionEnter();
-          this.mainScene.map[yPos][xPos] = (short)(0x9C | i);
-          this.mainScene.map[yPos][xPos - 1] = (short)(0x9B | i);
-          sound = this.mainScene.mSoundHoop;
+        	  paramBoolean = false; 
+          addRing();
+          this.mCanvas.tileMap[yPos][xPos] = (short)(0x9C | i);
+          this.mCanvas.tileMap[yPos][xPos - 1] = (short)(0x9B | i);
+          sound = this.mCanvas.mSoundHoop;
         } 
         break;
       case 16:
     	// Right Small Ring 
         if (b(paramInt1, paramInt2, yPos, xPos, j)) {
-          if (this.a == 16) {
-        	  isCollisionBlueGround = false;
+          if (this.mBallSize == 16) {
+        	  paramBoolean = false;
             break;
           } 
           if (a(paramInt1, paramInt2, yPos, xPos, j))
-        	  isCollisionBlueGround = false; 
-          OnRingCollisionEnter();
-          this.mainScene.map[yPos][xPos] = (short)(0x94 | i);
-          this.mainScene.map[yPos][xPos - 1] = (short)(0x93 | i);
-          sound = this.mainScene.mSoundHoop;
+        	  paramBoolean = false; 
+          addRing();
+          this.mCanvas.tileMap[yPos][xPos] = (short)(0x94 | i);
+          this.mCanvas.tileMap[yPos][xPos - 1] = (short)(0x93 | i);
+          sound = this.mCanvas.mSoundHoop;
         } 
         break;
       case 21:
     	// Top Big Ring
         if (b(paramInt1, paramInt2, yPos, xPos, j)) {
           if (a(paramInt1, paramInt2, yPos, xPos, j))
-        	  isCollisionBlueGround = false; 
-          OnRingCollisionEnter();
-          this.mainScene.map[yPos][xPos] = (short)(0x99 | i);
-          this.mainScene.map[yPos + 1][xPos] = (short)(0x9A | i);
-          sound = this.mainScene.mSoundHoop;
+        	  paramBoolean = false; 
+          addRing();
+          this.mCanvas.tileMap[yPos][xPos] = (short)(0x99 | i);
+          this.mCanvas.tileMap[yPos + 1][xPos] = (short)(0x9A | i);
+          sound = this.mCanvas.mSoundHoop;
         } 
         break;
       case 13:
     	// Top Small Ring
         if (b(paramInt1, paramInt2, yPos, xPos, j)) {
-          if (this.a == 16) {
-        	  isCollisionBlueGround = false;
+          if (this.mBallSize == 16) {
+        	  paramBoolean = false;
             break;
           } 
           if (a(paramInt1, paramInt2, yPos, xPos, j))
-        	  isCollisionBlueGround = false; 
-          OnRingCollisionEnter();
-          this.mainScene.map[yPos][xPos] = (short)(0x91 | i);
-          this.mainScene.map[yPos + 1][xPos] = (short)(0x92 | i);
-          sound = this.mainScene.mSoundHoop;
+        	  paramBoolean = false; 
+          addRing();
+          this.mCanvas.tileMap[yPos][xPos] = (short)(0x91 | i);
+          this.mCanvas.tileMap[yPos + 1][xPos] = (short)(0x92 | i);
+          sound = this.mCanvas.mSoundHoop;
         } 
         break;
       case 22:
     	// Bottom Big Ring
         if (b(paramInt1, paramInt2, yPos, xPos, j)) {
-        	OnRingCollisionEnter();
-          this.mainScene.map[yPos][xPos] = (short)(0x9A | i);
-          this.mainScene.map[yPos - 1][xPos] = (short)(0x99 | i);
-          sound = this.mainScene.mSoundHoop;
+        	addRing();
+          this.mCanvas.tileMap[yPos][xPos] = (short)(0x9A | i);
+          this.mCanvas.tileMap[yPos - 1][xPos] = (short)(0x99 | i);
+          sound = this.mCanvas.mSoundHoop;
         } 
         break;
       case 14:
     	// Bottom Small Ring
         if (b(paramInt1, paramInt2, yPos, xPos, j)) {
-          if (this.a == 16) {
-        	  isCollisionBlueGround = false;
+          if (this.mBallSize == 16) {
+        	  paramBoolean = false;
             break;
           } 
-          OnRingCollisionEnter();
-          this.mainScene.map[yPos][xPos] = (short)(0x92 | i);
-          this.mainScene.map[yPos - 1][xPos] = (short)(0x91 | i);
-          sound = this.mainScene.mSoundHoop;
+          addRing();
+          this.mCanvas.tileMap[yPos][xPos] = (short)(0x92 | i);
+          this.mCanvas.tileMap[yPos - 1][xPos] = (short)(0x91 | i);
+          sound = this.mCanvas.mSoundHoop;
         } 
         break;
       case 17:
       case 19:
       case 20:
         if (b(paramInt1, paramInt2, yPos, xPos, j)) {
-          if (this.a == 16) {
-        	  isCollisionBlueGround = false;
+          if (this.mBallSize == 16) {
+        	  paramBoolean = false;
             break;
           } 
           if (a(paramInt1, paramInt2, yPos, xPos, j))
-        	  isCollisionBlueGround = false; 
+        	  paramBoolean = false; 
         } 
         break;
       case 25:
       case 27:
       case 28:
         if (a(paramInt1, paramInt2, yPos, xPos, j))
-        	isCollisionBlueGround = false; 
+        	paramBoolean = false; 
         break;
       case 18:
-        if (b(paramInt1, paramInt2, yPos, xPos, j) && this.a == 16)
-        	isCollisionBlueGround = false; 
+        if (b(paramInt1, paramInt2, yPos, xPos, j) && this.mBallSize == 16)
+        	paramBoolean = false; 
         break;
       case 9:
     	  // cổng
         if (b(paramInt1, paramInt2, yPos, xPos, j)) {
-          if (this.mainScene.M) {
-            this.mainScene.mLeaveGame = true;
-            sound = this.mainScene.mSoundPop;
+          if (this.mCanvas.mOpenFlag) {
+            this.mCanvas.mLeaveGame = true;
+            sound = this.mCanvas.mSoundPop;
             break;
           } 
-          isCollisionBlueGround = false;
+          paramBoolean = false;
         } 
         break;
       case 29:
     	  // life item
-        this.mainScene.addSessionScore(1000);
-        if (this.mainScene.numLives < 5) {
-          this.mainScene.numLives++;
-          this.mainScene.mPaintUIFlag = true;
+        this.mCanvas.add2Score(1000);
+        if (this.mCanvas.numLives < 5) {
+          this.mCanvas.numLives++;
+          this.mCanvas.mPaintUIFlag = true;
         } 
-        this.mainScene.map[yPos][xPos] = 128;
-        sound = this.mainScene.mSoundPop;
+        this.mCanvas.tileMap[yPos][xPos] = 128;
+        sound = this.mCanvas.mSoundPop;
         break;
       case 39:
       case 40:
       case 41:
       case 42:
-    	  isCollisionBlueGround = false;
-        if (this.a == 16)
+    	  paramBoolean = false;
+        if (this.mBallSize == 16)
           c(); 
         break;
       case 43:
@@ -747,8 +747,8 @@ public class Ball {
       case 45:
       case 46:
         if (b(paramInt1, paramInt2, yPos, xPos, j)) {
-        	isCollisionBlueGround = false;
-          if (this.a == 12)
+        	paramBoolean = false;
+          if (this.mBallSize == 12)
             f(); 
         } 
         break;
@@ -757,31 +757,31 @@ public class Ball {
       case 49:
       case 50:
         this.g = 300;
-        sound = this.mainScene.mSoundPop;
+        sound = this.mCanvas.mSoundPop;
         this.m = false;
-        isCollisionBlueGround = false;
+        paramBoolean = false;
         break;
       case 51:
       case 52:
       case 53:
       case 54:
         this.y = 300;
-        sound = this.mainScene.mSoundPop;
-        isCollisionBlueGround = false;
+        sound = this.mCanvas.mSoundPop;
+        paramBoolean = false;
         break;
       case 38:
         this.h = 300;
-        sound = this.mainScene.mSoundPop;
-        isCollisionBlueGround = false;
+        sound = this.mCanvas.mSoundPop;
+        paramBoolean = false;
         break;
     } 
     if (sound != null)
       sound.play(1); 
-    return isCollisionBlueGround;
+    return paramBoolean;
   }
   
   public void b() {
-    int i = this.s;
+    int i = this.xPos;
     int j = 0;
     int k = 0;
     byte b1 = 0;
@@ -790,25 +790,25 @@ public class Ball {
       this.q--;
       if (this.q == 0) {
         this.z = 1;
-        if (this.mainScene.numLives < 0)
-          this.mainScene.mLeaveGame = true; 
+        if (this.mCanvas.numLives < 0)
+          this.mCanvas.mLeaveGame = true; 
       } 
       return;
     } 
-    int m = this.s / 12;
-    int n = this.r / 12;
-    boolean bool2 = ((this.mainScene.map[n][m] & 0x40) != 0) ? true : false;
+    int m = this.xPos / 12;
+    int n = this.yPos / 12;
+    boolean bool2 = ((this.mCanvas.tileMap[n][m] & 0x40) != 0) ? true : false;
     if (bool2) {
-      if (this.a == 16) {
+      if (this.mBallSize == 16) {
         k = -30;
         j = -2;
         if (this.m)
-          this.o = -10; 
+          this.ySpeed = -10; 
       } else {
         k = 42;
         j = 6;
       } 
-    } else if (this.a == 16) {
+    } else if (this.mBallSize == 16) {
       k = 38;
       j = 3;
     } else {
@@ -839,48 +839,48 @@ public class Ball {
     this.C++;
     if (this.C == 3)
       this.C = 0; 
-    if (this.o < -150) {
-      this.o = -150;
-    } else if (this.o > 150) {
-      this.o = 150;
+    if (this.ySpeed < -150) {
+      this.ySpeed = -150;
+    } else if (this.ySpeed > 150) {
+      this.ySpeed = 150;
     } 
-    if (this.l < -150) {
-      this.l = -150;
-    } else if (this.l > 150) {
-      this.l = 150;
+    if (this.xSpeed < -150) {
+      this.xSpeed = -150;
+    } else if (this.xSpeed > 150) {
+      this.xSpeed = 150;
     } 
-    if (this.o < 10 && this.o > 0 && !bool2 && !bool1)
-      this.o = 10; 
-    for (byte b2 = 0; b2 < Math.abs(this.o) / 10; b2++) {
+    if (this.ySpeed < 10 && this.ySpeed > 0 && !bool2 && !bool1)
+      this.ySpeed = 10; 
+    for (byte b2 = 0; b2 < Math.abs(this.ySpeed) / 10; b2++) {
       byte b = 0;
-      if (this.o != 0)
-        b = (byte) ((this.o < 0) ? -1 : 1); 
-      if (b(this.s, this.r + b)) {
-        this.r += b;
+      if (this.ySpeed != 0)
+        b = (byte) ((this.ySpeed < 0) ? -1 : 1); 
+      if (b(this.xPos, this.yPos + b)) {
+        this.yPos += b;
         this.m = false;
         if (k == -30) {
-          n = this.r / 12;
-          if ((this.mainScene.map[n][m] & 0x40) == 0) {
-            this.o >>= 1;
-            if (this.o <= 10 && this.o >= -10)
-              this.o = 0; 
+          n = this.yPos / 12;
+          if ((this.mCanvas.tileMap[n][m] & 0x40) == 0) {
+            this.ySpeed >>= 1;
+            if (this.ySpeed <= 10 && this.ySpeed >= -10)
+              this.ySpeed = 0; 
           } 
         } 
       } else {
-        if (this.u && this.l < 10 && this.C == 0) {
+        if (this.u && this.xSpeed < 10 && this.C == 0) {
           byte b4 = 1;
-          if (b(this.s + b4, this.r + b)) {
-            this.s += b4;
-            this.r += b;
+          if (b(this.xPos + b4, this.yPos + b)) {
+            this.xPos += b4;
+            this.yPos += b;
             this.u = false;
-          } else if (b(this.s - b4, this.r + b)) {
-            this.s -= b4;
-            this.r += b;
+          } else if (b(this.xPos - b4, this.yPos + b)) {
+            this.xPos -= b4;
+            this.yPos += b;
             this.u = false;
           } 
         } 
         if (b > 0 || (bool1 && b < 0)) {
-          this.o = this.o * -1 / 2;
+          this.ySpeed = this.ySpeed * -1 / 2;
           this.m = true;
           if (this.v && (this.x & 0x8) != 0) {
             this.v = false;
@@ -892,41 +892,41 @@ public class Ball {
           } else if (this.y == 0) {
             this.t = 0;
           } 
-          if (this.o < 10 && this.o > -10) {
+          if (this.ySpeed < 10 && this.ySpeed > -10) {
             if (bool1) {
-              this.o = -10;
+              this.ySpeed = -10;
               break;
             } 
-            this.o = 10;
+            this.ySpeed = 10;
           } 
           break;
         } 
         if (b < 0 || (bool1 && b > 0))
           if (bool1) {
-            this.o = -20;
+            this.ySpeed = -20;
           } else {
-            this.o = -this.o >> 1;
+            this.ySpeed = -this.ySpeed >> 1;
           }  
       } 
     } 
     if (bool1) {
-      if (j == -2 && this.o < k) {
-        this.o += j;
-        if (this.o > k)
-          this.o = k; 
-      } else if (!this.m && this.o > k) {
-        this.o += j;
-        if (this.o < k)
-          this.o = k; 
+      if (j == -2 && this.ySpeed < k) {
+        this.ySpeed += j;
+        if (this.ySpeed > k)
+          this.ySpeed = k; 
+      } else if (!this.m && this.ySpeed > k) {
+        this.ySpeed += j;
+        if (this.ySpeed < k)
+          this.ySpeed = k; 
       } 
-    } else if (j == -2 && this.o > k) {
-      this.o += j;
-      if (this.o < k)
-        this.o = k; 
-    } else if (!this.m && this.o < k) {
-      this.o += j;
-      if (this.o > k)
-        this.o = k; 
+    } else if (j == -2 && this.ySpeed > k) {
+      this.ySpeed += j;
+      if (this.ySpeed < k)
+        this.ySpeed = k; 
+    } else if (!this.m && this.ySpeed < k) {
+      this.ySpeed += j;
+      if (this.ySpeed > k)
+        this.ySpeed = k; 
     } 
     if (this.h != 0) {
       b1 = 100;
@@ -934,16 +934,16 @@ public class Ball {
     } else {
       b1 = 50;
     } 
-    if ((this.x & 0x2) != 0 && this.l < b1) {
-      this.l += 6;
-    } else if ((this.x & 0x1) != 0 && this.l > -b1) {
-      this.l -= 6;
-    } else if (this.l > 0) {
-      this.l -= 4;
-    } else if (this.l < 0) {
-      this.l += 4;
+    if ((this.x & 0x2) != 0 && this.xSpeed < b1) {
+      this.xSpeed += 6;
+    } else if ((this.x & 0x1) != 0 && this.xSpeed > -b1) {
+      this.xSpeed -= 6;
+    } else if (this.xSpeed > 0) {
+      this.xSpeed -= 4;
+    } else if (this.xSpeed < 0) {
+      this.xSpeed += 4;
     } 
-    if (this.a == 16 && this.y == 0)
+    if (this.mBallSize == 16 && this.y == 0)
       if (bool1) {
         this.t += 5;
       } else {
@@ -951,20 +951,20 @@ public class Ball {
       }  
     if (this.m && (this.x & 0x8) != 0) {
       if (bool1) {
-        this.o = 67 + this.t;
+        this.ySpeed = 67 + this.t;
       } else {
-        this.o = -67 + this.t;
+        this.ySpeed = -67 + this.t;
       } 
       this.m = false;
     } 
-    int i1 = Math.abs(this.l);
+    int i1 = Math.abs(this.xSpeed);
     int i2 = i1 / 10;
     for (byte b3 = 0; b3 < i2; b3++) {
       byte b = 0;
-      if (this.l != 0)
-        b = (byte) ((this.l < 0) ? -1 : 1); 
-      if (b(this.s + b, this.r)) {
-        this.s += b;
+      if (this.xSpeed != 0)
+        b = (byte) ((this.xSpeed < 0) ? -1 : 1); 
+      if (b(this.xPos + b, this.yPos)) {
+        this.xPos += b;
       } else if (this.u) {
         this.u = false;
         byte b4 = 0;
@@ -973,14 +973,14 @@ public class Ball {
         } else {
           b4 = -1;
         } 
-        if (b(this.s + b, this.r + b4)) {
-          this.s += b;
-          this.r += b4;
-        } else if (b(this.s + b, this.r - b4)) {
-          this.s += b;
-          this.r -= b4;
+        if (b(this.xPos + b, this.yPos + b4)) {
+          this.xPos += b;
+          this.yPos += b4;
+        } else if (b(this.xPos + b, this.yPos - b4)) {
+          this.xPos += b;
+          this.yPos -= b4;
         } else {
-          this.l = -(this.l >> 1);
+          this.xSpeed = -(this.xSpeed >> 1);
         } 
       } 
     } 

@@ -102,7 +102,7 @@ public class BounceCanvas extends TileCanvas {
     this.mLevelDisCntr = 120;
     this.mPaintUIFlag = true;
     if (this.mUI.e != this.s && this.mUI.b != this.S)
-      this.map[this.mUI.b][this.mUI.e] = (short)(0x8 | this.map[this.mUI.b][this.mUI.e] & 0x40); 
+      this.tileMap[this.mUI.b][this.mUI.e] = (short)(0x8 | this.tileMap[this.mUI.b][this.mUI.e] & 0x40); 
     a(paramInt1, paramInt2, this.mUI.A, this.mUI.a, this.mUI.g);
     synchronized (this.mBall) {
       this.mBall.a(this.mUI.e, this.mUI.b);
@@ -126,15 +126,15 @@ public class BounceCanvas extends TileCanvas {
   
   public void a(int paramInt1, int paramInt2, int paramInt3, int paramInt4, int paramInt5) {
     this.mBall = new Ball(paramInt1, paramInt2, paramInt3, this);
-    this.mBall.l = paramInt4;
-    this.mBall.o = paramInt5;
+    this.mBall.xSpeed = paramInt4;
+    this.mBall.ySpeed = paramInt5;
     this.l = 0;
     this.k = 0;
     e();
   }
   
   public void e() {
-    int i = this.mBall.s - 64;
+    int i = this.mBall.xPos - 64;
     if (i < 0) {
       i = 0;
     } else if (i > this.width * 12 - 156) {
@@ -144,14 +144,14 @@ public class BounceCanvas extends TileCanvas {
     this.v = this.l * 12 - i;
     this.Z = 156;
     this.G = this.l + 13;
-    while (this.mBall.r - 6 < this.k * 12)
+    while (this.mBall.yPos - 6 < this.k * 12)
       this.k -= 7; 
-    while (this.mBall.r + 6 > this.k * 12 + 96)
+    while (this.mBall.yPos + 6 > this.k * 12 + 96)
       this.k += 7; 
     f();
   }
   
-  public void addSessionScore(int paramInt) {
+  public void add2Score(int paramInt) {
     this.mScore += paramInt;
     this.mPaintUIFlag = true;
   }
@@ -170,7 +170,7 @@ public class BounceCanvas extends TileCanvas {
       }
     } 
     a(this.X, this.v);
-    a(this.X, this.mBall.s, this.mBall.r, this.mBall.p, this.v);
+    a(this.X, this.mBall.xPos, this.mBall.yPos, this.mBall.mHalfBallSize, this.v);
     this.X.setClip(0, 0, 128, 128);
     
     if (this.mPaintUIFlag) {
@@ -217,12 +217,12 @@ public class BounceCanvas extends TileCanvas {
   public void a(Graphics paramGraphics, int paramInt) {
     if (this.mBall == null)
       return; 
-    int i = this.mBall.s - this.l * 12;
-    int j = this.mBall.r - this.k * 12;
+    int i = this.mBall.xPos - this.l * 12;
+    int j = this.mBall.yPos - this.k * 12;
     if (this.mBall.z == 2) {
       paramGraphics.drawImage(this.mBall.k, i - 6 + paramInt, j - 6, 20);
     } else {
-      paramGraphics.drawImage(this.mBall.i, i - this.mBall.p + paramInt, j - this.mBall.p, 20);
+      paramGraphics.drawImage(this.mBall.i, i - this.mBall.mHalfBallSize + paramInt, j - this.mBall.mHalfBallSize, 20);
     } 
   }
   
@@ -265,7 +265,7 @@ public class BounceCanvas extends TileCanvas {
     if (this.mLevelDisCntr != 0)
       this.mLevelDisCntr--; 
     synchronized (this.mBall) {
-      if (this.mBall.r - 6 < this.k * 12 || this.mBall.r + 6 > this.k * 12 + 96) {
+      if (this.mBall.yPos - 6 < this.k * 12 || this.mBall.yPos + 6 > this.k * 12 + 96) {
         e();
       } else {
         this.mBall.b();
@@ -290,16 +290,16 @@ public class BounceCanvas extends TileCanvas {
       if (this.numRings == this.totalRingInLevel)
         this.mOpenExitFlag = true; 
       if (this.mOpenExitFlag && this.z && (this.W + 1) * 12 > m() && this.W * 12 < g()) {
-        if (this.M) {
+        if (this.mOpenFlag) {
           this.z = false;
           this.mOpenExitFlag = false;
         } else {
           h();
         } 
-        this.map[this.u][this.al] = (short)(this.map[this.u][this.al] | 0x80);
-        this.map[this.u][this.al + 1] = (short)(this.map[this.u][this.al + 1] | 0x80);
-        this.map[this.u + 1][this.al] = (short)(this.map[this.u + 1][this.al] | 0x80);
-        this.map[this.u + 1][this.al + 1] = (short)(this.map[this.u + 1][this.al + 1] | 0x80);
+        this.tileMap[this.u][this.al] = (short)(this.tileMap[this.u][this.al] | 0x80);
+        this.tileMap[this.u][this.al + 1] = (short)(this.tileMap[this.u][this.al + 1] | 0x80);
+        this.tileMap[this.u + 1][this.al] = (short)(this.tileMap[this.u + 1][this.al] | 0x80);
+        this.tileMap[this.u + 1][this.al + 1] = (short)(this.tileMap[this.u + 1][this.al + 1] | 0x80);
       } 
       this.bonusCntrValue = 0;
       if (this.mBall.h != 0 || this.mBall.g != 0 || this.mBall.y != 0) {
@@ -313,7 +313,7 @@ public class BounceCanvas extends TileCanvas {
           this.mPaintUIFlag = true; 
       } 
     } 
-    c(this.mBall.s);
+    c(this.mBall.xPos);
     q();
     repaint();
     if (this.mLeaveGame) {
@@ -321,7 +321,7 @@ public class BounceCanvas extends TileCanvas {
       this.mOpenExitFlag = false;
       this.isCheatLevel = true;
       this.currentLevel = 1 + this.currentLevel;
-      addSessionScore(5000);
+      add2Score(5000);
       this.mUI.CompletedLevel();
       if (this.currentLevel > 11) {
         this.mUI.b(true);
@@ -501,44 +501,44 @@ public class BounceCanvas extends TileCanvas {
   public void k() {
     for (byte b1 = 0; b1 < this.height; b1++) {
       for (byte b2 = 0; b2 < this.width; b2++) {
-        byte b3 = (byte)(this.map[b1][b2] & 0xFF7F & 0xFFFFFFBF);
+        byte b3 = (byte)(this.tileMap[b1][b2] & 0xFF7F & 0xFFFFFFBF);
         switch (b3) {
           case 7:
           case 29:
             if (a(b1, b2, b3))
-              this.map[b1][b2] = (short)(0x0 | this.map[b1][b2] & 0x40); 
+              this.tileMap[b1][b2] = (short)(0x0 | this.tileMap[b1][b2] & 0x40); 
             break;
           case 13:
             if (a(b1, b2, b3))
-              this.map[b1][b2] = (short)(0x11 | this.map[b1][b2] & 0x40); 
+              this.tileMap[b1][b2] = (short)(0x11 | this.tileMap[b1][b2] & 0x40); 
             break;
           case 14:
             if (a(b1, b2, b3))
-              this.map[b1][b2] = (short)(0x12 | this.map[b1][b2] & 0x40); 
+              this.tileMap[b1][b2] = (short)(0x12 | this.tileMap[b1][b2] & 0x40); 
             break;
           case 21:
             if (a(b1, b2, b3))
-              this.map[b1][b2] = (short)(0x19 | this.map[b1][b2] & 0x40); 
+              this.tileMap[b1][b2] = (short)(0x19 | this.tileMap[b1][b2] & 0x40); 
             break;
           case 22:
             if (a(b1, b2, b3))
-              this.map[b1][b2] = (short)(0x1A | this.map[b1][b2] & 0x40); 
+              this.tileMap[b1][b2] = (short)(0x1A | this.tileMap[b1][b2] & 0x40); 
             break;
           case 15:
             if (a(b1, b2, b3))
-              this.map[b1][b2] = (short)(0x13 | this.map[b1][b2] & 0x40); 
+              this.tileMap[b1][b2] = (short)(0x13 | this.tileMap[b1][b2] & 0x40); 
             break;
           case 16:
             if (a(b1, b2, b3))
-              this.map[b1][b2] = (short)(0x14 | this.map[b1][b2] & 0x40); 
+              this.tileMap[b1][b2] = (short)(0x14 | this.tileMap[b1][b2] & 0x40); 
             break;
           case 23:
             if (a(b1, b2, b3))
-              this.map[b1][b2] = (short)(0x1B | this.map[b1][b2] & 0x40); 
+              this.tileMap[b1][b2] = (short)(0x1B | this.tileMap[b1][b2] & 0x40); 
             break;
           case 24:
             if (a(b1, b2, b3))
-              this.map[b1][b2] = (short)(0x1C | this.map[b1][b2] & 0x40); 
+              this.tileMap[b1][b2] = (short)(0x1C | this.tileMap[b1][b2] & 0x40); 
             break;
         } 
       } 

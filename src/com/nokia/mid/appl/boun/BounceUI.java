@@ -382,14 +382,14 @@ public class BounceUI implements CommandListener {
           dataOutputStream.writeByte(this.mCanvas.numLives);
           dataOutputStream.writeByte(this.mCanvas.numRings);
           dataOutputStream.writeByte(this.mCanvas.currentLevel);
-          dataOutputStream.writeByte(this.mCanvas.mBall.a);
+          dataOutputStream.writeByte(this.mCanvas.mBall.mBallSize);
           dataOutputStream.writeInt(this.mCanvas.mScore);
           dataOutputStream.writeInt(this.mCanvas.l);
           dataOutputStream.writeInt(this.mCanvas.k);
-          dataOutputStream.writeInt(this.mCanvas.mBall.s);
-          dataOutputStream.writeInt(this.mCanvas.mBall.r);
-          dataOutputStream.writeInt(this.mCanvas.mBall.l);
-          dataOutputStream.writeInt(this.mCanvas.mBall.o);
+          dataOutputStream.writeInt(this.mCanvas.mBall.xPos);
+          dataOutputStream.writeInt(this.mCanvas.mBall.yPos);
+          dataOutputStream.writeInt(this.mCanvas.mBall.xSpeed);
+          dataOutputStream.writeInt(this.mCanvas.mBall.ySpeed);
           dataOutputStream.writeInt(0);
           dataOutputStream.writeInt(0);
           dataOutputStream.writeInt(this.mCanvas.mBall.d);
@@ -401,7 +401,7 @@ public class BounceUI implements CommandListener {
           b2 = 0;
           for (b3 = 0; b3 < this.mCanvas.height; b3++) {
             for (byte b = 0; b < this.mCanvas.width; b++) {
-              byte b6 = (byte)(this.mCanvas.map[b3][b] & 0xFF7F & 0xFFFFFFBF);
+              byte b6 = (byte)(this.mCanvas.tileMap[b3][b] & 0xFF7F & 0xFFFFFFBF);
               if (b6 == 7 || b6 == 29 || b6 == 13 || b6 == 14 || b6 == 21 || b6 == 22 || b6 == 15 || b6 == 16 || b6 == 23 || b6 == 24) {
                 arrayOfInt[b2][0] = b3;
                 arrayOfInt[b2][1] = b;
