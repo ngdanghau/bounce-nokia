@@ -29,7 +29,7 @@ public class Ball {
   
   public int ballState;
   
-  public int t;
+  public int jumpOffset;
   
   public int speedBonusCntr;
   
@@ -37,13 +37,13 @@ public class Ball {
   
   public int jumpBonusCntr;
   
-  public boolean m;
+  public boolean mGroundedFlag;
   
-  public boolean v;
+  public boolean mCDRubberFlag;
   
-  public boolean u;
+  public boolean mCDRampFlag;
   
-  public int C;
+  public int popCntr;
   
   public static final byte[][] TRI_TILE_DATA = new byte[][] { 
       { 
@@ -101,7 +101,7 @@ public class Ball {
         0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 
         0, 0 } };
   
-  public static final byte[][] xByte = new byte[][] { 
+  public static final byte[][] LARGE_BALL_DATA = new byte[][] { 
       { 
         0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 
         1, 0, 0, 0, 0, 0 }, { 
@@ -155,15 +155,15 @@ public class Ball {
     this.xSpeed = 0;
     this.ySpeed = 0;
     this.mCanvas = parame;
-    this.t = 0;
-    this.m = false;
-    this.v = false;
-    this.u = false;
+    this.jumpOffset = 0;
+    this.mGroundedFlag = false;
+    this.mCDRubberFlag = false;
+    this.mCDRampFlag = false;
     this.q = 0;
     this.speedBonusCntr = 0;
     this.gravBonusCntr = 0;
     this.jumpBonusCntr = 0;
-    this.C = 0;
+    this.popCntr = 0;
     this.ballState = 0;
     this.direction = 0;
     this.mCanvas.setBallImages(this);
@@ -201,7 +201,7 @@ public class Ball {
     int m = (paramInt2 - 1 + this.mHalfBallSize) / 12 + 1;
     for (int n = i; n < k; n++) {
       for (int i1 = j; i1 < m; i1++) {
-        if (!OnCollisionEnter(paramInt1, paramInt2, i1, n))
+        if (!testTile(paramInt1, paramInt2, i1, n))
           return false; 
       } 
     } 
@@ -253,7 +253,7 @@ public class Ball {
     this.mBallImage = this.smallBallImage;
   }
   
-  public void e() {
+  public void popBall() {
     if (!this.mCanvas.mInvincible) {
       this.q = 7;
       this.ballState = 2;
@@ -337,7 +337,7 @@ public class Ball {
       i1 = this.mBallSize + m;
     } 
     if (this.mBallSize == 16) {
-      arrayOfByte = xByte;
+      arrayOfByte = LARGE_BALL_DATA;
     } else {
       arrayOfByte = SMALL_BALL_DATA;
     } 
@@ -396,7 +396,7 @@ public class Ball {
       i1 = this.mBallSize + m;
     } 
     if (this.mBallSize == 16) {
-      arrayOfByte = xByte;
+      arrayOfByte = LARGE_BALL_DATA;
     } else {
       arrayOfByte = SMALL_BALL_DATA;
     } 
@@ -407,7 +407,7 @@ public class Ball {
     for (byte b5 = b3; b5 < n; b5++) {
       for (byte b = b4; b < i1; b++) {
         if ((TRI_TILE_DATA[Math.abs(b - b2)][Math.abs(b5 - b1)] & arrayOfByte[b - m][b5 - k]) != 0) {
-          if (!this.m)
+          if (!this.mGroundedFlag)
             redirectBall(paramInt5); 
           return true;
         } 
@@ -500,7 +500,7 @@ public class Ball {
     return a(paramInt1 - this.mHalfBallSize, paramInt2 - this.mHalfBallSize, paramInt1 + this.mHalfBallSize, paramInt2 + this.mHalfBallSize, i, j, k, m);
   }
   
-  public boolean OnCollisionEnter(int paramInt1, int paramInt2, int yPos, int xPos) {
+  public boolean testTile(int paramInt1, int paramInt2, int yPos, int xPos) {
     int k;
     if (yPos >= this.mCanvas.mTileMapHeight || yPos < 0 || xPos >= this.mCanvas.mTileMapWidth || xPos < 0)
       return false; 
@@ -515,19 +515,19 @@ public class Ball {
     	  // nền đất đỏ
         if (squareCollide(paramInt1, paramInt2, yPos, xPos)) {
         	paramBoolean = false;
-          this.u = true;
+          this.mCDRampFlag = true;
           break;
         } 
-        this.u = true;
+        this.mCDRampFlag = true;
         break;
       case 2:
     	  // nền đất xanh full
         if (squareCollide(paramInt1, paramInt2, yPos, xPos)) {
-          this.v = true;
+          this.mCDRubberFlag = true;
           paramBoolean = false;
           break;
         } 
-        this.u = true;
+        this.mCDRampFlag = true;
         break;
       case 34:
     	// nền đất xanh Top Left
@@ -538,9 +538,9 @@ public class Ball {
       case 37:
     	// nền đất xanh Bottom Left
         if (triangleCollide(paramInt1, paramInt2, yPos, xPos, j)) {
-          this.v = true;
+          this.mCDRubberFlag = true;
           paramBoolean = false;
-          this.u = true;
+          this.mCDRampFlag = true;
         } 
         break;
       case 30:
@@ -553,7 +553,7 @@ public class Ball {
     	// nền đất đỏ Bottom Left
         if (triangleCollide(paramInt1, paramInt2, yPos, xPos, j)) {
         	paramBoolean = false;
-          this.u = true;
+          this.mCDRampFlag = true;
         } 
         break;
       case 10:
@@ -564,7 +564,7 @@ public class Ball {
           int n = this.mCanvas.P[k][1] * 12 + this.mCanvas.mMOOffset[k][1];
           if (a(paramInt1 - this.mHalfBallSize + 1, paramInt2 - this.mHalfBallSize + 1, paramInt1 + this.mHalfBallSize - 1, paramInt2 + this.mHalfBallSize - 1, m + 1, n + 1, m + 24 - 1, n + 24 - 1)) {
         	  paramBoolean = false;
-            e();
+            popBall();
           } 
         } 
         break;
@@ -578,7 +578,7 @@ public class Ball {
     	  // Thorn 90
         if (thinCollide(paramInt1, paramInt2, yPos, xPos, j)) {
         	paramBoolean = false;
-          e();
+          popBall();
         } 
         break;
       case 7:
@@ -758,7 +758,7 @@ public class Ball {
       case 50:
         this.gravBonusCntr = 300;
         sound = this.mCanvas.mSoundPop;
-        this.m = false;
+        this.mGroundedFlag = false;
         paramBoolean = false;
         break;
       case 51:
@@ -802,7 +802,7 @@ public class Ball {
       if (this.mBallSize == 16) {
         k = -30;
         j = -2;
-        if (this.m)
+        if (this.mGroundedFlag)
           this.ySpeed = -10; 
       } else {
         k = 42;
@@ -822,23 +822,23 @@ public class Ball {
       this.gravBonusCntr--;
       if (this.gravBonusCntr == 0) {
         bool1 = false;
-        this.m = false;
+        this.mGroundedFlag = false;
         k *= -1;
         j *= -1;
       } 
     } 
     if (this.jumpBonusCntr != 0) {
-      if (-1 * Math.abs(this.t) > -80)
+      if (-1 * Math.abs(this.jumpOffset) > -80)
         if (bool1) {
-          this.t = 80;
+          this.jumpOffset = 80;
         } else {
-          this.t = -80;
+          this.jumpOffset = -80;
         }  
       this.jumpBonusCntr--;
     } 
-    this.C++;
-    if (this.C == 3)
-      this.C = 0; 
+    this.popCntr++;
+    if (this.popCntr == 3)
+      this.popCntr = 0; 
     if (this.ySpeed < -150) {
       this.ySpeed = -150;
     } else if (this.ySpeed > 150) {
@@ -857,7 +857,7 @@ public class Ball {
         b = (byte) ((this.ySpeed < 0) ? -1 : 1); 
       if (collisionDetection(this.xPos, this.yPos + b)) {
         this.yPos += b;
-        this.m = false;
+        this.mGroundedFlag = false;
         if (k == -30) {
           n = this.yPos / 12;
           if ((this.mCanvas.tileMap[n][m] & 0x40) == 0) {
@@ -867,30 +867,30 @@ public class Ball {
           } 
         } 
       } else {
-        if (this.u && this.xSpeed < 10 && this.C == 0) {
+        if (this.mCDRampFlag && this.xSpeed < 10 && this.popCntr == 0) {
           byte b4 = 1;
           if (collisionDetection(this.xPos + b4, this.yPos + b)) {
             this.xPos += b4;
             this.yPos += b;
-            this.u = false;
+            this.mCDRampFlag = false;
           } else if (collisionDetection(this.xPos - b4, this.yPos + b)) {
             this.xPos -= b4;
             this.yPos += b;
-            this.u = false;
+            this.mCDRampFlag = false;
           } 
         } 
         if (b > 0 || (bool1 && b < 0)) {
           this.ySpeed = this.ySpeed * -1 / 2;
-          this.m = true;
-          if (this.v && (this.direction & 0x8) != 0) {
-            this.v = false;
+          this.mGroundedFlag = true;
+          if (this.mCDRubberFlag && (this.direction & 0x8) != 0) {
+            this.mCDRubberFlag = false;
             if (bool1) {
-              this.t += 10;
+              this.jumpOffset += 10;
             } else {
-              this.t += -10;
+              this.jumpOffset += -10;
             } 
           } else if (this.jumpBonusCntr == 0) {
-            this.t = 0;
+            this.jumpOffset = 0;
           } 
           if (this.ySpeed < 10 && this.ySpeed > -10) {
             if (bool1) {
@@ -914,7 +914,7 @@ public class Ball {
         this.ySpeed += j;
         if (this.ySpeed > k)
           this.ySpeed = k; 
-      } else if (!this.m && this.ySpeed > k) {
+      } else if (!this.mGroundedFlag && this.ySpeed > k) {
         this.ySpeed += j;
         if (this.ySpeed < k)
           this.ySpeed = k; 
@@ -923,7 +923,7 @@ public class Ball {
       this.ySpeed += j;
       if (this.ySpeed < k)
         this.ySpeed = k; 
-    } else if (!this.m && this.ySpeed < k) {
+    } else if (!this.mGroundedFlag && this.ySpeed < k) {
       this.ySpeed += j;
       if (this.ySpeed > k)
         this.ySpeed = k; 
@@ -945,17 +945,17 @@ public class Ball {
     } 
     if (this.mBallSize == 16 && this.jumpBonusCntr == 0)
       if (bool1) {
-        this.t += 5;
+        this.jumpOffset += 5;
       } else {
-        this.t += -5;
+        this.jumpOffset += -5;
       }  
-    if (this.m && (this.direction & 0x8) != 0) {
+    if (this.mGroundedFlag && (this.direction & 0x8) != 0) {
       if (bool1) {
-        this.ySpeed = 67 + this.t;
+        this.ySpeed = 67 + this.jumpOffset;
       } else {
-        this.ySpeed = -67 + this.t;
+        this.ySpeed = -67 + this.jumpOffset;
       } 
-      this.m = false;
+      this.mGroundedFlag = false;
     } 
     int i1 = Math.abs(this.xSpeed);
     int i2 = i1 / 10;
@@ -965,8 +965,8 @@ public class Ball {
         b = (byte) ((this.xSpeed < 0) ? -1 : 1); 
       if (collisionDetection(this.xPos + b, this.yPos)) {
         this.xPos += b;
-      } else if (this.u) {
-        this.u = false;
+      } else if (this.mCDRampFlag) {
+        this.mCDRampFlag = false;
         byte b4 = 0;
         if (bool1) {
           b4 = 1;
