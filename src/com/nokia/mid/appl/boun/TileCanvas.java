@@ -15,7 +15,7 @@ import javax.microedition.lcdui.Image;
 public abstract class TileCanvas extends FullCanvas {
   protected int tileX;
   
-  protected int k;
+  protected int tileY;
   
   protected int divTileX;
   
@@ -27,7 +27,7 @@ public abstract class TileCanvas extends FullCanvas {
   
   protected Image mGameBuffer;
   
-  private Image[] Q;
+  private Image[] tileImages;
   
   private Image tmpTileImage;
   
@@ -75,9 +75,9 @@ public abstract class TileCanvas extends FullCanvas {
   
   public Image mSpikeImgPtr;
   
-  public Image A;
+  public Image mUILife;
   
-  public Image D;
+  public Image mUIRing;
   
   public int mTopLeftExitTileCol;
   
@@ -97,7 +97,7 @@ public abstract class TileCanvas extends FullCanvas {
   
   protected Display mDisplay;
   
-  public com.nokia.mid.appl.boun.g ab = null;
+  public com.nokia.mid.appl.boun.g mGameTimer = null;
   
   public TileCanvas(Display paramDisplay) {
     this.mDisplay = paramDisplay;
@@ -111,7 +111,7 @@ public abstract class TileCanvas extends FullCanvas {
     loadTileImages();
     this.mLoadLevelFlag = false;
     this.tileX = 0;
-    this.k = 0;
+    this.tileY = 0;
     this.z = false;
     this.divTileX = this.tileX + 13;
     this.tileMap = null;
@@ -146,7 +146,7 @@ public abstract class TileCanvas extends FullCanvas {
       } 
       this.mExitPosX = dataInputStream.read();
       this.mExitPosY = dataInputStream.read();
-      a(this.mExitPosX, this.mExitPosY, this.Q[12]);
+      createExitTileObject(this.mExitPosX, this.mExitPosY, this.tileImages[12]);
       this.totalRingInLevel = dataInputStream.read();
       this.mTileMapWidth = dataInputStream.read();
       this.mTileMapHeight = dataInputStream.read();
@@ -213,10 +213,10 @@ public abstract class TileCanvas extends FullCanvas {
     } 
     this.mSpikeImgPtr = Image.createImage(24, 24);
     Graphics graphics = this.mSpikeImgPtr.getGraphics();
-    graphics.drawImage(this.Q[46], 0, 0, 20);
-    graphics.drawImage(manipulateImage(this.Q[46], 0), 12, 0, 20);
-    graphics.drawImage(manipulateImage(this.Q[46], 4), 12, 12, 20);
-    graphics.drawImage(manipulateImage(this.Q[46], 1), 0, 12, 20);
+    graphics.drawImage(this.tileImages[46], 0, 0, 20);
+    graphics.drawImage(manipulateImage(this.tileImages[46], 0), 12, 0, 20);
+    graphics.drawImage(manipulateImage(this.tileImages[46], 4), 12, 12, 20);
+    graphics.drawImage(manipulateImage(this.tileImages[46], 1), 0, 12, 20);
     graphics = null;
   }
   
@@ -293,7 +293,7 @@ public abstract class TileCanvas extends FullCanvas {
     int k;
     Graphics graphics = this.mGameBuffer.getGraphics();
     if (paramInt1 < 0 || paramInt2 < 0 || paramInt1 >= this.mTileMapWidth || paramInt2 >= this.mTileMapHeight) {
-      graphics.drawImage(this.Q[0], paramInt3, paramInt4, 20);
+      graphics.drawImage(this.tileImages[0], paramInt3, paramInt4, 20);
       return;
     } 
     this.tileMap[paramInt2][paramInt1] = (short)(this.tileMap[paramInt2][paramInt1] & 0xFF7F);
@@ -304,47 +304,47 @@ public abstract class TileCanvas extends FullCanvas {
     graphics.setColor(bool ? 1073328 : 11591920);
     switch (i) {
       case 1:
-        graphics.drawImage(this.Q[0], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[0], paramInt3, paramInt4, 20);
         break;
       case 0:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
         break;
       case 2:
-        graphics.drawImage(this.Q[1], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[1], paramInt3, paramInt4, 20);
         break;
       case 3:
         if (bool) {
-          graphics.drawImage(this.Q[6], paramInt3, paramInt4, 20);
+          graphics.drawImage(this.tileImages[6], paramInt3, paramInt4, 20);
           break;
         } 
-        graphics.drawImage(this.Q[2], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[2], paramInt3, paramInt4, 20);
         break;
       case 4:
         if (bool) {
-          graphics.drawImage(this.Q[9], paramInt3, paramInt4, 20);
+          graphics.drawImage(this.tileImages[9], paramInt3, paramInt4, 20);
           break;
         } 
-        graphics.drawImage(this.Q[5], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[5], paramInt3, paramInt4, 20);
         break;
       case 5:
         if (bool) {
-          graphics.drawImage(this.Q[7], paramInt3, paramInt4, 20);
+          graphics.drawImage(this.tileImages[7], paramInt3, paramInt4, 20);
           break;
         } 
-        graphics.drawImage(this.Q[3], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[3], paramInt3, paramInt4, 20);
         break;
       case 6:
         if (bool) {
-          graphics.drawImage(this.Q[8], paramInt3, paramInt4, 20);
+          graphics.drawImage(this.tileImages[8], paramInt3, paramInt4, 20);
           break;
         } 
-        graphics.drawImage(this.Q[4], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[4], paramInt3, paramInt4, 20);
         break;
       case 7:
-        graphics.drawImage(this.Q[10], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[10], paramInt3, paramInt4, 20);
         break;
       case 8:
-        graphics.drawImage(this.Q[11], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[11], paramInt3, paramInt4, 20);
         break;
       case 13:
       case 14:
@@ -363,8 +363,8 @@ public abstract class TileCanvas extends FullCanvas {
       case 27:
       case 28:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(this.Q[com.nokia.mid.appl.boun.BounceConst.a[i - 13]], paramInt3, paramInt4, 20);
-        graphics.drawImage(this.Q[com.nokia.mid.appl.boun.BounceConst.b[i - 13]], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[com.nokia.mid.appl.boun.BounceConst.a[i - 13]], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[com.nokia.mid.appl.boun.BounceConst.b[i - 13]], paramInt3, paramInt4, 20);
         break;
       case 9:
         j = (paramInt1 - this.mTopLeftExitTileCol) * 12;
@@ -393,110 +393,110 @@ public abstract class TileCanvas extends FullCanvas {
         } 
         break;
       case 29:
-        graphics.drawImage(this.Q[45], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[45], paramInt3, paramInt4, 20);
         break;
       case 30:
         if (bool) {
-          graphics.drawImage(this.Q[61], paramInt3, paramInt4, 20);
+          graphics.drawImage(this.tileImages[61], paramInt3, paramInt4, 20);
           break;
         } 
-        graphics.drawImage(this.Q[57], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[57], paramInt3, paramInt4, 20);
         break;
       case 31:
         if (bool) {
-          graphics.drawImage(this.Q[60], paramInt3, paramInt4, 20);
+          graphics.drawImage(this.tileImages[60], paramInt3, paramInt4, 20);
           break;
         } 
-        graphics.drawImage(this.Q[56], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[56], paramInt3, paramInt4, 20);
         break;
       case 32:
         if (bool) {
-          graphics.drawImage(this.Q[59], paramInt3, paramInt4, 20);
+          graphics.drawImage(this.tileImages[59], paramInt3, paramInt4, 20);
           break;
         } 
-        graphics.drawImage(this.Q[55], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[55], paramInt3, paramInt4, 20);
         break;
       case 33:
         if (bool) {
-          graphics.drawImage(this.Q[62], paramInt3, paramInt4, 20);
+          graphics.drawImage(this.tileImages[62], paramInt3, paramInt4, 20);
           break;
         } 
-        graphics.drawImage(this.Q[58], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[58], paramInt3, paramInt4, 20);
         break;
       case 34:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(this.Q[65], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[65], paramInt3, paramInt4, 20);
         break;
       case 35:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(this.Q[64], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[64], paramInt3, paramInt4, 20);
         break;
       case 36:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(this.Q[63], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[63], paramInt3, paramInt4, 20);
         break;
       case 37:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(this.Q[66], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[66], paramInt3, paramInt4, 20);
         break;
       case 39:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(this.Q[50], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[50], paramInt3, paramInt4, 20);
         break;
       case 40:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(manipulateImage(this.Q[50], 5), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.tileImages[50], 5), paramInt3, paramInt4, 20);
         break;
       case 41:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(manipulateImage(this.Q[50], 4), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.tileImages[50], 4), paramInt3, paramInt4, 20);
         break;
       case 42:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(manipulateImage(this.Q[50], 3), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.tileImages[50], 3), paramInt3, paramInt4, 20);
         break;
       case 43:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(this.Q[51], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[51], paramInt3, paramInt4, 20);
         break;
       case 44:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(manipulateImage(this.Q[51], 5), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.tileImages[51], 5), paramInt3, paramInt4, 20);
         break;
       case 45:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(manipulateImage(this.Q[51], 4), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.tileImages[51], 4), paramInt3, paramInt4, 20);
         break;
       case 46:
         graphics.fillRect(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(manipulateImage(this.Q[51], 3), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.tileImages[51], 3), paramInt3, paramInt4, 20);
         break;
       case 47:
-        graphics.drawImage(this.Q[52], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[52], paramInt3, paramInt4, 20);
         break;
       case 48:
-        graphics.drawImage(manipulateImage(this.Q[52], 5), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.tileImages[52], 5), paramInt3, paramInt4, 20);
         break;
       case 49:
-        graphics.drawImage(manipulateImage(this.Q[52], 4), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.tileImages[52], 4), paramInt3, paramInt4, 20);
         break;
       case 50:
-        graphics.drawImage(manipulateImage(this.Q[52], 3), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.tileImages[52], 3), paramInt3, paramInt4, 20);
         break;
       case 38:
-        graphics.drawImage(this.Q[53], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[53], paramInt3, paramInt4, 20);
         break;
       case 51:
-        graphics.drawImage(this.Q[54], paramInt3, paramInt4, 20);
+        graphics.drawImage(this.tileImages[54], paramInt3, paramInt4, 20);
         break;
       case 52:
-        graphics.drawImage(manipulateImage(this.Q[54], 5), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.tileImages[54], 5), paramInt3, paramInt4, 20);
         break;
       case 53:
-        graphics.drawImage(manipulateImage(this.Q[54], 4), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.tileImages[54], 4), paramInt3, paramInt4, 20);
         break;
       case 54:
-        graphics.drawImage(manipulateImage(this.Q[54], 3), paramInt3, paramInt4, 20);
+        graphics.drawImage(manipulateImage(this.tileImages[54], 3), paramInt3, paramInt4, 20);
         break;
     } 
   }
@@ -519,8 +519,8 @@ public abstract class TileCanvas extends FullCanvas {
         int i2 = this.tileMap[i1][n] & 0xFFFFFFBF;
         if (i2 >= 13 && i2 <= 28) {
           int i3 = (n - this.tileX) * 12 + paramInt4;
-          int i4 = (i1 - this.k) * 12;
-          paramGraphics.drawImage(this.Q[com.nokia.mid.appl.boun.BounceConst.b[i2 - 13]], i3, i4, 20);
+          int i4 = (i1 - this.tileY) * 12;
+          paramGraphics.drawImage(this.tileImages[com.nokia.mid.appl.boun.BounceConst.b[i2 - 13]], i3, i4, 20);
         } 
       } 
     } 
@@ -529,13 +529,13 @@ public abstract class TileCanvas extends FullCanvas {
   public void f() {
     for (byte b1 = 0; b1 < 13; b1++) {
       for (byte b2 = 0; b2 < 8; b2++)
-        a(this.tileX + b1, this.k + b2, b1 * 12, b2 * 12); 
+        a(this.tileX + b1, this.tileY + b2, b1 * 12, b2 * 12); 
     } 
   }
   
   public void i() {
     int i = this.tileX;
-    int j = this.k;
+    int j = this.tileY;
     for (byte b1 = 0; b1 < 13; b1++) {
       if (b1 * 12 >= this.divisorLine && i >= this.tileX)
         i = this.divTileX - 13; 
@@ -544,7 +544,7 @@ public abstract class TileCanvas extends FullCanvas {
           a(i, j, b1 * 12, b2 * 12); 
         j++;
       } 
-      j = this.k;
+      j = this.tileY;
       i++;
     } 
   }
@@ -569,7 +569,7 @@ public abstract class TileCanvas extends FullCanvas {
         this.tileX -= 13;
       } 
       for (byte b1 = 0; b1 < 8; b1++)
-        a(this.divTileX - 13, this.k + b1, m, b1 * 12); 
+        a(this.divTileX - 13, this.tileY + b1, m, b1 * 12); 
     } 
     while ((k + 128) / 12 >= j) {
       if (this.divisorLine >= 156) {
@@ -582,7 +582,7 @@ public abstract class TileCanvas extends FullCanvas {
       j++;
       i++;
       for (byte b1 = 0; b1 < 8; b1++)
-        a(this.tileX + m / 12, this.k + b1, m, b1 * 12); 
+        a(this.tileX + m / 12, this.tileY + b1, m, b1 * 12); 
     } 
     this.v = this.tileX * 12 - k;
   }
@@ -608,7 +608,7 @@ public abstract class TileCanvas extends FullCanvas {
     return image;
   }
   
-  public Image b(Image paramImage) {
+  public Image createExitImage(Image paramImage) {
     Image image = Image.createImage(24, 48);
     Graphics graphics = image.getGraphics();
     graphics.setColor(11591920);
@@ -627,90 +627,90 @@ public abstract class TileCanvas extends FullCanvas {
   }
   
   public void loadTileImages() {
-    Image image = a("/icons/objects_nm.png");
-    this.Q = new Image[67];
-    this.Q[0] = a(image, 1, 0);
-    this.Q[1] = a(image, 1, 2);
-    this.Q[2] = a(image, 0, 3, -5185296);
-    this.Q[3] = manipulateImage(this.Q[2], 1);
-    this.Q[4] = manipulateImage(this.Q[2], 3);
-    this.Q[5] = manipulateImage(this.Q[2], 5);
-    this.Q[6] = a(image, 0, 3, -15703888);
-    this.Q[7] = manipulateImage(this.Q[6], 1);
-    this.Q[8] = manipulateImage(this.Q[6], 3);
-    this.Q[9] = manipulateImage(this.Q[6], 5);
-    this.Q[10] = a(image, 0, 4);
-    this.Q[11] = a(image, 3, 4);
-    this.Q[12] = b(a(image, 2, 3));
-    this.Q[14] = a(image, 0, 5);
-    this.Q[13] = manipulateImage(this.Q[14], 1);
-    this.Q[15] = manipulateImage(this.Q[13], 0);
-    this.Q[16] = manipulateImage(this.Q[14], 0);
-    this.Q[18] = a(image, 1, 5);
-    this.Q[17] = manipulateImage(this.Q[18], 1);
-    this.Q[19] = manipulateImage(this.Q[17], 0);
-    this.Q[20] = manipulateImage(this.Q[18], 0);
-    this.Q[22] = a(image, 2, 5);
-    this.Q[21] = manipulateImage(this.Q[22], 1);
-    this.Q[23] = manipulateImage(this.Q[21], 0);
-    this.Q[24] = manipulateImage(this.Q[22], 0);
-    this.Q[26] = a(image, 3, 5);
-    this.Q[25] = manipulateImage(this.Q[26], 1);
-    this.Q[27] = manipulateImage(this.Q[25], 0);
-    this.Q[28] = manipulateImage(this.Q[26], 0);
-    this.Q[29] = manipulateImage(this.Q[14], 5);
-    this.Q[30] = manipulateImage(this.Q[29], 1);
-    this.Q[31] = manipulateImage(this.Q[29], 0);
-    this.Q[32] = manipulateImage(this.Q[30], 0);
-    this.Q[33] = manipulateImage(this.Q[18], 5);
-    this.Q[34] = manipulateImage(this.Q[33], 1);
-    this.Q[35] = manipulateImage(this.Q[33], 0);
-    this.Q[36] = manipulateImage(this.Q[34], 0);
-    this.Q[37] = manipulateImage(this.Q[22], 5);
-    this.Q[38] = manipulateImage(this.Q[37], 1);
-    this.Q[39] = manipulateImage(this.Q[37], 0);
-    this.Q[40] = manipulateImage(this.Q[38], 0);
-    this.Q[41] = manipulateImage(this.Q[26], 5);
-    this.Q[42] = manipulateImage(this.Q[41], 1);
-    this.Q[43] = manipulateImage(this.Q[41], 0);
-    this.Q[44] = manipulateImage(this.Q[42], 0);
-    this.Q[45] = a(image, 3, 3);
-    this.Q[46] = a(image, 1, 3);
-    this.Q[47] = a(image, 2, 0);
-    this.Q[48] = a(image, 0, 1);
-    this.Q[49] = a(a(image, 3, 0));
-    this.Q[50] = a(image, 3, 1);
-    this.Q[51] = a(image, 2, 4);
-    this.Q[52] = a(image, 3, 2);
-    this.Q[53] = a(image, 1, 1);
-    this.Q[54] = a(image, 2, 2);
-    this.Q[55] = a(image, 0, 0, -5185296);
-    this.Q[56] = manipulateImage(this.Q[55], 3);
-    this.Q[57] = manipulateImage(this.Q[55], 4);
-    this.Q[58] = manipulateImage(this.Q[55], 5);
-    this.Q[59] = a(image, 0, 0, -15703888);
-    this.Q[60] = manipulateImage(this.Q[59], 3);
-    this.Q[61] = manipulateImage(this.Q[59], 4);
-    this.Q[62] = manipulateImage(this.Q[59], 5);
-    this.Q[63] = a(image, 0, 2);
-    this.Q[64] = manipulateImage(this.Q[63], 3);
-    this.Q[65] = manipulateImage(this.Q[63], 4);
-    this.Q[66] = manipulateImage(this.Q[63], 5);
-    this.A = a(image, 2, 1);
-    this.D = a(image, 1, 4);
+    Image image = loadImage("/icons/objects_nm.png");
+    this.tileImages = new Image[67];
+    this.tileImages[0] = extractImage(image, 1, 0);
+    this.tileImages[1] = extractImage(image, 1, 2);
+    this.tileImages[2] = extractImageBG(image, 0, 3, -5185296);
+    this.tileImages[3] = manipulateImage(this.tileImages[2], 1);
+    this.tileImages[4] = manipulateImage(this.tileImages[2], 3);
+    this.tileImages[5] = manipulateImage(this.tileImages[2], 5);
+    this.tileImages[6] = extractImageBG(image, 0, 3, -15703888);
+    this.tileImages[7] = manipulateImage(this.tileImages[6], 1);
+    this.tileImages[8] = manipulateImage(this.tileImages[6], 3);
+    this.tileImages[9] = manipulateImage(this.tileImages[6], 5);
+    this.tileImages[10] = extractImage(image, 0, 4);
+    this.tileImages[11] = extractImage(image, 3, 4);
+    this.tileImages[12] = createExitImage(extractImage(image, 2, 3));
+    this.tileImages[14] = extractImage(image, 0, 5);
+    this.tileImages[13] = manipulateImage(this.tileImages[14], 1);
+    this.tileImages[15] = manipulateImage(this.tileImages[13], 0);
+    this.tileImages[16] = manipulateImage(this.tileImages[14], 0);
+    this.tileImages[18] = extractImage(image, 1, 5);
+    this.tileImages[17] = manipulateImage(this.tileImages[18], 1);
+    this.tileImages[19] = manipulateImage(this.tileImages[17], 0);
+    this.tileImages[20] = manipulateImage(this.tileImages[18], 0);
+    this.tileImages[22] = extractImage(image, 2, 5);
+    this.tileImages[21] = manipulateImage(this.tileImages[22], 1);
+    this.tileImages[23] = manipulateImage(this.tileImages[21], 0);
+    this.tileImages[24] = manipulateImage(this.tileImages[22], 0);
+    this.tileImages[26] = extractImage(image, 3, 5);
+    this.tileImages[25] = manipulateImage(this.tileImages[26], 1);
+    this.tileImages[27] = manipulateImage(this.tileImages[25], 0);
+    this.tileImages[28] = manipulateImage(this.tileImages[26], 0);
+    this.tileImages[29] = manipulateImage(this.tileImages[14], 5);
+    this.tileImages[30] = manipulateImage(this.tileImages[29], 1);
+    this.tileImages[31] = manipulateImage(this.tileImages[29], 0);
+    this.tileImages[32] = manipulateImage(this.tileImages[30], 0);
+    this.tileImages[33] = manipulateImage(this.tileImages[18], 5);
+    this.tileImages[34] = manipulateImage(this.tileImages[33], 1);
+    this.tileImages[35] = manipulateImage(this.tileImages[33], 0);
+    this.tileImages[36] = manipulateImage(this.tileImages[34], 0);
+    this.tileImages[37] = manipulateImage(this.tileImages[22], 5);
+    this.tileImages[38] = manipulateImage(this.tileImages[37], 1);
+    this.tileImages[39] = manipulateImage(this.tileImages[37], 0);
+    this.tileImages[40] = manipulateImage(this.tileImages[38], 0);
+    this.tileImages[41] = manipulateImage(this.tileImages[26], 5);
+    this.tileImages[42] = manipulateImage(this.tileImages[41], 1);
+    this.tileImages[43] = manipulateImage(this.tileImages[41], 0);
+    this.tileImages[44] = manipulateImage(this.tileImages[42], 0);
+    this.tileImages[45] = extractImage(image, 3, 3);
+    this.tileImages[46] = extractImage(image, 1, 3);
+    this.tileImages[47] = extractImage(image, 2, 0);
+    this.tileImages[48] = extractImage(image, 0, 1);
+    this.tileImages[49] = a(extractImage(image, 3, 0));
+    this.tileImages[50] = extractImage(image, 3, 1);
+    this.tileImages[51] = extractImage(image, 2, 4);
+    this.tileImages[52] = extractImage(image, 3, 2);
+    this.tileImages[53] = extractImage(image, 1, 1);
+    this.tileImages[54] = extractImage(image, 2, 2);
+    this.tileImages[55] = extractImageBG(image, 0, 0, -5185296);
+    this.tileImages[56] = manipulateImage(this.tileImages[55], 3);
+    this.tileImages[57] = manipulateImage(this.tileImages[55], 4);
+    this.tileImages[58] = manipulateImage(this.tileImages[55], 5);
+    this.tileImages[59] = extractImageBG(image, 0, 0, -15703888);
+    this.tileImages[60] = manipulateImage(this.tileImages[59], 3);
+    this.tileImages[61] = manipulateImage(this.tileImages[59], 4);
+    this.tileImages[62] = manipulateImage(this.tileImages[59], 5);
+    this.tileImages[63] = extractImage(image, 0, 2);
+    this.tileImages[64] = manipulateImage(this.tileImages[63], 3);
+    this.tileImages[65] = manipulateImage(this.tileImages[63], 4);
+    this.tileImages[66] = manipulateImage(this.tileImages[63], 5);
+    this.mUILife = extractImage(image, 2, 1);
+    this.mUIRing = extractImage(image, 1, 4);
   }
   
   public void setBallImages(Ball paramf) {
-    paramf.smallBallImage = this.Q[47];
-    paramf.k = this.Q[48];
-    paramf.largeBallImage = this.Q[49];
+    paramf.smallBallImage = this.tileImages[47];
+    paramf.poppedImage = this.tileImages[48];
+    paramf.largeBallImage = this.tileImages[49];
   }
   
-  public static Image a(Image paramImage, int paramInt1, int paramInt2) {
-    return a(paramImage, paramInt1, paramInt2, 0);
+  public static Image extractImage(Image paramImage, int paramInt1, int paramInt2) {
+    return extractImageBG(paramImage, paramInt1, paramInt2, 0);
   }
   
-  public static Image a(Image paramImage, int paramInt1, int paramInt2, int paramInt3) {
+  public static Image extractImageBG(Image paramImage, int paramInt1, int paramInt2, int paramInt3) {
     Image image = DirectUtils.createImage(12, 12, paramInt3);
     if (image == null) {
       image = Image.createImage(12, 12);
@@ -723,7 +723,7 @@ public abstract class TileCanvas extends FullCanvas {
     return image;
   }
   
-  public static Image a(String paramString) {
+  public static Image loadImage(String paramString) {
     Image image = null;
     try {
       image = Image.createImage(paramString);
@@ -731,7 +731,7 @@ public abstract class TileCanvas extends FullCanvas {
     return image;
   }
   
-  public void a(int paramInt1, int paramInt2, Image paramImage) {
+  public void createExitTileObject(int paramInt1, int paramInt2, Image paramImage) {
     this.mTopLeftExitTileCol = paramInt1;
     this.mTopLeftExitTileRow = paramInt2;
     this.mImgPtr = paramImage;
@@ -758,16 +758,16 @@ public abstract class TileCanvas extends FullCanvas {
   public abstract void run();
   
   public synchronized void start() {
-    if (this.ab != null)
+    if (this.mGameTimer != null)
       return; 
-    this.ab = new com.nokia.mid.appl.boun.g(this, this);
+    this.mGameTimer = new com.nokia.mid.appl.boun.g(this, this);
   }
   
   public synchronized void stop() {
-    if (this.ab == null)
+    if (this.mGameTimer == null)
       return; 
-    this.ab.a();
-    this.ab = null;
+    this.mGameTimer.a();
+    this.mGameTimer = null;
   }
   
   protected void n() {
@@ -801,9 +801,3 @@ public abstract class TileCanvas extends FullCanvas {
     }
   }
 }
-
-
-/* Location:              D:\Java Mobile\nokiabounc_jdifc8jb.jar!\com\nokia\mid\appl\boun\b.class
- * Java compiler version: 1 (45.3)
- * JD-Core Version:       1.1.3
- */

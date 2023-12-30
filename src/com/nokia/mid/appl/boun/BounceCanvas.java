@@ -127,7 +127,7 @@ public class BounceCanvas extends TileCanvas {
     this.mBall.xSpeed = paramInt4;
     this.mBall.ySpeed = paramInt5;
     this.tileX = 0;
-    this.k = 0;
+    this.tileY = 0;
     e();
   }
   
@@ -142,10 +142,10 @@ public class BounceCanvas extends TileCanvas {
     this.v = this.tileX * 12 - i;
     this.divisorLine = 156;
     this.divTileX = this.tileX + 13;
-    while (this.mBall.yPos - 6 < this.k * 12)
-      this.k -= 7; 
-    while (this.mBall.yPos + 6 > this.k * 12 + 96)
-      this.k += 7; 
+    while (this.mBall.yPos - 6 < this.tileY * 12)
+      this.tileY -= 7; 
+    while (this.mBall.yPos + 6 > this.tileY * 12 + 96)
+      this.tileY += 7; 
     f();
   }
   
@@ -176,11 +176,11 @@ public class BounceCanvas extends TileCanvas {
       this.mFullScreenGraphics.fillRect(0, 97, 128, 32);
       // vẽ lại số lượng mạng sống còn lại
       for (byte b1 = 0; b1 < this.numLives; b1++)
-        this.mFullScreenGraphics.drawImage(this.A, 5 + b1 * (this.A.getWidth() - 1), 99, 20);
+        this.mFullScreenGraphics.drawImage(this.mUILife, 5 + b1 * (this.mUILife.getWidth() - 1), 99, 20);
       
       // vẽ số lượng ring còn lại
       for (byte b2 = 0; b2 < this.totalRingInLevel - this.numRings; b2++)
-        this.mFullScreenGraphics.drawImage(this.D, 5 + b2 * (this.D.getWidth() - 4), 112, 20); 
+        this.mFullScreenGraphics.drawImage(this.mUIRing, 5 + b2 * (this.mUIRing.getWidth() - 4), 112, 20); 
      
       // vẽ lại điểm số
       this.mFullScreenGraphics.setColor(16777214); // FFFFFE = trắng
@@ -216,9 +216,9 @@ public class BounceCanvas extends TileCanvas {
     if (this.mBall == null)
       return; 
     int i = this.mBall.xPos - this.tileX * 12;
-    int j = this.mBall.yPos - this.k * 12;
+    int j = this.mBall.yPos - this.tileY * 12;
     if (this.mBall.ballState == 2) {
-      paramGraphics.drawImage(this.mBall.k, i - 6 + paramInt, j - 6, 20);
+      paramGraphics.drawImage(this.mBall.poppedImage, i - 6 + paramInt, j - 6, 20);
     } else {
       paramGraphics.drawImage(this.mBall.mBallImage, i - this.mBall.mHalfBallSize + paramInt, j - this.mBall.mHalfBallSize, 20);
     } 
@@ -263,7 +263,7 @@ public class BounceCanvas extends TileCanvas {
     if (this.mLevelDisCntr != 0)
       this.mLevelDisCntr--; 
     synchronized (this.mBall) {
-      if (this.mBall.yPos - 6 < this.k * 12 || this.mBall.yPos + 6 > this.k * 12 + 96) {
+      if (this.mBall.yPos - 6 < this.tileY * 12 || this.mBall.yPos + 6 > this.tileY * 12 + 96) {
         e();
       } else {
         this.mBall.update();

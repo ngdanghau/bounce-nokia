@@ -383,7 +383,7 @@ public class BounceUI implements CommandListener {
           dataOutputStream.writeByte(this.mCanvas.mBall.mBallSize);
           dataOutputStream.writeInt(this.mCanvas.mScore);
           dataOutputStream.writeInt(this.mCanvas.tileX);
-          dataOutputStream.writeInt(this.mCanvas.k);
+          dataOutputStream.writeInt(this.mCanvas.tileY);
           dataOutputStream.writeInt(this.mCanvas.mBall.xPos);
           dataOutputStream.writeInt(this.mCanvas.mBall.yPos);
           dataOutputStream.writeInt(this.mCanvas.mBall.xSpeed);

@@ -141,7 +141,7 @@ public class Ball {
   
   public Image mBallImage;
   
-  public Image k;
+  public Image poppedImage;
   
   public Image largeBallImage;
   
