@@ -16,32 +16,32 @@ public class BounceCanvas extends TileCanvas {
   
   
   // âm thanh 
-  public Sound upSFX;
+  public Sound mSoundHoop;
   
-  public Sound pickupSFX;
+  public Sound mSoundPickup;
   
-  public Sound popSFX;
+  public Sound mSoundPop;
   
-  public BounceUI game;
+  public BounceUI mUI;
   
-  public Player player;
+  public Ball mBall;
   
-  public int noOfRingCollected;
+  public int numRings;
   
-  public int noOfLife;
+  public int numLives;
   
   // diem số hiện tại
-  public int sessionScore;
+  public int mScore;
   
-  public int ad;
+  public int bonusCntrValue;
   
-  public int p;
+  public int mLevelDisCntr;
   
-  public boolean e;
+  public boolean mLeaveGame;
   
-  public boolean openPortal;
+  public boolean mOpenExitFlag;
   
-  public boolean y;
+  public boolean mPaintUIFlag;
   
   public final Font font = Font.getFont(32, 0, 8);
   
@@ -51,28 +51,28 @@ public class BounceCanvas extends TileCanvas {
   
   public boolean T;
   
-  private boolean isFly = false;
+  private boolean mCheat = false;
   
-  public boolean isInvincibility = false;
+  public boolean mInvincible = false;
   
-  private int triggerCheat = 0;
+  private int mCheatSeq = 0;
   
-  private static final String[] aj = new String[] { "/icons/nokiagames.png", "/icons/bouncesplash.png" };
+  private static final String[] SPLASH_NAME = new String[] { "/icons/nokiagames.png", "/icons/bouncesplash.png" };
   
-  public boolean isPlaying = true;
+  public boolean mIncomingCall = true;
   
-  private long K = System.currentTimeMillis();
+  private long mLastTimeRepainted = System.currentTimeMillis();
   
   public BounceCanvas(BounceUI parama, int paramInt) {
     super(parama.m);
-    this.game = parama;
-    this.upSFX = b("/sounds/up.ott");
-    this.pickupSFX = b("/sounds/pickup.ott");
-    this.popSFX = b("/sounds/pop.ott");
+    this.mUI = parama;
+    this.mSoundHoop = b("/sounds/up.ott");
+    this.mSoundPickup = b("/sounds/pickup.ott");
+    this.mSoundPop = b("/sounds/pop.ott");
     this.F = Image.createImage(128, 128);
     this.ap = 1;
     try {
-      this.t = Image.createImage(aj[this.ap]);
+      this.t = Image.createImage(SPLASH_NAME[this.ap]);
     } catch (IOException iOException) {
       this.t = Image.createImage(1, 1);
     } 
@@ -81,34 +81,34 @@ public class BounceCanvas extends TileCanvas {
   
   public void a(int paramInt1, int paramInt2, int paramInt3) {
     this.currentLevel = paramInt1;
-    this.noOfRingCollected = 0;
-    this.noOfLife = paramInt3;
-    this.sessionScore = paramInt2;
-    this.e = false;
-    this.openPortal = false;
+    this.numRings = 0;
+    this.numLives = paramInt3;
+    this.mScore = paramInt2;
+    this.mLeaveGame = false;
+    this.mOpenExitFlag = false;
     l();
     this.T = true;
   }
   
   public void a(int paramInt1, int paramInt2) {
-    this.currentLevel = this.game.B;
-    this.noOfRingCollected = this.game.t;
-    this.noOfLife = this.game.C;
-    this.sessionScore = this.game.G;
+    this.currentLevel = this.mUI.B;
+    this.numRings = this.mUI.t;
+    this.numLives = this.mUI.C;
+    this.mScore = this.mUI.G;
     r();
     ReadLevelMap(this.currentLevel);
     k();
     b();
-    this.p = 120;
-    this.y = true;
-    if (this.game.e != this.s && this.game.b != this.S)
-      this.map[this.game.b][this.game.e] = (short)(0x8 | this.map[this.game.b][this.game.e] & 0x40); 
-    a(paramInt1, paramInt2, this.game.A, this.game.a, this.game.g);
-    synchronized (this.player) {
-      this.player.a(this.game.e, this.game.b);
-      this.player.h = this.game.w;
-      this.player.g = this.game.z;
-      this.player.y = this.game.n;
+    this.mLevelDisCntr = 120;
+    this.mPaintUIFlag = true;
+    if (this.mUI.e != this.s && this.mUI.b != this.S)
+      this.map[this.mUI.b][this.mUI.e] = (short)(0x8 | this.map[this.mUI.b][this.mUI.e] & 0x40); 
+    a(paramInt1, paramInt2, this.mUI.A, this.mUI.a, this.mUI.g);
+    synchronized (this.mBall) {
+      this.mBall.a(this.mUI.e, this.mUI.b);
+      this.mBall.h = this.mUI.w;
+      this.mBall.g = this.mUI.z;
+      this.mBall.y = this.mUI.n;
       this.T = true;
     } 
   }
@@ -116,25 +116,25 @@ public class BounceCanvas extends TileCanvas {
   private void l() {
     r();
     ReadLevelMap(this.currentLevel);
-    this.noOfRingCollected = 0;
-    this.p = 120;
-    this.y = true;
+    this.numRings = 0;
+    this.mLevelDisCntr = 120;
+    this.mPaintUIFlag = true;
     a(this.s * 12 + 6, this.S * 12 + 6, this.a, 0, 0);
-    this.player.a(this.s, this.S);
+    this.mBall.a(this.s, this.S);
     this.T = true;
   }
   
   public void a(int paramInt1, int paramInt2, int paramInt3, int paramInt4, int paramInt5) {
-    this.player = new Player(paramInt1, paramInt2, paramInt3, this);
-    this.player.l = paramInt4;
-    this.player.o = paramInt5;
+    this.mBall = new Ball(paramInt1, paramInt2, paramInt3, this);
+    this.mBall.l = paramInt4;
+    this.mBall.o = paramInt5;
     this.l = 0;
     this.k = 0;
     e();
   }
   
   public void e() {
-    int i = this.player.s - 64;
+    int i = this.mBall.s - 64;
     if (i < 0) {
       i = 0;
     } else if (i > this.width * 12 - 156) {
@@ -144,16 +144,16 @@ public class BounceCanvas extends TileCanvas {
     this.v = this.l * 12 - i;
     this.Z = 156;
     this.G = this.l + 13;
-    while (this.player.r - 6 < this.k * 12)
+    while (this.mBall.r - 6 < this.k * 12)
       this.k -= 7; 
-    while (this.player.r + 6 > this.k * 12 + 96)
+    while (this.mBall.r + 6 > this.k * 12 + 96)
       this.k += 7; 
     f();
   }
   
   public void addSessionScore(int paramInt) {
-    this.sessionScore += paramInt;
-    this.y = true;
+    this.mScore += paramInt;
+    this.mPaintUIFlag = true;
   }
   
   public void q() {
@@ -170,30 +170,30 @@ public class BounceCanvas extends TileCanvas {
       }
     } 
     a(this.X, this.v);
-    a(this.X, this.player.s, this.player.r, this.player.p, this.v);
+    a(this.X, this.mBall.s, this.mBall.r, this.mBall.p, this.v);
     this.X.setClip(0, 0, 128, 128);
     
-    if (this.y) {
+    if (this.mPaintUIFlag) {
       this.X.setColor(545706); // 0853AA = xanh dương
       this.X.fillRect(0, 97, 128, 32);
       // vẽ lại số lượng mạng sống còn lại
-      for (byte b1 = 0; b1 < this.noOfLife; b1++)
+      for (byte b1 = 0; b1 < this.numLives; b1++)
         this.X.drawImage(this.A, 5 + b1 * (this.A.getWidth() - 1), 99, 20);
       
       // vẽ số lượng ring còn lại
-      for (byte b2 = 0; b2 < this.totalRingInLevel - this.noOfRingCollected; b2++)
+      for (byte b2 = 0; b2 < this.totalRingInLevel - this.numRings; b2++)
         this.X.drawImage(this.D, 5 + b2 * (this.D.getWidth() - 4), 112, 20); 
      
       // vẽ lại điểm số
       this.X.setColor(16777214); // FFFFFE = trắng
       this.X.setFont(this.font);
-      this.X.drawString(ShowScoreZeroPad(this.sessionScore), 64, 100, 20);
+      this.X.drawString(ShowScoreZeroPad(this.mScore), 64, 100, 20);
       
-      if (this.ad != 0) {
+      if (this.bonusCntrValue != 0) {
         this.X.setColor(16750611);
-        this.X.fillRect(1, 128 - 3 * this.ad / 30, 5, 128);
+        this.X.fillRect(1, 128 - 3 * this.bonusCntrValue / 30, 5, 128);
       } 
-      this.y = false;
+      this.mPaintUIFlag = false;
     } 
   }
   
@@ -206,7 +206,7 @@ public class BounceCanvas extends TileCanvas {
       } 
     } else {
       paramGraphics.drawImage(this.F, 0, 0, 20);
-      if (this.p != 0) {
+      if (this.mLevelDisCntr != 0) {
         paramGraphics.setColor(16777214);
         paramGraphics.setFont(this.font);
         paramGraphics.drawString(this.levelTitle, 44, 84, 20);
@@ -215,14 +215,14 @@ public class BounceCanvas extends TileCanvas {
   }
   
   public void a(Graphics paramGraphics, int paramInt) {
-    if (this.player == null)
+    if (this.mBall == null)
       return; 
-    int i = this.player.s - this.l * 12;
-    int j = this.player.r - this.k * 12;
-    if (this.player.z == 2) {
-      paramGraphics.drawImage(this.player.k, i - 6 + paramInt, j - 6, 20);
+    int i = this.mBall.s - this.l * 12;
+    int j = this.mBall.r - this.k * 12;
+    if (this.mBall.z == 2) {
+      paramGraphics.drawImage(this.mBall.k, i - 6 + paramInt, j - 6, 20);
     } else {
-      paramGraphics.drawImage(this.player.i, i - this.player.p + paramInt, j - this.player.p, 20);
+      paramGraphics.drawImage(this.mBall.i, i - this.mBall.p + paramInt, j - this.mBall.p, 20);
     } 
   }
   
@@ -234,8 +234,8 @@ public class BounceCanvas extends TileCanvas {
     } 
     if (this.ap != -1) {
       if (this.t == null || this.t == null) {
-        this.isPlaying = false;
-        this.game.Home();
+        this.mIncomingCall = false;
+        this.mUI.displayMainMenu();
       } else if (this.n > 30) {
         this.t = null;
         Runtime.getRuntime().gc();
@@ -243,7 +243,7 @@ public class BounceCanvas extends TileCanvas {
           case 0:
             this.ap = 1;
             try {
-              this.t = Image.createImage(aj[this.ap]);
+              this.t = Image.createImage(SPLASH_NAME[this.ap]);
             } catch (IOException iOException) {
               this.t = Image.createImage(1, 1);
             } 
@@ -251,8 +251,8 @@ public class BounceCanvas extends TileCanvas {
             break;
           case 1:
             this.ap = -1;
-            this.isPlaying = false;
-            this.game.Home();
+            this.mIncomingCall = false;
+            this.mUI.displayMainMenu();
             break;
         } 
         this.n = 0;
@@ -262,37 +262,37 @@ public class BounceCanvas extends TileCanvas {
       repaint();
       return;
     } 
-    if (this.p != 0)
-      this.p--; 
-    synchronized (this.player) {
-      if (this.player.r - 6 < this.k * 12 || this.player.r + 6 > this.k * 12 + 96) {
+    if (this.mLevelDisCntr != 0)
+      this.mLevelDisCntr--; 
+    synchronized (this.mBall) {
+      if (this.mBall.r - 6 < this.k * 12 || this.mBall.r + 6 > this.k * 12 + 96) {
         e();
       } else {
-        this.player.b();
+        this.mBall.b();
       } 
-      if (this.player.z == 1) {
-        if (this.noOfLife < 0) {
-          this.game.CompletedLevel();
+      if (this.mBall.z == 1) {
+        if (this.numLives < 0) {
+          this.mUI.CompletedLevel();
           stop();
-          this.game.b(false);
+          this.mUI.b(false);
           return;
         } 
-        int i = this.player.d;
-        int j = this.player.c;
-        int k = this.player.b;
-        a(this.player.d * 12 + 6, this.player.c * 12 + 6, this.player.b, 0, 0);
-        this.player.d = i;
-        this.player.c = j;
-        this.player.b = k;
+        int i = this.mBall.d;
+        int j = this.mBall.c;
+        int k = this.mBall.b;
+        a(this.mBall.d * 12 + 6, this.mBall.c * 12 + 6, this.mBall.b, 0, 0);
+        this.mBall.d = i;
+        this.mBall.c = j;
+        this.mBall.b = k;
       } 
       if (this.B != 0)
         o(); 
-      if (this.noOfRingCollected == this.totalRingInLevel)
-        this.openPortal = true; 
-      if (this.openPortal && this.z && (this.W + 1) * 12 > m() && this.W * 12 < g()) {
+      if (this.numRings == this.totalRingInLevel)
+        this.mOpenExitFlag = true; 
+      if (this.mOpenExitFlag && this.z && (this.W + 1) * 12 > m() && this.W * 12 < g()) {
         if (this.M) {
           this.z = false;
-          this.openPortal = false;
+          this.mOpenExitFlag = false;
         } else {
           h();
         } 
@@ -301,33 +301,33 @@ public class BounceCanvas extends TileCanvas {
         this.map[this.u + 1][this.al] = (short)(this.map[this.u + 1][this.al] | 0x80);
         this.map[this.u + 1][this.al + 1] = (short)(this.map[this.u + 1][this.al + 1] | 0x80);
       } 
-      this.ad = 0;
-      if (this.player.h != 0 || this.player.g != 0 || this.player.y != 0) {
-        if (this.player.h > this.ad)
-          this.ad = this.player.h; 
-        if (this.player.g > this.ad)
-          this.ad = this.player.g; 
-        if (this.player.y > this.ad)
-          this.ad = this.player.y; 
-        if (this.ad % 30 == 0 || this.ad == 1)
-          this.y = true; 
+      this.bonusCntrValue = 0;
+      if (this.mBall.h != 0 || this.mBall.g != 0 || this.mBall.y != 0) {
+        if (this.mBall.h > this.bonusCntrValue)
+          this.bonusCntrValue = this.mBall.h; 
+        if (this.mBall.g > this.bonusCntrValue)
+          this.bonusCntrValue = this.mBall.g; 
+        if (this.mBall.y > this.bonusCntrValue)
+          this.bonusCntrValue = this.mBall.y; 
+        if (this.bonusCntrValue % 30 == 0 || this.bonusCntrValue == 1)
+          this.mPaintUIFlag = true; 
       } 
     } 
-    c(this.player.s);
+    c(this.mBall.s);
     q();
     repaint();
-    if (this.e) {
-      this.e = false;
-      this.openPortal = false;
+    if (this.mLeaveGame) {
+      this.mLeaveGame = false;
+      this.mOpenExitFlag = false;
       this.isCheatLevel = true;
       this.currentLevel = 1 + this.currentLevel;
       addSessionScore(5000);
-      this.game.CompletedLevel();
+      this.mUI.CompletedLevel();
       if (this.currentLevel > 11) {
-        this.game.b(true);
+        this.mUI.b(true);
       } else {
-        this.isPlaying = false;
-        this.game.d();
+        this.mIncomingCall = false;
+        this.mUI.d();
         repaint();
       } 
     } 
@@ -339,79 +339,79 @@ public class BounceCanvas extends TileCanvas {
       this.n = 31;
       return;
     } 
-    if (this.player == null)
+    if (this.mBall == null)
       return; 
-    synchronized (this.player) {
+    synchronized (this.mBall) {
       switch (keyCode) {
         case KEY_NUM1:
           this.isCheatLevel = true;
-          if (this.isFly && --this.currentLevel < 1)
+          if (this.mCheat && --this.currentLevel < 1)
             this.currentLevel = 11; 
           break;
         case KEY_NUM3:
           this.isCheatLevel = true;
-          if (this.isFly && ++this.currentLevel > 11)
+          if (this.mCheat && ++this.currentLevel > 11)
             this.currentLevel = 1; 
           break;
         case KEY_NUM7:
-          if (this.triggerCheat == 0 || this.triggerCheat == 2) {
-            this.triggerCheat++;
+          if (this.mCheatSeq == 0 || this.mCheatSeq == 2) {
+            this.mCheatSeq++;
             break;
           } 
-          this.triggerCheat = 0;
+          this.mCheatSeq = 0;
           break;
         case KEY_NUM8:
-          if (this.triggerCheat == 1 || this.triggerCheat == 3) {
-            this.triggerCheat++;
+          if (this.mCheatSeq == 1 || this.mCheatSeq == 3) {
+            this.mCheatSeq++;
             break;
           } 
-          if (this.triggerCheat == 5) {
-            this.upSFX.play(1);
-            this.isInvincibility = true;
-            this.triggerCheat = 0;
+          if (this.mCheatSeq == 5) {
+            this.mSoundHoop.play(1);
+            this.mInvincible = true;
+            this.mCheatSeq = 0;
             break;
           } 
-          this.triggerCheat = 0;
+          this.mCheatSeq = 0;
           break;
         case KEY_NUM9:
-          if (this.triggerCheat == 4) {
-            this.triggerCheat++;
+          if (this.mCheatSeq == 4) {
+            this.mCheatSeq++;
             break;
           } 
-          if (this.triggerCheat == 5) {
-            this.popSFX.play(1);
-            this.isFly = true;
-            this.triggerCheat = 0;
+          if (this.mCheatSeq == 5) {
+            this.mSoundPop.play(1);
+            this.mCheat = true;
+            this.mCheatSeq = 0;
             break;
           } 
-          this.triggerCheat = 0;
+          this.mCheatSeq = 0;
           break;
         case KEY_POUND:
-          if (this.isFly)
-            this.player.g = 300; 
+          if (this.mCheat)
+            this.mBall.g = 300; 
           break;
         case -7:
         case -6:
-          this.isPlaying = false;
-          this.game.Home();
+          this.mIncomingCall = false;
+          this.mUI.displayMainMenu();
           break;
         default:
           switch (getGameAction(keyCode)) {
             case UP:
-              this.player.move(8);
+              this.mBall.move(8);
               break;
             case DOWN:
-              this.player.move(4);
+              this.mBall.move(4);
               break;
             case LEFT:
-              this.player.move(1);
+              this.mBall.move(1);
               break;
             case RIGHT:
-              this.player.move(2);
+              this.mBall.move(2);
               break;
             case FIRE:
-              if (this.isInvincibility)
-                this.e = true; 
+              if (this.mInvincible)
+                this.mLeaveGame = true; 
               break;
           } 
           break;
@@ -420,21 +420,21 @@ public class BounceCanvas extends TileCanvas {
   }
   
   public void keyReleased(int keyCode) {
-    if (this.player == null)
+    if (this.mBall == null)
       return; 
-    synchronized (this.player) {
+    synchronized (this.mBall) {
       switch (getGameAction(keyCode)) {
         case 1:
-          this.player.a(8);
+          this.mBall.a(8);
           break;
         case 6:
-          this.player.a(4);
+          this.mBall.a(4);
           break;
         case 2:
-          this.player.a(1);
+          this.mBall.a(1);
           break;
         case 5:
-          this.player.a(2);
+          this.mBall.a(2);
           break;
       } 
     } 
@@ -478,24 +478,24 @@ public class BounceCanvas extends TileCanvas {
   }
   
   public void hideNotify() {
-    if (this.isPlaying) {
-      if (this.player != null)
-        this.player.a(); 
-      this.game.Home();
+    if (this.mIncomingCall) {
+      if (this.mBall != null)
+        this.mBall.a(); 
+      this.mUI.displayMainMenu();
     } 
-    this.isPlaying = true;
+    this.mIncomingCall = true;
   }
   
   public void b() {
-    for (byte b1 = 0; b1 < this.game.r; b1++) {
-      this.ae[b1][0] = this.game.l[b1][0];
-      this.ae[b1][1] = this.game.l[b1][1];
-      this.w[b1][0] = this.game.D[b1][0];
-      this.w[b1][1] = this.game.D[b1][1];
+    for (byte b1 = 0; b1 < this.mUI.r; b1++) {
+      this.ae[b1][0] = this.mUI.l[b1][0];
+      this.ae[b1][1] = this.mUI.l[b1][1];
+      this.w[b1][0] = this.mUI.D[b1][0];
+      this.w[b1][1] = this.mUI.D[b1][1];
     } 
-    this.game.D = null;
-    this.game.l = null;
-    this.game.r = 0;
+    this.mUI.D = null;
+    this.mUI.l = null;
+    this.mUI.r = 0;
   }
   
   public void k() {
@@ -543,13 +543,13 @@ public class BounceCanvas extends TileCanvas {
         } 
       } 
     } 
-    this.game.u = null;
-    this.game.p = 0;
+    this.mUI.u = null;
+    this.mUI.p = 0;
   }
   
   public boolean a(int paramInt1, int paramInt2, byte paramByte) {
-    for (byte b1 = 0; b1 < this.game.p; b1++) {
-      if (this.game.u[b1][0] == paramInt1 && this.game.u[b1][1] == paramInt2)
+    for (byte b1 = 0; b1 < this.mUI.p; b1++) {
+      if (this.mUI.u[b1][0] == paramInt1 && this.mUI.u[b1][1] == paramInt2)
         return false; 
     } 
     return true;

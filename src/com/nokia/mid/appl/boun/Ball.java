@@ -3,7 +3,7 @@ package com.nokia.mid.appl.boun;
 import com.nokia.mid.sound.Sound;
 import javax.microedition.lcdui.Image;
 
-public class Player {
+public class Ball {
   private boolean j = true;
   
   public int s;
@@ -149,7 +149,7 @@ public class Player {
   
   private int q;
   
-  public Player(int paramInt1, int paramInt2, int paramInt3, BounceCanvas parame) {
+  public Ball(int paramInt1, int paramInt2, int paramInt3, BounceCanvas parame) {
     this.s = paramInt1;
     this.r = paramInt2;
     this.l = 0;
@@ -254,15 +254,15 @@ public class Player {
   }
   
   public void e() {
-    if (!this.mainScene.isInvincibility) {
+    if (!this.mainScene.mInvincible) {
       this.q = 7;
       this.z = 2;
-      this.mainScene.noOfLife--;
+      this.mainScene.numLives--;
       this.h = 0;
       this.g = 0;
       this.y = 0;
-      this.mainScene.y = true;
-      this.mainScene.popSFX.play(1);
+      this.mainScene.mPaintUIFlag = true;
+      this.mainScene.mSoundPop.play(1);
     } 
   }
   
@@ -270,8 +270,8 @@ public class Player {
   // chạm ring
   public void OnRingCollisionEnter() {
     this.mainScene.addSessionScore(500);
-    this.mainScene.noOfRingCollected++;
-    this.mainScene.y = true;
+    this.mainScene.numRings++;
+    this.mainScene.mPaintUIFlag = true;
   }
   
   public void b(int paramInt) {
@@ -587,7 +587,7 @@ public class Player {
         this.mainScene.map[this.c][this.d] = 128;
         a(xPos, yPos);
         this.mainScene.map[yPos][xPos] = 136;
-        sound = this.mainScene.popSFX;
+        sound = this.mainScene.mSoundPop;
         break;
       case 23:
     	  // Left Big Ring
@@ -599,7 +599,7 @@ public class Player {
           OnRingCollisionEnter();
           this.mainScene.map[yPos][xPos] = (short)(0x9B | i);
           this.mainScene.map[yPos][xPos + 1] = (short)(0x9C | i);
-          sound = this.mainScene.upSFX;
+          sound = this.mainScene.mSoundHoop;
         } 
         break;
       case 15:
@@ -614,7 +614,7 @@ public class Player {
           OnRingCollisionEnter();
           this.mainScene.map[yPos][xPos] = (short)(0x93 | i);
           this.mainScene.map[yPos][xPos + 1] = (short)(0x94 | i);
-          sound = this.mainScene.upSFX;
+          sound = this.mainScene.mSoundHoop;
         } 
         break;
       case 24:
@@ -625,7 +625,7 @@ public class Player {
           OnRingCollisionEnter();
           this.mainScene.map[yPos][xPos] = (short)(0x9C | i);
           this.mainScene.map[yPos][xPos - 1] = (short)(0x9B | i);
-          sound = this.mainScene.upSFX;
+          sound = this.mainScene.mSoundHoop;
         } 
         break;
       case 16:
@@ -640,7 +640,7 @@ public class Player {
           OnRingCollisionEnter();
           this.mainScene.map[yPos][xPos] = (short)(0x94 | i);
           this.mainScene.map[yPos][xPos - 1] = (short)(0x93 | i);
-          sound = this.mainScene.upSFX;
+          sound = this.mainScene.mSoundHoop;
         } 
         break;
       case 21:
@@ -651,7 +651,7 @@ public class Player {
           OnRingCollisionEnter();
           this.mainScene.map[yPos][xPos] = (short)(0x99 | i);
           this.mainScene.map[yPos + 1][xPos] = (short)(0x9A | i);
-          sound = this.mainScene.upSFX;
+          sound = this.mainScene.mSoundHoop;
         } 
         break;
       case 13:
@@ -666,7 +666,7 @@ public class Player {
           OnRingCollisionEnter();
           this.mainScene.map[yPos][xPos] = (short)(0x91 | i);
           this.mainScene.map[yPos + 1][xPos] = (short)(0x92 | i);
-          sound = this.mainScene.upSFX;
+          sound = this.mainScene.mSoundHoop;
         } 
         break;
       case 22:
@@ -675,7 +675,7 @@ public class Player {
         	OnRingCollisionEnter();
           this.mainScene.map[yPos][xPos] = (short)(0x9A | i);
           this.mainScene.map[yPos - 1][xPos] = (short)(0x99 | i);
-          sound = this.mainScene.upSFX;
+          sound = this.mainScene.mSoundHoop;
         } 
         break;
       case 14:
@@ -688,7 +688,7 @@ public class Player {
           OnRingCollisionEnter();
           this.mainScene.map[yPos][xPos] = (short)(0x92 | i);
           this.mainScene.map[yPos - 1][xPos] = (short)(0x91 | i);
-          sound = this.mainScene.upSFX;
+          sound = this.mainScene.mSoundHoop;
         } 
         break;
       case 17:
@@ -717,8 +717,8 @@ public class Player {
     	  // cổng
         if (b(paramInt1, paramInt2, yPos, xPos, j)) {
           if (this.mainScene.M) {
-            this.mainScene.e = true;
-            sound = this.mainScene.popSFX;
+            this.mainScene.mLeaveGame = true;
+            sound = this.mainScene.mSoundPop;
             break;
           } 
           isCollisionBlueGround = false;
@@ -727,12 +727,12 @@ public class Player {
       case 29:
     	  // life item
         this.mainScene.addSessionScore(1000);
-        if (this.mainScene.noOfLife < 5) {
-          this.mainScene.noOfLife++;
-          this.mainScene.y = true;
+        if (this.mainScene.numLives < 5) {
+          this.mainScene.numLives++;
+          this.mainScene.mPaintUIFlag = true;
         } 
         this.mainScene.map[yPos][xPos] = 128;
-        sound = this.mainScene.popSFX;
+        sound = this.mainScene.mSoundPop;
         break;
       case 39:
       case 40:
@@ -757,7 +757,7 @@ public class Player {
       case 49:
       case 50:
         this.g = 300;
-        sound = this.mainScene.popSFX;
+        sound = this.mainScene.mSoundPop;
         this.m = false;
         isCollisionBlueGround = false;
         break;
@@ -766,12 +766,12 @@ public class Player {
       case 53:
       case 54:
         this.y = 300;
-        sound = this.mainScene.popSFX;
+        sound = this.mainScene.mSoundPop;
         isCollisionBlueGround = false;
         break;
       case 38:
         this.h = 300;
-        sound = this.mainScene.popSFX;
+        sound = this.mainScene.mSoundPop;
         isCollisionBlueGround = false;
         break;
     } 
@@ -790,8 +790,8 @@ public class Player {
       this.q--;
       if (this.q == 0) {
         this.z = 1;
-        if (this.mainScene.noOfLife < 0)
-          this.mainScene.e = true; 
+        if (this.mainScene.numLives < 0)
+          this.mainScene.mLeaveGame = true; 
       } 
       return;
     } 

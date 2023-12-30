@@ -700,7 +700,7 @@ public abstract class TileCanvas extends FullCanvas {
     this.D = a(image, 1, 4);
   }
   
-  public void a(Player paramf) {
+  public void a(Ball paramf) {
     paramf.A = this.Q[47];
     paramf.k = this.Q[48];
     paramf.B = this.Q[49];

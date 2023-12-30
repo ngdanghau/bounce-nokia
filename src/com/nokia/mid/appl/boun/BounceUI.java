@@ -110,7 +110,7 @@ public class BounceUI implements CommandListener {
     this.menu[3] = com.nokia.mid.appl.boun.c.a(8); // Instructions
   }
   
-  public synchronized void Home() {
+  public synchronized void displayMainMenu() {
 	
     this.mainMenu = new List(com.nokia.mid.appl.boun.c.a(0), 3); // 0 = Bounce
     if (this.BACK == null) {
@@ -157,7 +157,7 @@ public class BounceUI implements CommandListener {
       this.mCanvas.a(paramInt, 0, 3);
     } 
     this.mCanvas.d();
-    this.mCanvas.player.a();
+    this.mCanvas.mBall.a();
     this.m.setCurrent((Displayable)this.mCanvas);
     this.K = 1;
   }
@@ -273,7 +273,7 @@ public class BounceUI implements CommandListener {
         this.mIDlet.destroyApp(true);
         this.mIDlet.notifyDestroyed();
       } else {
-    	  Home();
+    	  displayMainMenu();
       } 
     } else if (paramCommand == this.OK) {
       this.K = 1;
@@ -369,7 +369,7 @@ public class BounceUI implements CommandListener {
           dataOutputStream.writeInt(this.highScore);
           break;
         case 3:
-          if (this.mCanvas == null || this.mCanvas.player == null)
+          if (this.mCanvas == null || this.mCanvas.mBall == null)
             return; 
           b1 = 0;
           if (this.K == 1) {
@@ -379,24 +379,24 @@ public class BounceUI implements CommandListener {
           } 
           dataOutputStream.writeLong(System.currentTimeMillis());
           dataOutputStream.writeByte(b1);
-          dataOutputStream.writeByte(this.mCanvas.noOfLife);
-          dataOutputStream.writeByte(this.mCanvas.noOfRingCollected);
+          dataOutputStream.writeByte(this.mCanvas.numLives);
+          dataOutputStream.writeByte(this.mCanvas.numRings);
           dataOutputStream.writeByte(this.mCanvas.currentLevel);
-          dataOutputStream.writeByte(this.mCanvas.player.a);
-          dataOutputStream.writeInt(this.mCanvas.sessionScore);
+          dataOutputStream.writeByte(this.mCanvas.mBall.a);
+          dataOutputStream.writeInt(this.mCanvas.mScore);
           dataOutputStream.writeInt(this.mCanvas.l);
           dataOutputStream.writeInt(this.mCanvas.k);
-          dataOutputStream.writeInt(this.mCanvas.player.s);
-          dataOutputStream.writeInt(this.mCanvas.player.r);
-          dataOutputStream.writeInt(this.mCanvas.player.l);
-          dataOutputStream.writeInt(this.mCanvas.player.o);
+          dataOutputStream.writeInt(this.mCanvas.mBall.s);
+          dataOutputStream.writeInt(this.mCanvas.mBall.r);
+          dataOutputStream.writeInt(this.mCanvas.mBall.l);
+          dataOutputStream.writeInt(this.mCanvas.mBall.o);
           dataOutputStream.writeInt(0);
           dataOutputStream.writeInt(0);
-          dataOutputStream.writeInt(this.mCanvas.player.d);
-          dataOutputStream.writeInt(this.mCanvas.player.c);
-          dataOutputStream.writeInt(this.mCanvas.player.h);
-          dataOutputStream.writeInt(this.mCanvas.player.g);
-          dataOutputStream.writeInt(this.mCanvas.player.y);
+          dataOutputStream.writeInt(this.mCanvas.mBall.d);
+          dataOutputStream.writeInt(this.mCanvas.mBall.c);
+          dataOutputStream.writeInt(this.mCanvas.mBall.h);
+          dataOutputStream.writeInt(this.mCanvas.mBall.g);
+          dataOutputStream.writeInt(this.mCanvas.mBall.y);
           arrayOfInt = new int[50][3];
           b2 = 0;
           for (b3 = 0; b3 < this.mCanvas.height; b3++) {
@@ -438,18 +438,18 @@ public class BounceUI implements CommandListener {
       this.unlockedLevel = Math.min(this.mCanvas.currentLevel, 11); // 11 là level tối đa mà game có
       saveGameData(1);
     } 
-    if (this.mCanvas.sessionScore > this.highScore) {
-      this.highScore = this.mCanvas.sessionScore;
+    if (this.mCanvas.mScore > this.highScore) {
+      this.highScore = this.mCanvas.mScore;
       this.isNewHighScore = true;
       saveGameData(2);
     } 
-    this.sessionScore = this.mCanvas.sessionScore;
+    this.sessionScore = this.mCanvas.mScore;
   }
   
   public void b(boolean paramBoolean) {
     this.K = 3;
     this.J = 0;
-    this.mCanvas.isPlaying = false;
+    this.mCanvas.mIncomingCall = false;
     a(paramBoolean);
   }
 }
