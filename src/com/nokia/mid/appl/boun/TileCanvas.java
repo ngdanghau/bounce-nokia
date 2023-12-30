@@ -124,8 +124,8 @@ public abstract class TileCanvas extends FullCanvas {
     String str = "";
     String[] arrayOfString = new String[1];
     arrayOfString[0] = (new Integer(this.currentLevel)).toString();
-    this.levelTitle = com.nokia.mid.appl.boun.c.a(9, arrayOfString); // Level {}
-    this.levelCompletedText = com.nokia.mid.appl.boun.c.a(10, arrayOfString); // Level {} completed!
+    this.levelTitle = com.nokia.mid.appl.boun.Local.getText(9, arrayOfString); // Level {}
+    this.levelCompletedText = com.nokia.mid.appl.boun.Local.getText(10, arrayOfString); // Level {} completed!
     arrayOfString[0] = null;
     arrayOfString = null;
     if (paramInt < 10) {

@@ -104,18 +104,18 @@ public class BounceUI implements CommandListener {
   }
   
   public synchronized void e() {
-    this.menu[0] = com.nokia.mid.appl.boun.c.a(4); // Continue
-    this.menu[1] = com.nokia.mid.appl.boun.c.a(11); // New Game
-    this.menu[2] = com.nokia.mid.appl.boun.c.a(7);// High Score
-    this.menu[3] = com.nokia.mid.appl.boun.c.a(8); // Instructions
+    this.menu[0] = Local.getText(4); // Continue
+    this.menu[1] = Local.getText(11); // New Game
+    this.menu[2] = Local.getText(7);// High Score
+    this.menu[3] = Local.getText(8); // Instructions
   }
   
   public synchronized void displayMainMenu() {
 	
-    this.mainMenu = new List(com.nokia.mid.appl.boun.c.a(0), 3); // 0 = Bounce
+    this.mainMenu = new List(Local.getText(0), 3); // 0 = Bounce
     if (this.BACK == null) {
-      this.BACK = new Command(com.nokia.mid.appl.boun.c.a(2), 2, 1); // 2 = Back
-      this.EXIT = new Command(com.nokia.mid.appl.boun.c.a(5), 7, 1); // 5 = Exit
+      this.BACK = new Command(Local.getText(2), 2, 1); // 2 = Back
+      this.EXIT = new Command(Local.getText(5), 7, 1); // 5 = Exit
     } 
     if (this.K == 1 || this.J == 1 || this.J == 2)
       this.mainMenu.append(this.menu[0], null); 
@@ -142,9 +142,9 @@ public class BounceUI implements CommandListener {
     String[] arrayOfString2 = new String[1];
     for (byte b = 0; b < this.unlockedLevel; b++) {
       arrayOfString2[0] = String.valueOf(b + 1);
-      arrayOfString1[b] = com.nokia.mid.appl.boun.c.a(9, arrayOfString2);
+      arrayOfString1[b] = Local.getText(9, arrayOfString2);
     } 
-    this.F = new List(com.nokia.mid.appl.boun.c.a(11), 3, arrayOfString1, null); // 11 = New game
+    this.F = new List(Local.getText(11), 3, arrayOfString1, null); // 11 = New game
     this.F.addCommand(this.BACK);
     this.F.setCommandListener(this);
     // F la List Control
@@ -165,7 +165,7 @@ public class BounceUI implements CommandListener {
   // su kien khi click vao high score
   // h la diem so
   public void c() {
-    this.displayForm = new Form(com.nokia.mid.appl.boun.c.a(7)); // 7 = High score
+    this.displayForm = new Form(Local.getText(7)); // 7 = High score
     this.displayForm.append(String.valueOf(this.highScore));
     this.displayForm.addCommand(this.BACK);
     this.displayForm.setCommandListener(this);
@@ -174,13 +174,13 @@ public class BounceUI implements CommandListener {
   
   // su kien khi nhan vao Instructions
   public void b() {
-    this.displayForm = new Form(com.nokia.mid.appl.boun.c.a(8)); // 8 = Instructions
+    this.displayForm = new Form(Local.getText(8)); // 8 = Instructions
     String[] arrayOfString = { 
     		this.mCanvas.getKeyName(this.mCanvas.getKeyCode(2)), // 2 = LEFT
     		this.mCanvas.getKeyName(this.mCanvas.getKeyCode(5)),  // 5 = RIGHT
     		this.mCanvas.getKeyName(this.mCanvas.getKeyCode(1)) // 1 = UP
     };
-    this.displayForm.append(com.nokia.mid.appl.boun.c.a(1, arrayOfString));
+    this.displayForm.append(Local.getText(1, arrayOfString));
     this.displayForm.addCommand(this.BACK);
     this.displayForm.setCommandListener(this);
     this.m.setCurrent((Displayable)this.displayForm);
@@ -190,16 +190,16 @@ public class BounceUI implements CommandListener {
   public void a(boolean paramBoolean) {
     this.mCanvas.stop();
     if (this.iOK == null)
-      this.iOK = new Command(com.nokia.mid.appl.boun.c.a(13), 4, 1);  // 13 = OK
-    this.displayForm = new Form(com.nokia.mid.appl.boun.c.a(6)); // 6 = Game over
+      this.iOK = new Command(Local.getText(13), 4, 1);  // 13 = OK
+    this.displayForm = new Form(Local.getText(6)); // 6 = Game over
     if (paramBoolean) {
-      this.displayForm.append(com.nokia.mid.appl.boun.c.a(3)); // 3 = Congrats!
+      this.displayForm.append(Local.getText(3)); // 3 = Congrats!
     } else {
-      this.displayForm.append(com.nokia.mid.appl.boun.c.a(6)); // 6 = Game over
+      this.displayForm.append(Local.getText(6)); // 6 = Game over
     } 
     this.displayForm.append("\n\n");
     if (this.isNewHighScore) {
-      this.displayForm.append(com.nokia.mid.appl.boun.c.a(12)); // 12 = New high score!
+      this.displayForm.append(Local.getText(12)); // 12 = New high score!
       this.displayForm.append("\n\n");
     } 
     this.displayForm.append(String.valueOf(this.sessionScore));
@@ -215,7 +215,7 @@ public class BounceUI implements CommandListener {
     a(false, 0);
     this.K = 5;
     if (this.OK == null)
-      this.OK = new Command(com.nokia.mid.appl.boun.c.a(4), 4, 1); // 4 = Continue
+      this.OK = new Command(Local.getText(4), 4, 1); // 4 = Continue
     this.displayForm = new Form("");
     this.displayForm.append(this.mCanvas.levelCompletedText);
     this.displayForm.append("\n\n");
@@ -453,9 +453,3 @@ public class BounceUI implements CommandListener {
     a(paramBoolean);
   }
 }
-
-
-/* Location:              D:\Java Mobile\nokiabounc_jdifc8jb.jar!\com\nokia\mid\appl\boun\a.class
- * Java compiler version: 1 (45.3)
- * JD-Core Version:       1.1.3
- */
