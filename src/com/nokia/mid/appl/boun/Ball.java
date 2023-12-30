@@ -27,15 +27,15 @@ public class Ball {
   
   public int b;
   
-  public int z;
+  public int ballState;
   
   public int t;
   
-  public int h;
+  public int speedBonusCntr;
   
-  public int g;
+  public int gravBonusCntr;
   
-  public int y;
+  public int jumpBonusCntr;
   
   public boolean m;
   
@@ -139,13 +139,13 @@ public class Ball {
   
   public BounceCanvas mCanvas;
   
-  public Image i;
+  public Image mBallImage;
   
   public Image k;
   
   public Image B;
   
-  public Image A;
+  public Image smallBallImage;
   
   private int q;
   
@@ -160,11 +160,11 @@ public class Ball {
     this.v = false;
     this.u = false;
     this.q = 0;
-    this.h = 0;
-    this.g = 0;
-    this.y = 0;
+    this.speedBonusCntr = 0;
+    this.gravBonusCntr = 0;
+    this.jumpBonusCntr = 0;
     this.C = 0;
-    this.z = 0;
+    this.ballState = 0;
     this.x = 0;
     this.mCanvas.setBallImages(this);
     if (paramInt3 == 12) {
@@ -211,7 +211,7 @@ public class Ball {
   public void f() {
     this.mBallSize = 16;
     this.mHalfBallSize = 8;
-    this.i = this.B;
+    this.mBallImage = this.B;
     boolean bool = false;
     for (byte b = 1; !bool; b++) {
       bool = true;
@@ -250,17 +250,17 @@ public class Ball {
   public void c() {
     this.mBallSize = 12;
     this.mHalfBallSize = 6;
-    this.i = this.A;
+    this.mBallImage = this.smallBallImage;
   }
   
   public void e() {
     if (!this.mCanvas.mInvincible) {
       this.q = 7;
-      this.z = 2;
+      this.ballState = 2;
       this.mCanvas.numLives--;
-      this.h = 0;
-      this.g = 0;
-      this.y = 0;
+      this.speedBonusCntr = 0;
+      this.gravBonusCntr = 0;
+      this.jumpBonusCntr = 0;
       this.mCanvas.mPaintUIFlag = true;
       this.mCanvas.mSoundPop.play(1);
     } 
@@ -502,9 +502,9 @@ public class Ball {
   
   public boolean OnCollisionEnter(int paramInt1, int paramInt2, int yPos, int xPos) {
     int k;
-    if (yPos >= this.mCanvas.height || yPos < 0 || xPos >= this.mCanvas.width || xPos < 0)
+    if (yPos >= this.mCanvas.mTileMapHeight || yPos < 0 || xPos >= this.mCanvas.mTileMapWidth || xPos < 0)
       return false; 
-    if (this.z == 2)
+    if (this.ballState == 2)
       return false; 
     boolean paramBoolean = true;
     int i = this.mCanvas.tileMap[yPos][xPos] & 0x40;
@@ -560,8 +560,8 @@ public class Ball {
     	  // Dyn Thorn Axis
         k = this.mCanvas.b(xPos, yPos);
         if (k != -1) {
-          int m = this.mCanvas.P[k][0] * 12 + this.mCanvas.w[k][0];
-          int n = this.mCanvas.P[k][1] * 12 + this.mCanvas.w[k][1];
+          int m = this.mCanvas.P[k][0] * 12 + this.mCanvas.mMOOffset[k][0];
+          int n = this.mCanvas.P[k][1] * 12 + this.mCanvas.mMOOffset[k][1];
           if (a(paramInt1 - this.mHalfBallSize + 1, paramInt2 - this.mHalfBallSize + 1, paramInt1 + this.mHalfBallSize - 1, paramInt2 + this.mHalfBallSize - 1, m + 1, n + 1, m + 24 - 1, n + 24 - 1)) {
         	  paramBoolean = false;
             e();
@@ -756,7 +756,7 @@ public class Ball {
       case 48:
       case 49:
       case 50:
-        this.g = 300;
+        this.gravBonusCntr = 300;
         sound = this.mCanvas.mSoundPop;
         this.m = false;
         paramBoolean = false;
@@ -765,12 +765,12 @@ public class Ball {
       case 52:
       case 53:
       case 54:
-        this.y = 300;
+        this.jumpBonusCntr = 300;
         sound = this.mCanvas.mSoundPop;
         paramBoolean = false;
         break;
       case 38:
-        this.h = 300;
+        this.speedBonusCntr = 300;
         sound = this.mCanvas.mSoundPop;
         paramBoolean = false;
         break;
@@ -780,16 +780,16 @@ public class Ball {
     return paramBoolean;
   }
   
-  public void b() {
+  public void update() {
     int i = this.xPos;
     int j = 0;
     int k = 0;
     byte b1 = 0;
     boolean bool1 = false;
-    if (this.z == 2) {
+    if (this.ballState == 2) {
       this.q--;
       if (this.q == 0) {
-        this.z = 1;
+        this.ballState = 1;
         if (this.mCanvas.numLives < 0)
           this.mCanvas.mLeaveGame = true; 
       } 
@@ -815,26 +815,26 @@ public class Ball {
       k = 80;
       j = 4;
     } 
-    if (this.g != 0) {
+    if (this.gravBonusCntr != 0) {
       bool1 = true;
       k *= -1;
       j *= -1;
-      this.g--;
-      if (this.g == 0) {
+      this.gravBonusCntr--;
+      if (this.gravBonusCntr == 0) {
         bool1 = false;
         this.m = false;
         k *= -1;
         j *= -1;
       } 
     } 
-    if (this.y != 0) {
+    if (this.jumpBonusCntr != 0) {
       if (-1 * Math.abs(this.t) > -80)
         if (bool1) {
           this.t = 80;
         } else {
           this.t = -80;
         }  
-      this.y--;
+      this.jumpBonusCntr--;
     } 
     this.C++;
     if (this.C == 3)
@@ -889,7 +889,7 @@ public class Ball {
             } else {
               this.t += -10;
             } 
-          } else if (this.y == 0) {
+          } else if (this.jumpBonusCntr == 0) {
             this.t = 0;
           } 
           if (this.ySpeed < 10 && this.ySpeed > -10) {
@@ -928,9 +928,9 @@ public class Ball {
       if (this.ySpeed > k)
         this.ySpeed = k; 
     } 
-    if (this.h != 0) {
+    if (this.speedBonusCntr != 0) {
       b1 = 100;
-      this.h--;
+      this.speedBonusCntr--;
     } else {
       b1 = 50;
     } 
@@ -943,7 +943,7 @@ public class Ball {
     } else if (this.xSpeed < 0) {
       this.xSpeed += 4;
     } 
-    if (this.mBallSize == 16 && this.y == 0)
+    if (this.mBallSize == 16 && this.jumpBonusCntr == 0)
       if (bool1) {
         this.t += 5;
       } else {

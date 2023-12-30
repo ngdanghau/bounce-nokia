@@ -67,11 +67,11 @@ public class BounceUI implements CommandListener {
   
   public int[][] u;
   
-  public int r;
+  public int mSavedSpikeCount;
   
-  public short[][] D;
+  public short[][] mSavedSpikeOffset;
   
-  public short[][] l;
+  public short[][] mSavedSpikeDirection;
   
   public long o;
   
@@ -331,14 +331,14 @@ public class BounceUI implements CommandListener {
           this.u[b1][1] = dataInputStream.readShort();
           this.u[b1][2] = dataInputStream.readByte();
         } 
-        this.r = dataInputStream.readByte();
-        this.D = new short[this.r][2];
-        this.l = new short[this.r][2];
-        for (byte b2 = 0; b2 < this.r; b2++) {
-          this.D[b2][0] = dataInputStream.readShort();
-          this.D[b2][1] = dataInputStream.readShort();
-          this.l[b2][0] = dataInputStream.readShort();
-          this.l[b2][1] = dataInputStream.readShort();
+        this.mSavedSpikeCount = dataInputStream.readByte();
+        this.mSavedSpikeOffset = new short[this.mSavedSpikeCount][2];
+        this.mSavedSpikeDirection = new short[this.mSavedSpikeCount][2];
+        for (byte b2 = 0; b2 < this.mSavedSpikeCount; b2++) {
+          this.mSavedSpikeOffset[b2][0] = dataInputStream.readShort();
+          this.mSavedSpikeOffset[b2][1] = dataInputStream.readShort();
+          this.mSavedSpikeDirection[b2][0] = dataInputStream.readShort();
+          this.mSavedSpikeDirection[b2][1] = dataInputStream.readShort();
         } 
         if (dataInputStream.readLong() != -559038737L)
           this.J = 0; 
@@ -394,13 +394,13 @@ public class BounceUI implements CommandListener {
           dataOutputStream.writeInt(0);
           dataOutputStream.writeInt(this.mCanvas.mBall.d);
           dataOutputStream.writeInt(this.mCanvas.mBall.c);
-          dataOutputStream.writeInt(this.mCanvas.mBall.h);
-          dataOutputStream.writeInt(this.mCanvas.mBall.g);
-          dataOutputStream.writeInt(this.mCanvas.mBall.y);
+          dataOutputStream.writeInt(this.mCanvas.mBall.speedBonusCntr);
+          dataOutputStream.writeInt(this.mCanvas.mBall.gravBonusCntr);
+          dataOutputStream.writeInt(this.mCanvas.mBall.jumpBonusCntr);
           arrayOfInt = new int[50][3];
           b2 = 0;
-          for (b3 = 0; b3 < this.mCanvas.height; b3++) {
-            for (byte b = 0; b < this.mCanvas.width; b++) {
+          for (b3 = 0; b3 < this.mCanvas.mTileMapHeight; b3++) {
+            for (byte b = 0; b < this.mCanvas.mTileMapWidth; b++) {
               byte b6 = (byte)(this.mCanvas.tileMap[b3][b] & 0xFF7F & 0xFFFFFFBF);
               if (b6 == 7 || b6 == 29 || b6 == 13 || b6 == 14 || b6 == 21 || b6 == 22 || b6 == 15 || b6 == 16 || b6 == 23 || b6 == 24) {
                 arrayOfInt[b2][0] = b3;
@@ -419,10 +419,10 @@ public class BounceUI implements CommandListener {
           arrayOfInt = null;
           dataOutputStream.writeByte(this.mCanvas.B);
           for (b5 = 0; b5 < this.mCanvas.B; b5++) {
-            dataOutputStream.writeShort(this.mCanvas.w[b5][0]);
-            dataOutputStream.writeShort(this.mCanvas.w[b5][1]);
-            dataOutputStream.writeShort(this.mCanvas.ae[b5][0]);
-            dataOutputStream.writeShort(this.mCanvas.ae[b5][1]);
+            dataOutputStream.writeShort(this.mCanvas.mMOOffset[b5][0]);
+            dataOutputStream.writeShort(this.mCanvas.mMOOffset[b5][1]);
+            dataOutputStream.writeShort(this.mCanvas.mMODirection[b5][0]);
+            dataOutputStream.writeShort(this.mCanvas.mMODirection[b5][1]);
           } 
           dataOutputStream.writeLong(-559038737L);
           break;

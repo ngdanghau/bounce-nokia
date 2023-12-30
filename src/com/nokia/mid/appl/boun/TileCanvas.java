@@ -53,9 +53,9 @@ public abstract class TileCanvas extends FullCanvas {
   
   public short[][] tileMap;
   
-  public int width;
+  public int mTileMapWidth;
   
-  public int height;
+  public int mTileMapHeight;
   
   public int totalRingInLevel;
   
@@ -65,9 +65,9 @@ public abstract class TileCanvas extends FullCanvas {
   
   public short[][] O;
   
-  public short[][] ae;
+  public short[][] mMODirection;
   
-  public short[][] w;
+  public short[][] mMOOffset;
   
   public Image[] r;
   
@@ -148,11 +148,11 @@ public abstract class TileCanvas extends FullCanvas {
       this.V = dataInputStream.read();
       a(this.W, this.V, this.Q[12]);
       this.totalRingInLevel = dataInputStream.read();
-      this.width = dataInputStream.read();
-      this.height = dataInputStream.read();
-      this.tileMap = new short[this.height][this.width];
-      for (byte b1 = 0; b1 < this.height; b1++) {
-        for (byte b2 = 0; b2 < this.width; b2++)
+      this.mTileMapWidth = dataInputStream.read();
+      this.mTileMapHeight = dataInputStream.read();
+      this.tileMap = new short[this.mTileMapHeight][this.mTileMapWidth];
+      for (byte b1 = 0; b1 < this.mTileMapHeight; b1++) {
+        for (byte b2 = 0; b2 < this.mTileMapWidth; b2++)
           this.tileMap[b1][b2] = (short)dataInputStream.read(); 
       } 
       this.B = dataInputStream.read();
@@ -195,8 +195,8 @@ public abstract class TileCanvas extends FullCanvas {
   public void a(DataInputStream paramDataInputStream) throws IOException {
     this.P = new short[this.B][2];
     this.O = new short[this.B][2];
-    this.ae = new short[this.B][2];
-    this.w = new short[this.B][2];
+    this.mMODirection = new short[this.B][2];
+    this.mMOOffset = new short[this.B][2];
     this.r = new Image[this.B];
     this.an = new Graphics[this.B];
     for (byte b1 = 0; b1 < this.B; b1++) {
@@ -204,12 +204,12 @@ public abstract class TileCanvas extends FullCanvas {
       this.P[b1][1] = (short)paramDataInputStream.read();
       this.O[b1][0] = (short)paramDataInputStream.read();
       this.O[b1][1] = (short)paramDataInputStream.read();
-      this.ae[b1][0] = (short)paramDataInputStream.read();
-      this.ae[b1][1] = (short)paramDataInputStream.read();
+      this.mMODirection[b1][0] = (short)paramDataInputStream.read();
+      this.mMODirection[b1][1] = (short)paramDataInputStream.read();
       int i = paramDataInputStream.read();
       int j = paramDataInputStream.read();
-      this.w[b1][0] = (short)i;
-      this.w[b1][1] = (short)j;
+      this.mMOOffset[b1][0] = (short)i;
+      this.mMOOffset[b1][1] = (short)j;
     } 
     this.L = Image.createImage(24, 24);
     Graphics graphics = this.L.getGraphics();
@@ -235,28 +235,28 @@ public abstract class TileCanvas extends FullCanvas {
     for (byte b1 = 0; b1 < this.B; b1++) {
       short s1 = this.P[b1][0];
       short s2 = this.P[b1][1];
-      short s3 = this.w[b1][0];
-      short s4 = this.w[b1][1];
-      this.w[b1][0] = (short)(this.w[b1][0] + this.ae[b1][0]);
+      short s3 = this.mMOOffset[b1][0];
+      short s4 = this.mMOOffset[b1][1];
+      this.mMOOffset[b1][0] = (short)(this.mMOOffset[b1][0] + this.mMODirection[b1][0]);
       int n = (this.O[b1][0] - s1 - 2) * 12;
       int i1 = (this.O[b1][1] - s2 - 2) * 12;
-      if (this.w[b1][0] < 0) {
-        this.w[b1][0] = 0;
-      } else if (this.w[b1][0] > n) {
-        this.w[b1][0] = (short)n;
+      if (this.mMOOffset[b1][0] < 0) {
+        this.mMOOffset[b1][0] = 0;
+      } else if (this.mMOOffset[b1][0] > n) {
+        this.mMOOffset[b1][0] = (short)n;
       } 
-      if (this.w[b1][0] == 0 || this.w[b1][0] == n)
-        this.ae[b1][0] = (short)-this.ae[b1][0]; 
-      this.w[b1][1] = (short)(this.w[b1][1] + this.ae[b1][1]);
-      if (this.w[b1][1] < 0) {
-        this.w[b1][1] = 0;
-      } else if (this.w[b1][1] > i1) {
-        this.w[b1][1] = (short)i1;
+      if (this.mMOOffset[b1][0] == 0 || this.mMOOffset[b1][0] == n)
+        this.mMODirection[b1][0] = (short)-this.mMODirection[b1][0]; 
+      this.mMOOffset[b1][1] = (short)(this.mMOOffset[b1][1] + this.mMODirection[b1][1]);
+      if (this.mMOOffset[b1][1] < 0) {
+        this.mMOOffset[b1][1] = 0;
+      } else if (this.mMOOffset[b1][1] > i1) {
+        this.mMOOffset[b1][1] = (short)i1;
       } 
-      if (this.w[b1][1] == 0 || this.w[b1][1] == i1)
-        this.ae[b1][1] = (short)(this.ae[b1][1] * -1); 
-      short s5 = this.w[b1][0];
-      short s6 = this.w[b1][1];
+      if (this.mMOOffset[b1][1] == 0 || this.mMOOffset[b1][1] == i1)
+        this.mMODirection[b1][1] = (short)(this.mMODirection[b1][1] * -1); 
+      short s5 = this.mMOOffset[b1][0];
+      short s6 = this.mMOOffset[b1][1];
       if (s5 < s3) {
         short s = s5;
         s5 = s3;
@@ -292,7 +292,7 @@ public abstract class TileCanvas extends FullCanvas {
     int j;
     int k;
     Graphics graphics = this.E.getGraphics();
-    if (paramInt1 < 0 || paramInt2 < 0 || paramInt1 >= this.width || paramInt2 >= this.height) {
+    if (paramInt1 < 0 || paramInt2 < 0 || paramInt1 >= this.mTileMapWidth || paramInt2 >= this.mTileMapHeight) {
       graphics.drawImage(this.Q[0], paramInt3, paramInt4, 20);
       return;
     } 
@@ -379,8 +379,8 @@ public abstract class TileCanvas extends FullCanvas {
         if (j != -1) {
           k = (paramInt1 - this.P[j][0]) * 12;
           int m = (paramInt2 - this.P[j][1]) * 12;
-          int n = this.w[j][0] - k;
-          int i1 = this.w[j][1] - m;
+          int n = this.mMOOffset[j][0] - k;
+          int i1 = this.mMOOffset[j][1] - m;
           if ((n > -36 && n < 12) || (i1 > -36 && i1 < 12)) {
             this.J.setColor(11591920);
             this.J.fillRect(0, 0, 12, 12);
@@ -510,10 +510,10 @@ public abstract class TileCanvas extends FullCanvas {
       i = 0; 
     if (j < 0)
       j = 0; 
-    if (k > this.width)
-      k = this.width; 
-    if (m > this.height)
-      m = this.height; 
+    if (k > this.mTileMapWidth)
+      k = this.mTileMapWidth; 
+    if (m > this.mTileMapHeight)
+      m = this.mTileMapHeight; 
     for (int n = i; n < k; n++) {
       for (int i1 = j; i1 < m; i1++) {
         int i2 = this.tileMap[i1][n] & 0xFFFFFFBF;
@@ -555,8 +555,8 @@ public abstract class TileCanvas extends FullCanvas {
     int k = paramInt - 64;
     if (k < 0) {
       k = 0;
-    } else if (k > (this.width + 1) * 12 - 156) {
-      k = (this.width + 1) * 12 - 156;
+    } else if (k > (this.mTileMapWidth + 1) * 12 - 156) {
+      k = (this.mTileMapWidth + 1) * 12 - 156;
     } 
     while (k / 12 < i) {
       this.Z -= 12;
@@ -701,7 +701,7 @@ public abstract class TileCanvas extends FullCanvas {
   }
   
   public void setBallImages(Ball paramf) {
-    paramf.A = this.Q[47];
+    paramf.smallBallImage = this.Q[47];
     paramf.k = this.Q[48];
     paramf.B = this.Q[49];
   }

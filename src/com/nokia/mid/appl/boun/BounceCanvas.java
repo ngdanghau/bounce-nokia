@@ -66,9 +66,9 @@ public class BounceCanvas extends TileCanvas {
   public BounceCanvas(BounceUI parama, int paramInt) {
     super(parama.m);
     this.mUI = parama;
-    this.mSoundHoop = b("/sounds/up.ott");
-    this.mSoundPickup = b("/sounds/pickup.ott");
-    this.mSoundPop = b("/sounds/pop.ott");
+    this.mSoundHoop = loadSound("/sounds/up.ott");
+    this.mSoundPickup = loadSound("/sounds/pickup.ott");
+    this.mSoundPop = loadSound("/sounds/pop.ott");
     this.F = Image.createImage(128, 128);
     this.ap = 1;
     try {
@@ -98,7 +98,7 @@ public class BounceCanvas extends TileCanvas {
     r();
     ReadLevelMap(this.currentLevel);
     k();
-    b();
+    resetSpikes();
     this.mLevelDisCntr = 120;
     this.mPaintUIFlag = true;
     if (this.mUI.e != this.s && this.mUI.b != this.S)
@@ -106,9 +106,9 @@ public class BounceCanvas extends TileCanvas {
     a(paramInt1, paramInt2, this.mUI.A, this.mUI.a, this.mUI.g);
     synchronized (this.mBall) {
       this.mBall.a(this.mUI.e, this.mUI.b);
-      this.mBall.h = this.mUI.w;
-      this.mBall.g = this.mUI.z;
-      this.mBall.y = this.mUI.n;
+      this.mBall.speedBonusCntr = this.mUI.w;
+      this.mBall.gravBonusCntr = this.mUI.z;
+      this.mBall.jumpBonusCntr = this.mUI.n;
       this.T = true;
     } 
   }
@@ -137,8 +137,8 @@ public class BounceCanvas extends TileCanvas {
     int i = this.mBall.xPos - 64;
     if (i < 0) {
       i = 0;
-    } else if (i > this.width * 12 - 156) {
-      i = this.width * 12 - 156;
+    } else if (i > this.mTileMapWidth * 12 - 156) {
+      i = this.mTileMapWidth * 12 - 156;
     } 
     this.l = i / 12;
     this.v = this.l * 12 - i;
@@ -187,7 +187,7 @@ public class BounceCanvas extends TileCanvas {
       // vẽ lại điểm số
       this.X.setColor(16777214); // FFFFFE = trắng
       this.X.setFont(this.font);
-      this.X.drawString(ShowScoreZeroPad(this.mScore), 64, 100, 20);
+      this.X.drawString(zeroString(this.mScore), 64, 100, 20);
       
       if (this.bonusCntrValue != 0) {
         this.X.setColor(16750611);
@@ -219,10 +219,10 @@ public class BounceCanvas extends TileCanvas {
       return; 
     int i = this.mBall.xPos - this.l * 12;
     int j = this.mBall.yPos - this.k * 12;
-    if (this.mBall.z == 2) {
+    if (this.mBall.ballState == 2) {
       paramGraphics.drawImage(this.mBall.k, i - 6 + paramInt, j - 6, 20);
     } else {
-      paramGraphics.drawImage(this.mBall.i, i - this.mBall.mHalfBallSize + paramInt, j - this.mBall.mHalfBallSize, 20);
+      paramGraphics.drawImage(this.mBall.mBallImage, i - this.mBall.mHalfBallSize + paramInt, j - this.mBall.mHalfBallSize, 20);
     } 
   }
   
@@ -268,9 +268,9 @@ public class BounceCanvas extends TileCanvas {
       if (this.mBall.yPos - 6 < this.k * 12 || this.mBall.yPos + 6 > this.k * 12 + 96) {
         e();
       } else {
-        this.mBall.b();
+        this.mBall.update();
       } 
-      if (this.mBall.z == 1) {
+      if (this.mBall.ballState == 1) {
         if (this.numLives < 0) {
           this.mUI.CompletedLevel();
           stop();
@@ -302,13 +302,13 @@ public class BounceCanvas extends TileCanvas {
         this.tileMap[this.u + 1][this.al + 1] = (short)(this.tileMap[this.u + 1][this.al + 1] | 0x80);
       } 
       this.bonusCntrValue = 0;
-      if (this.mBall.h != 0 || this.mBall.g != 0 || this.mBall.y != 0) {
-        if (this.mBall.h > this.bonusCntrValue)
-          this.bonusCntrValue = this.mBall.h; 
-        if (this.mBall.g > this.bonusCntrValue)
-          this.bonusCntrValue = this.mBall.g; 
-        if (this.mBall.y > this.bonusCntrValue)
-          this.bonusCntrValue = this.mBall.y; 
+      if (this.mBall.speedBonusCntr != 0 || this.mBall.gravBonusCntr != 0 || this.mBall.jumpBonusCntr != 0) {
+        if (this.mBall.speedBonusCntr > this.bonusCntrValue)
+          this.bonusCntrValue = this.mBall.speedBonusCntr; 
+        if (this.mBall.gravBonusCntr > this.bonusCntrValue)
+          this.bonusCntrValue = this.mBall.gravBonusCntr; 
+        if (this.mBall.jumpBonusCntr > this.bonusCntrValue)
+          this.bonusCntrValue = this.mBall.jumpBonusCntr; 
         if (this.bonusCntrValue % 30 == 0 || this.bonusCntrValue == 1)
           this.mPaintUIFlag = true; 
       } 
@@ -388,7 +388,7 @@ public class BounceCanvas extends TileCanvas {
           break;
         case KEY_POUND:
           if (this.mCheat)
-            this.mBall.g = 300; 
+            this.mBall.gravBonusCntr = 300; 
           break;
         case -7:
         case -6:
@@ -440,7 +440,7 @@ public class BounceCanvas extends TileCanvas {
     } 
   }
   
-  public static String ShowScoreZeroPad(int paramInt) {
+  public static String zeroString(int paramInt) {
     String str;
     if (paramInt < 100) {
       str = "0000000";
@@ -460,7 +460,7 @@ public class BounceCanvas extends TileCanvas {
     return str + paramInt;
   }
   
-  protected Sound b(String paramString) {
+  protected Sound loadSound(String paramString) {
     byte[] arrayOfByte = new byte[100];
     Sound sound = null;
     DataInputStream dataInputStream = new DataInputStream(getClass().getResourceAsStream(paramString));
@@ -486,21 +486,21 @@ public class BounceCanvas extends TileCanvas {
     this.mIncomingCall = true;
   }
   
-  public void b() {
-    for (byte b1 = 0; b1 < this.mUI.r; b1++) {
-      this.ae[b1][0] = this.mUI.l[b1][0];
-      this.ae[b1][1] = this.mUI.l[b1][1];
-      this.w[b1][0] = this.mUI.D[b1][0];
-      this.w[b1][1] = this.mUI.D[b1][1];
+  public void resetSpikes() {
+    for (byte b1 = 0; b1 < this.mUI.mSavedSpikeCount; b1++) {
+      this.mMODirection[b1][0] = this.mUI.mSavedSpikeDirection[b1][0];
+      this.mMODirection[b1][1] = this.mUI.mSavedSpikeDirection[b1][1];
+      this.mMOOffset[b1][0] = this.mUI.mSavedSpikeOffset[b1][0];
+      this.mMOOffset[b1][1] = this.mUI.mSavedSpikeOffset[b1][1];
     } 
-    this.mUI.D = null;
-    this.mUI.l = null;
-    this.mUI.r = 0;
+    this.mUI.mSavedSpikeOffset = null;
+    this.mUI.mSavedSpikeDirection = null;
+    this.mUI.mSavedSpikeCount = 0;
   }
   
   public void k() {
-    for (byte b1 = 0; b1 < this.height; b1++) {
-      for (byte b2 = 0; b2 < this.width; b2++) {
+    for (byte b1 = 0; b1 < this.mTileMapHeight; b1++) {
+      for (byte b2 = 0; b2 < this.mTileMapWidth; b2++) {
         byte b3 = (byte)(this.tileMap[b1][b2] & 0xFF7F & 0xFFFFFFBF);
         switch (b3) {
           case 7:
