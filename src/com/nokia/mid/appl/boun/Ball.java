@@ -43,7 +43,7 @@ public class Ball {
   
   public boolean mCDRampFlag;
   
-  public int popCntr;
+  public int slideCntr;
   
   public static final byte[][] TRI_TILE_DATA = new byte[][] { 
       { 
@@ -147,7 +147,7 @@ public class Ball {
   
   public Image smallBallImage;
   
-  private int q;
+  private int popCntr;
   
   public Ball(int paramInt1, int paramInt2, int paramInt3, BounceCanvas parame) {
     this.xPos = paramInt1;
@@ -159,11 +159,11 @@ public class Ball {
     this.mGroundedFlag = false;
     this.mCDRubberFlag = false;
     this.mCDRampFlag = false;
-    this.q = 0;
+    this.popCntr = 0;
     this.speedBonusCntr = 0;
     this.gravBonusCntr = 0;
     this.jumpBonusCntr = 0;
-    this.popCntr = 0;
+    this.slideCntr = 0;
     this.ballState = 0;
     this.direction = 0;
     this.mCanvas.setBallImages(this);
@@ -255,7 +255,7 @@ public class Ball {
   
   public void popBall() {
     if (!this.mCanvas.mInvincible) {
-      this.q = 7;
+      this.popCntr = 7;
       this.ballState = 2;
       this.mCanvas.numLives--;
       this.speedBonusCntr = 0;
@@ -787,8 +787,8 @@ public class Ball {
     byte b1 = 0;
     boolean bool1 = false;
     if (this.ballState == 2) {
-      this.q--;
-      if (this.q == 0) {
+      this.popCntr--;
+      if (this.popCntr == 0) {
         this.ballState = 1;
         if (this.mCanvas.numLives < 0)
           this.mCanvas.mLeaveGame = true; 
@@ -836,9 +836,9 @@ public class Ball {
         }  
       this.jumpBonusCntr--;
     } 
-    this.popCntr++;
-    if (this.popCntr == 3)
-      this.popCntr = 0; 
+    this.slideCntr++;
+    if (this.slideCntr == 3)
+      this.slideCntr = 0; 
     if (this.ySpeed < -150) {
       this.ySpeed = -150;
     } else if (this.ySpeed > 150) {
@@ -867,7 +867,7 @@ public class Ball {
           } 
         } 
       } else {
-        if (this.mCDRampFlag && this.xSpeed < 10 && this.popCntr == 0) {
+        if (this.mCDRampFlag && this.xSpeed < 10 && this.slideCntr == 0) {
           byte b4 = 1;
           if (collisionDetection(this.xPos + b4, this.yPos + b)) {
             this.xPos += b4;
