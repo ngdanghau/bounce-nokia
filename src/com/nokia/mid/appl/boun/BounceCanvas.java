@@ -294,12 +294,12 @@ public class BounceCanvas extends TileCanvas {
           this.z = false;
           this.mOpenExitFlag = false;
         } else {
-          h();
+          openExit();
         } 
-        this.tileMap[this.u][this.al] = (short)(this.tileMap[this.u][this.al] | 0x80);
-        this.tileMap[this.u][this.al + 1] = (short)(this.tileMap[this.u][this.al + 1] | 0x80);
-        this.tileMap[this.u + 1][this.al] = (short)(this.tileMap[this.u + 1][this.al] | 0x80);
-        this.tileMap[this.u + 1][this.al + 1] = (short)(this.tileMap[this.u + 1][this.al + 1] | 0x80);
+        this.tileMap[this.mTopLeftExitTileRow][this.mTopLeftExitTileCol] = (short)(this.tileMap[this.mTopLeftExitTileRow][this.mTopLeftExitTileCol] | 0x80);
+        this.tileMap[this.mTopLeftExitTileRow][this.mTopLeftExitTileCol + 1] = (short)(this.tileMap[this.mTopLeftExitTileRow][this.mTopLeftExitTileCol + 1] | 0x80);
+        this.tileMap[this.mTopLeftExitTileRow + 1][this.mTopLeftExitTileCol] = (short)(this.tileMap[this.mTopLeftExitTileRow + 1][this.mTopLeftExitTileCol] | 0x80);
+        this.tileMap[this.mTopLeftExitTileRow + 1][this.mTopLeftExitTileCol + 1] = (short)(this.tileMap[this.mTopLeftExitTileRow + 1][this.mTopLeftExitTileCol + 1] | 0x80);
       } 
       this.bonusCntrValue = 0;
       if (this.mBall.speedBonusCntr != 0 || this.mBall.gravBonusCntr != 0 || this.mBall.jumpBonusCntr != 0) {
@@ -398,16 +398,16 @@ public class BounceCanvas extends TileCanvas {
         default:
           switch (getGameAction(keyCode)) {
             case UP:
-              this.mBall.move(8);
+              this.mBall.setDirection(8);
               break;
             case DOWN:
-              this.mBall.move(4);
+              this.mBall.setDirection(4);
               break;
             case LEFT:
-              this.mBall.move(1);
+              this.mBall.setDirection(1);
               break;
             case RIGHT:
-              this.mBall.move(2);
+              this.mBall.setDirection(2);
               break;
             case FIRE:
               if (this.mInvincible)
@@ -480,7 +480,7 @@ public class BounceCanvas extends TileCanvas {
   public void hideNotify() {
     if (this.mIncomingCall) {
       if (this.mBall != null)
-        this.mBall.a(); 
+        this.mBall.resetDirections(); 
       this.mUI.displayMainMenu();
     } 
     this.mIncomingCall = true;

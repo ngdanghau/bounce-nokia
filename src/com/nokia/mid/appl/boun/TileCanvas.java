@@ -79,15 +79,15 @@ public abstract class TileCanvas extends FullCanvas {
   
   public Image D;
   
-  public int al;
+  public int mTopLeftExitTileCol;
   
-  public int u;
+  public int mTopLeftExitTileRow;
   
-  public Image aa;
+  public Image mExitTileImage;
   
-  public Image o;
+  public Image mImgPtr;
   
-  public int b;
+  public int mImageOffset;
   
   public boolean mOpenFlag;
   
@@ -367,10 +367,10 @@ public abstract class TileCanvas extends FullCanvas {
         graphics.drawImage(this.Q[com.nokia.mid.appl.boun.d.b[i - 13]], paramInt3, paramInt4, 20);
         break;
       case 9:
-        j = (paramInt1 - this.al) * 12;
-        k = (paramInt2 - this.u) * 12;
+        j = (paramInt1 - this.mTopLeftExitTileCol) * 12;
+        k = (paramInt2 - this.mTopLeftExitTileRow) * 12;
         graphics.setClip(paramInt3, paramInt4, 12, 12);
-        graphics.drawImage(this.aa, paramInt3 - j, paramInt4 - k, 20);
+        graphics.drawImage(this.mExitTileImage, paramInt3 - j, paramInt4 - k, 20);
         graphics.setClip(0, 0, this.E.getWidth(), this.E.getHeight());
         this.z = true;
         break;
@@ -703,7 +703,7 @@ public abstract class TileCanvas extends FullCanvas {
   public void setBallImages(Ball paramf) {
     paramf.smallBallImage = this.Q[47];
     paramf.k = this.Q[48];
-    paramf.B = this.Q[49];
+    paramf.largeBallImage = this.Q[49];
   }
   
   public static Image a(Image paramImage, int paramInt1, int paramInt2) {
@@ -732,27 +732,27 @@ public abstract class TileCanvas extends FullCanvas {
   }
   
   public void a(int paramInt1, int paramInt2, Image paramImage) {
-    this.al = paramInt1;
-    this.u = paramInt2;
-    this.o = paramImage;
-    this.aa = Image.createImage(24, 24);
-    this.b = 0;
-    p();
+    this.mTopLeftExitTileCol = paramInt1;
+    this.mTopLeftExitTileRow = paramInt2;
+    this.mImgPtr = paramImage;
+    this.mExitTileImage = Image.createImage(24, 24);
+    this.mImageOffset = 0;
+    repaintExitTile();
     this.mOpenFlag = false;
   }
   
-  public void p() {
-    Graphics graphics = this.aa.getGraphics();
-    graphics.drawImage(this.o, 0, 0 - this.b, 20);
+  public void repaintExitTile() {
+    Graphics graphics = this.mExitTileImage.getGraphics();
+    graphics.drawImage(this.mImgPtr, 0, 0 - this.mImageOffset, 20);
   }
   
-  public void h() {
-    this.b += 4;
-    if (this.b >= 24) {
-      this.b = 24;
+  public void openExit() {
+    this.mImageOffset += 4;
+    if (this.mImageOffset >= 24) {
+      this.mImageOffset = 24;
       this.mOpenFlag = true;
     } 
-    p();
+    repaintExitTile();
   }
   
   public abstract void run();

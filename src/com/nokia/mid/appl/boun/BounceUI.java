@@ -157,7 +157,7 @@ public class BounceUI implements CommandListener {
       this.mCanvas.a(paramInt, 0, 3);
     } 
     this.mCanvas.d();
-    this.mCanvas.mBall.a();
+    this.mCanvas.mBall.resetDirections();
     this.m.setCurrent((Displayable)this.mCanvas);
     this.K = 1;
   }

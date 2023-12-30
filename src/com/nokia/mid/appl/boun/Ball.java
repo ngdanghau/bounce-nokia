@@ -15,7 +15,7 @@ public class Ball {
   public int ySpeed;
   
   // tọa độ x của player
-  public int x;
+  public int direction;
   
   public int mBallSize;
   
@@ -143,7 +143,7 @@ public class Ball {
   
   public Image k;
   
-  public Image B;
+  public Image largeBallImage;
   
   public Image smallBallImage;
   
@@ -165,12 +165,12 @@ public class Ball {
     this.jumpBonusCntr = 0;
     this.C = 0;
     this.ballState = 0;
-    this.x = 0;
+    this.direction = 0;
     this.mCanvas.setBallImages(this);
     if (paramInt3 == 12) {
-      c();
+      shrinkBall();
     } else {
-      f();
+      enlargeBall();
     } 
   }
   
@@ -180,21 +180,21 @@ public class Ball {
     this.respawnSize = this.mBallSize;
   }
   
-  public void move(int paramInt) {
+  public void setDirection(int paramInt) {
     if (paramInt == 8 || paramInt == 4 || paramInt == 2 || paramInt == 1)
-      this.x |= paramInt; 
+      this.direction |= paramInt; 
   }
   
   public void releaseDirection(int paramInt) {
     if (paramInt == 8 || paramInt == 4 || paramInt == 2 || paramInt == 1)
-      this.x &= paramInt ^ 0xFFFFFFFF; 
+      this.direction &= paramInt ^ 0xFFFFFFFF; 
   }
   
-  public void a() {
-    this.x &= 0xFFFFFFF0;
+  public void resetDirections() {
+    this.direction &= 0xFFFFFFF0;
   }
   
-  public boolean b(int paramInt1, int paramInt2) {
+  public boolean collisionDetection(int paramInt1, int paramInt2) {
     int i = (paramInt1 - this.mHalfBallSize) / 12;
     int j = (paramInt2 - this.mHalfBallSize) / 12;
     int k = (paramInt1 - 1 + this.mHalfBallSize) / 12 + 1;
@@ -208,37 +208,37 @@ public class Ball {
     return true;
   }
   
-  public void f() {
+  public void enlargeBall() {
     this.mBallSize = 16;
     this.mHalfBallSize = 8;
-    this.mBallImage = this.B;
+    this.mBallImage = this.largeBallImage;
     boolean bool = false;
     for (byte b = 1; !bool; b++) {
       bool = true;
-      if (b(this.xPos, this.yPos - b)) {
+      if (collisionDetection(this.xPos, this.yPos - b)) {
         this.yPos -= b;
         continue;
       } 
-      if (b(this.xPos - b, this.yPos - b)) {
+      if (collisionDetection(this.xPos - b, this.yPos - b)) {
         this.xPos -= b;
         this.yPos -= b;
         continue;
       } 
-      if (b(this.xPos + b, this.yPos - b)) {
+      if (collisionDetection(this.xPos + b, this.yPos - b)) {
         this.xPos += b;
         this.yPos -= b;
         continue;
       } 
-      if (b(this.xPos, this.yPos + b)) {
+      if (collisionDetection(this.xPos, this.yPos + b)) {
         this.yPos += b;
         continue;
       } 
-      if (b(this.xPos - b, this.yPos + b)) {
+      if (collisionDetection(this.xPos - b, this.yPos + b)) {
         this.xPos -= b;
         this.yPos += b;
         continue;
       } 
-      if (b(this.xPos + b, this.yPos + b)) {
+      if (collisionDetection(this.xPos + b, this.yPos + b)) {
         this.xPos += b;
         this.yPos += b;
         continue;
@@ -247,7 +247,7 @@ public class Ball {
     } 
   }
   
-  public void c() {
+  public void shrinkBall() {
     this.mBallSize = 12;
     this.mHalfBallSize = 6;
     this.mBallImage = this.smallBallImage;
@@ -740,7 +740,7 @@ public class Ball {
       case 42:
     	  paramBoolean = false;
         if (this.mBallSize == 16)
-          c(); 
+          shrinkBall(); 
         break;
       case 43:
       case 44:
@@ -749,7 +749,7 @@ public class Ball {
         if (b(paramInt1, paramInt2, yPos, xPos, j)) {
         	paramBoolean = false;
           if (this.mBallSize == 12)
-            f(); 
+            enlargeBall(); 
         } 
         break;
       case 47:
@@ -855,7 +855,7 @@ public class Ball {
       byte b = 0;
       if (this.ySpeed != 0)
         b = (byte) ((this.ySpeed < 0) ? -1 : 1); 
-      if (b(this.xPos, this.yPos + b)) {
+      if (collisionDetection(this.xPos, this.yPos + b)) {
         this.yPos += b;
         this.m = false;
         if (k == -30) {
@@ -869,11 +869,11 @@ public class Ball {
       } else {
         if (this.u && this.xSpeed < 10 && this.C == 0) {
           byte b4 = 1;
-          if (b(this.xPos + b4, this.yPos + b)) {
+          if (collisionDetection(this.xPos + b4, this.yPos + b)) {
             this.xPos += b4;
             this.yPos += b;
             this.u = false;
-          } else if (b(this.xPos - b4, this.yPos + b)) {
+          } else if (collisionDetection(this.xPos - b4, this.yPos + b)) {
             this.xPos -= b4;
             this.yPos += b;
             this.u = false;
@@ -882,7 +882,7 @@ public class Ball {
         if (b > 0 || (bool1 && b < 0)) {
           this.ySpeed = this.ySpeed * -1 / 2;
           this.m = true;
-          if (this.v && (this.x & 0x8) != 0) {
+          if (this.v && (this.direction & 0x8) != 0) {
             this.v = false;
             if (bool1) {
               this.t += 10;
@@ -934,9 +934,9 @@ public class Ball {
     } else {
       b1 = 50;
     } 
-    if ((this.x & 0x2) != 0 && this.xSpeed < b1) {
+    if ((this.direction & 0x2) != 0 && this.xSpeed < b1) {
       this.xSpeed += 6;
-    } else if ((this.x & 0x1) != 0 && this.xSpeed > -b1) {
+    } else if ((this.direction & 0x1) != 0 && this.xSpeed > -b1) {
       this.xSpeed -= 6;
     } else if (this.xSpeed > 0) {
       this.xSpeed -= 4;
@@ -949,7 +949,7 @@ public class Ball {
       } else {
         this.t += -5;
       }  
-    if (this.m && (this.x & 0x8) != 0) {
+    if (this.m && (this.direction & 0x8) != 0) {
       if (bool1) {
         this.ySpeed = 67 + this.t;
       } else {
@@ -963,7 +963,7 @@ public class Ball {
       byte b = 0;
       if (this.xSpeed != 0)
         b = (byte) ((this.xSpeed < 0) ? -1 : 1); 
-      if (b(this.xPos + b, this.yPos)) {
+      if (collisionDetection(this.xPos + b, this.yPos)) {
         this.xPos += b;
       } else if (this.u) {
         this.u = false;
@@ -973,10 +973,10 @@ public class Ball {
         } else {
           b4 = -1;
         } 
-        if (b(this.xPos + b, this.yPos + b4)) {
+        if (collisionDetection(this.xPos + b, this.yPos + b4)) {
           this.xPos += b;
           this.yPos += b4;
-        } else if (b(this.xPos + b, this.yPos - b4)) {
+        } else if (collisionDetection(this.xPos + b, this.yPos - b4)) {
           this.xPos += b;
           this.yPos -= b4;
         } else {
