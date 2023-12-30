@@ -7,7 +7,7 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
-public class MainScene extends b {
+public class BounceCanvas extends TileCanvas {
   public int ap;
   
   public Image t;
@@ -63,7 +63,7 @@ public class MainScene extends b {
   
   private long K = System.currentTimeMillis();
   
-  public MainScene(BounceUI parama, int paramInt) {
+  public BounceCanvas(BounceUI parama, int paramInt) {
     super(parama.m);
     this.game = parama;
     this.upSFX = b("/sounds/up.ott");

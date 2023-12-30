@@ -137,7 +137,7 @@ public class Player {
         0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 
         1, 0, 0, 0, 0, 0 } };
   
-  public MainScene mainScene;
+  public BounceCanvas mainScene;
   
   public Image i;
   
@@ -149,7 +149,7 @@ public class Player {
   
   private int q;
   
-  public Player(int paramInt1, int paramInt2, int paramInt3, MainScene parame) {
+  public Player(int paramInt1, int paramInt2, int paramInt3, BounceCanvas parame) {
     this.s = paramInt1;
     this.r = paramInt2;
     this.l = 0;

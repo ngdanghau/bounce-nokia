@@ -12,7 +12,7 @@ import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
-public abstract class b extends FullCanvas {
+public abstract class TileCanvas extends FullCanvas {
   protected int l;
   
   protected int k;
@@ -99,7 +99,7 @@ public abstract class b extends FullCanvas {
   
   public com.nokia.mid.appl.boun.g ab = null;
   
-  public b(Display paramDisplay) {
+  public TileCanvas(Display paramDisplay) {
     this.m = paramDisplay;
     this.ag = getWidth();
     this.am = getHeight();
@@ -775,13 +775,13 @@ public abstract class b extends FullCanvas {
   }
   
   protected class g extends TimerTask {
-    b a;
+    TileCanvas a;
     
     Timer c;
     
-    private final b b;
+    private final TileCanvas b;
     
-    public g(b this$0, b param1b1) {
+    public g(TileCanvas this$0, TileCanvas param1b1) {
       this.b = this$0;
       this.a = param1b1;
       this.c = new Timer();

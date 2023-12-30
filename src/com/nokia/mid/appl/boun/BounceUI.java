@@ -17,7 +17,7 @@ public class BounceUI implements CommandListener {
   
   public Display m; // man hinh hien tai 
   
-  public MainScene mCanvas;
+  public BounceCanvas mCanvas;
   
   public int K = 2;
   
@@ -96,7 +96,7 @@ public class BounceUI implements CommandListener {
   public BounceUI(Bounce paramBounce) {
     this.mIDlet = paramBounce;
     ReadRMS();
-    this.mCanvas = new MainScene(this, 1);
+    this.mCanvas = new BounceCanvas(this, 1);
     this.mCanvas.d();
     this.m = Display.getDisplay(this.mIDlet);
     this.m.setCurrent((Displayable)this.mCanvas);

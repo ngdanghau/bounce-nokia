@@ -4,13 +4,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class g extends TimerTask {
-  b a;
+  TileCanvas a;
   
   Timer c;
   
-  private final b b;
+  private final TileCanvas b;
   
-  public g(b paramb1, b paramb2) {
+  public g(TileCanvas paramb1, TileCanvas paramb2) {
     this.b = paramb1;
     this.a = paramb2;
     this.c = new Timer();
