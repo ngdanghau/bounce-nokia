@@ -151,10 +151,11 @@ public abstract class TileCanvas extends FullCanvas {
       this.mTileMapWidth = dataInputStream.read();
       this.mTileMapHeight = dataInputStream.read();
       this.tileMap = new short[this.mTileMapHeight][this.mTileMapWidth];
-      for (byte b1 = 0; b1 < this.mTileMapHeight; b1++) {
-        for (byte b2 = 0; b2 < this.mTileMapWidth; b2++)
-          this.tileMap[b1][b2] = (short)dataInputStream.read(); 
-      } 
+      for (int b1 = 0; b1 < this.mTileMapHeight; b1++) {
+	      for (int b2 = 0; b2 < this.mTileMapWidth; b2++)
+	          this.tileMap[b1][b2] = (short)dataInputStream.read(); 
+	  } 
+      
       this.mNumMoveObj = dataInputStream.read();
       if (this.mNumMoveObj != 0)
         createMovingObj(dataInputStream); 
