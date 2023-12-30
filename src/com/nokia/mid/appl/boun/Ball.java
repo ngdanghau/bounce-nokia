@@ -558,7 +558,7 @@ public class Ball {
         break;
       case 10:
     	  // Dyn Thorn Axis
-        k = this.mCanvas.b(xPos, yPos);
+        k = this.mCanvas.findSpikeIndex(xPos, yPos);
         if (k != -1) {
           int m = this.mCanvas.mMOTopLeft[k][0] * 12 + this.mCanvas.mMOOffset[k][0];
           int n = this.mCanvas.mMOTopLeft[k][1] * 12 + this.mCanvas.mMOOffset[k][1];

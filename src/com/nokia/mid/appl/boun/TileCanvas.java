@@ -280,7 +280,7 @@ public abstract class TileCanvas extends FullCanvas {
     } 
   }
   
-  public int b(int paramInt1, int paramInt2) {
+  public int findSpikeIndex(int paramInt1, int paramInt2) {
     for (byte b1 = 0; b1 < this.mNumMoveObj; b1++) {
       if (this.mMOTopLeft[b1][0] <= paramInt1 && this.mMOBotRight[b1][0] > paramInt1 && this.mMOTopLeft[b1][1] <= paramInt2 && this.mMOBotRight[b1][1] > paramInt2)
         return b1; 
@@ -288,7 +288,7 @@ public abstract class TileCanvas extends FullCanvas {
     return -1;
   }
   
-  public void a(int paramInt1, int paramInt2, int paramInt3, int paramInt4) {
+  public void drawTile(int paramInt1, int paramInt2, int paramInt3, int paramInt4) {
     int j;
     int k;
     Graphics graphics = this.mGameBuffer.getGraphics();
@@ -375,7 +375,7 @@ public abstract class TileCanvas extends FullCanvas {
         this.z = true;
         break;
       case 10:
-        j = b(paramInt1, paramInt2);
+        j = findSpikeIndex(paramInt1, paramInt2);
         if (j != -1) {
           k = (paramInt1 - this.mMOTopLeft[j][0]) * 12;
           int m = (paramInt2 - this.mMOTopLeft[j][1]) * 12;
@@ -529,7 +529,7 @@ public abstract class TileCanvas extends FullCanvas {
   public void f() {
     for (byte b1 = 0; b1 < 13; b1++) {
       for (byte b2 = 0; b2 < 8; b2++)
-        a(this.tileX + b1, this.tileY + b2, b1 * 12, b2 * 12); 
+        drawTile(this.tileX + b1, this.tileY + b2, b1 * 12, b2 * 12); 
     } 
   }
   
@@ -541,7 +541,7 @@ public abstract class TileCanvas extends FullCanvas {
         i = this.divTileX - 13; 
       for (byte b2 = 0; b2 < 8; b2++) {
         if ((this.tileMap[j][i] & 0x80) != 0)
-          a(i, j, b1 * 12, b2 * 12); 
+          drawTile(i, j, b1 * 12, b2 * 12); 
         j++;
       } 
       j = this.tileY;
@@ -569,7 +569,7 @@ public abstract class TileCanvas extends FullCanvas {
         this.tileX -= 13;
       } 
       for (byte b1 = 0; b1 < 8; b1++)
-        a(this.divTileX - 13, this.tileY + b1, m, b1 * 12); 
+        drawTile(this.divTileX - 13, this.tileY + b1, m, b1 * 12); 
     } 
     while ((k + 128) / 12 >= j) {
       if (this.divisorLine >= 156) {
@@ -582,7 +582,7 @@ public abstract class TileCanvas extends FullCanvas {
       j++;
       i++;
       for (byte b1 = 0; b1 < 8; b1++)
-        a(this.tileX + m / 12, this.tileY + b1, m, b1 * 12); 
+        drawTile(this.tileX + m / 12, this.tileY + b1, m, b1 * 12); 
     } 
     this.v = this.tileX * 12 - k;
   }
