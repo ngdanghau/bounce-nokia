@@ -179,7 +179,7 @@ public class BounceCanvas extends TileCanvas {
         this.mFullScreenGraphics.drawImage(this.mUILife, 5 + b1 * (this.mUILife.getWidth() - 1), 99, 20);
       
       // vẽ số lượng ring còn lại
-      for (byte b2 = 0; b2 < this.totalRingInLevel - this.numRings; b2++)
+      for (byte b2 = 0; b2 < this.mTotalNumRings - this.numRings; b2++)
         this.mFullScreenGraphics.drawImage(this.mUIRing, 5 + b2 * (this.mUIRing.getWidth() - 4), 112, 20); 
      
       // vẽ lại điểm số
@@ -285,7 +285,7 @@ public class BounceCanvas extends TileCanvas {
       } 
       if (this.mNumMoveObj != 0)
         updateMovingSpikeObj(); 
-      if (this.numRings == this.totalRingInLevel)
+      if (this.numRings == this.mTotalNumRings)
         this.mOpenExitFlag = true; 
       if (this.mOpenExitFlag && this.z && (this.mExitPosX + 1) * 12 > m() && this.mExitPosX * 12 < g()) {
         if (this.mOpenFlag) {

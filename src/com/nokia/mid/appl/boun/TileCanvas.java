@@ -57,7 +57,7 @@ public abstract class TileCanvas extends FullCanvas {
   
   public int mTileMapHeight;
   
-  public int totalRingInLevel;
+  public int mTotalNumRings;
   
   public int mNumMoveObj;
   
@@ -147,7 +147,7 @@ public abstract class TileCanvas extends FullCanvas {
       this.mExitPosX = dataInputStream.read();
       this.mExitPosY = dataInputStream.read();
       createExitTileObject(this.mExitPosX, this.mExitPosY, this.tileImages[12]);
-      this.totalRingInLevel = dataInputStream.read();
+      this.mTotalNumRings = dataInputStream.read();
       this.mTileMapWidth = dataInputStream.read();
       this.mTileMapHeight = dataInputStream.read();
       this.tileMap = new short[this.mTileMapHeight][this.mTileMapWidth];
