@@ -45,7 +45,7 @@ public class Ball {
   
   public int C;
   
-  public static final byte[][] f = new byte[][] { 
+  public static final byte[][] TRI_TILE_DATA = new byte[][] { 
       { 
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
         0, 1 }, { 
@@ -73,7 +73,7 @@ public class Ball {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
         1, 1 } };
   
-  public static final byte[][] e = new byte[][] { 
+  public static final byte[][] SMALL_BALL_DATA = new byte[][] { 
       { 
         0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 
         0, 0 }, { 
@@ -312,7 +312,7 @@ public class Ball {
     } 
   }
   
-  public boolean b(int paramInt1, int paramInt2, int paramInt3, int paramInt4) {
+  public boolean squareCollide(int paramInt1, int paramInt2, int paramInt3, int paramInt4) {
     byte b1;
     int n;
     byte b2;
@@ -339,7 +339,7 @@ public class Ball {
     if (this.mBallSize == 16) {
       arrayOfByte = xByte;
     } else {
-      arrayOfByte = e;
+      arrayOfByte = SMALL_BALL_DATA;
     } 
     if (n > 12)
       n = 12; 
@@ -354,7 +354,7 @@ public class Ball {
     return false;
   }
   
-  public boolean c(int paramInt1, int paramInt2, int paramInt3, int paramInt4, int paramInt5) {
+  public boolean triangleCollide(int paramInt1, int paramInt2, int paramInt3, int paramInt4, int paramInt5) {
     byte b3;
     int n;
     byte b4;
@@ -398,7 +398,7 @@ public class Ball {
     if (this.mBallSize == 16) {
       arrayOfByte = xByte;
     } else {
-      arrayOfByte = e;
+      arrayOfByte = SMALL_BALL_DATA;
     } 
     if (n > 12)
       n = 12; 
@@ -406,7 +406,7 @@ public class Ball {
       i1 = 12; 
     for (byte b5 = b3; b5 < n; b5++) {
       for (byte b = b4; b < i1; b++) {
-        if ((f[Math.abs(b - b2)][Math.abs(b5 - b1)] & arrayOfByte[b - m][b5 - k]) != 0) {
+        if ((TRI_TILE_DATA[Math.abs(b - b2)][Math.abs(b5 - b1)] & arrayOfByte[b - m][b5 - k]) != 0) {
           if (!this.m)
             redirectBall(paramInt5); 
           return true;
@@ -416,7 +416,7 @@ public class Ball {
     return false;
   }
   
-  public boolean b(int paramInt1, int paramInt2, int paramInt3, int paramInt4, int paramInt5) {
+  public boolean thinCollide(int paramInt1, int paramInt2, int paramInt3, int paramInt4, int paramInt5) {
     int i = paramInt4 * 12;
     int j = paramInt3 * 12;
     int k = i + 12;
@@ -453,7 +453,7 @@ public class Ball {
     return a(paramInt1 - this.mHalfBallSize, paramInt2 - this.mHalfBallSize, paramInt1 + this.mHalfBallSize - 1, paramInt2 + this.mHalfBallSize - 1, i, j, k - 1, m - 1);
   }
   
-  public boolean a(int paramInt1, int paramInt2, int paramInt3, int paramInt4, int paramInt5) {
+  public boolean edgeCollide(int paramInt1, int paramInt2, int paramInt3, int paramInt4, int paramInt5) {
     int i = paramInt4 * 12;
     int j = paramInt3 * 12;
     int k = i + 12;
@@ -513,7 +513,7 @@ public class Ball {
     switch (j) {
       case 1:
     	  // nền đất đỏ
-        if (b(paramInt1, paramInt2, yPos, xPos)) {
+        if (squareCollide(paramInt1, paramInt2, yPos, xPos)) {
         	paramBoolean = false;
           this.u = true;
           break;
@@ -522,7 +522,7 @@ public class Ball {
         break;
       case 2:
     	  // nền đất xanh full
-        if (b(paramInt1, paramInt2, yPos, xPos)) {
+        if (squareCollide(paramInt1, paramInt2, yPos, xPos)) {
           this.v = true;
           paramBoolean = false;
           break;
@@ -537,7 +537,7 @@ public class Ball {
     	// nền đất xanh Bottom Right
       case 37:
     	// nền đất xanh Bottom Left
-        if (c(paramInt1, paramInt2, yPos, xPos, j)) {
+        if (triangleCollide(paramInt1, paramInt2, yPos, xPos, j)) {
           this.v = true;
           paramBoolean = false;
           this.u = true;
@@ -551,7 +551,7 @@ public class Ball {
     	// nền đất đỏ Bottom Right
       case 33:
     	// nền đất đỏ Bottom Left
-        if (c(paramInt1, paramInt2, yPos, xPos, j)) {
+        if (triangleCollide(paramInt1, paramInt2, yPos, xPos, j)) {
         	paramBoolean = false;
           this.u = true;
         } 
@@ -576,7 +576,7 @@ public class Ball {
     	  // Thorn 180
       case 6:
     	  // Thorn 90
-        if (b(paramInt1, paramInt2, yPos, xPos, j)) {
+        if (thinCollide(paramInt1, paramInt2, yPos, xPos, j)) {
         	paramBoolean = false;
           e();
         } 
@@ -591,8 +591,8 @@ public class Ball {
         break;
       case 23:
     	  // Left Big Ring
-        if (b(paramInt1, paramInt2, yPos, xPos, j)) {
-          if (a(paramInt1, paramInt2, yPos, xPos, j)) {
+        if (thinCollide(paramInt1, paramInt2, yPos, xPos, j)) {
+          if (edgeCollide(paramInt1, paramInt2, yPos, xPos, j)) {
         	  paramBoolean = false;
             break;
           } 
@@ -604,12 +604,12 @@ public class Ball {
         break;
       case 15:
     	// Left Small Ring 
-        if (b(paramInt1, paramInt2, yPos, xPos, j)) {
+        if (thinCollide(paramInt1, paramInt2, yPos, xPos, j)) {
           if (this.mBallSize == 16) {
         	  paramBoolean = false;
             break;
           } 
-          if (a(paramInt1, paramInt2, yPos, xPos, j))
+          if (edgeCollide(paramInt1, paramInt2, yPos, xPos, j))
         	  paramBoolean = false; 
           addRing();
           this.mCanvas.tileMap[yPos][xPos] = (short)(0x93 | i);
@@ -619,8 +619,8 @@ public class Ball {
         break;
       case 24:
     	// Right Big Ring
-        if (b(paramInt1, paramInt2, yPos, xPos, j)) {
-          if (a(paramInt1, paramInt2, yPos, xPos, j))
+        if (thinCollide(paramInt1, paramInt2, yPos, xPos, j)) {
+          if (edgeCollide(paramInt1, paramInt2, yPos, xPos, j))
         	  paramBoolean = false; 
           addRing();
           this.mCanvas.tileMap[yPos][xPos] = (short)(0x9C | i);
@@ -630,12 +630,12 @@ public class Ball {
         break;
       case 16:
     	// Right Small Ring 
-        if (b(paramInt1, paramInt2, yPos, xPos, j)) {
+        if (thinCollide(paramInt1, paramInt2, yPos, xPos, j)) {
           if (this.mBallSize == 16) {
         	  paramBoolean = false;
             break;
           } 
-          if (a(paramInt1, paramInt2, yPos, xPos, j))
+          if (edgeCollide(paramInt1, paramInt2, yPos, xPos, j))
         	  paramBoolean = false; 
           addRing();
           this.mCanvas.tileMap[yPos][xPos] = (short)(0x94 | i);
@@ -645,8 +645,8 @@ public class Ball {
         break;
       case 21:
     	// Top Big Ring
-        if (b(paramInt1, paramInt2, yPos, xPos, j)) {
-          if (a(paramInt1, paramInt2, yPos, xPos, j))
+        if (thinCollide(paramInt1, paramInt2, yPos, xPos, j)) {
+          if (edgeCollide(paramInt1, paramInt2, yPos, xPos, j))
         	  paramBoolean = false; 
           addRing();
           this.mCanvas.tileMap[yPos][xPos] = (short)(0x99 | i);
@@ -656,12 +656,12 @@ public class Ball {
         break;
       case 13:
     	// Top Small Ring
-        if (b(paramInt1, paramInt2, yPos, xPos, j)) {
+        if (thinCollide(paramInt1, paramInt2, yPos, xPos, j)) {
           if (this.mBallSize == 16) {
         	  paramBoolean = false;
             break;
           } 
-          if (a(paramInt1, paramInt2, yPos, xPos, j))
+          if (edgeCollide(paramInt1, paramInt2, yPos, xPos, j))
         	  paramBoolean = false; 
           addRing();
           this.mCanvas.tileMap[yPos][xPos] = (short)(0x91 | i);
@@ -671,7 +671,7 @@ public class Ball {
         break;
       case 22:
     	// Bottom Big Ring
-        if (b(paramInt1, paramInt2, yPos, xPos, j)) {
+        if (thinCollide(paramInt1, paramInt2, yPos, xPos, j)) {
         	addRing();
           this.mCanvas.tileMap[yPos][xPos] = (short)(0x9A | i);
           this.mCanvas.tileMap[yPos - 1][xPos] = (short)(0x99 | i);
@@ -680,7 +680,7 @@ public class Ball {
         break;
       case 14:
     	// Bottom Small Ring
-        if (b(paramInt1, paramInt2, yPos, xPos, j)) {
+        if (thinCollide(paramInt1, paramInt2, yPos, xPos, j)) {
           if (this.mBallSize == 16) {
         	  paramBoolean = false;
             break;
@@ -694,28 +694,28 @@ public class Ball {
       case 17:
       case 19:
       case 20:
-        if (b(paramInt1, paramInt2, yPos, xPos, j)) {
+        if (thinCollide(paramInt1, paramInt2, yPos, xPos, j)) {
           if (this.mBallSize == 16) {
         	  paramBoolean = false;
             break;
           } 
-          if (a(paramInt1, paramInt2, yPos, xPos, j))
+          if (edgeCollide(paramInt1, paramInt2, yPos, xPos, j))
         	  paramBoolean = false; 
         } 
         break;
       case 25:
       case 27:
       case 28:
-        if (a(paramInt1, paramInt2, yPos, xPos, j))
+        if (edgeCollide(paramInt1, paramInt2, yPos, xPos, j))
         	paramBoolean = false; 
         break;
       case 18:
-        if (b(paramInt1, paramInt2, yPos, xPos, j) && this.mBallSize == 16)
+        if (thinCollide(paramInt1, paramInt2, yPos, xPos, j) && this.mBallSize == 16)
         	paramBoolean = false; 
         break;
       case 9:
     	  // cổng
-        if (b(paramInt1, paramInt2, yPos, xPos, j)) {
+        if (thinCollide(paramInt1, paramInt2, yPos, xPos, j)) {
           if (this.mCanvas.mOpenFlag) {
             this.mCanvas.mLeaveGame = true;
             sound = this.mCanvas.mSoundPop;
@@ -746,7 +746,7 @@ public class Ball {
       case 44:
       case 45:
       case 46:
-        if (b(paramInt1, paramInt2, yPos, xPos, j)) {
+        if (thinCollide(paramInt1, paramInt2, yPos, xPos, j)) {
         	paramBoolean = false;
           if (this.mBallSize == 12)
             enlargeBall(); 
