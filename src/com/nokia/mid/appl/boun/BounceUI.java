@@ -15,21 +15,21 @@ import javax.microedition.rms.RecordStore;
 public class BounceUI implements CommandListener {
   public Bounce mIDlet;
   
-  public Display m; // man hinh hien tai 
+  public Display mDisplay; // man hinh hien tai 
   
   public BounceCanvas mCanvas;
   
-  public int K = 2;
+  public int mState = 2;
   
   public int unlockedLevel;
   
   public int highScore;
   
-  public boolean isNewHighScore;
+  public boolean mNewBestScore;
   
-  public int sessionScore;
+  public int mLastScore;
   
-  public byte J = 0;
+  public byte mSavedValid = 0;
   
   public byte mSavedLives;
   
@@ -41,21 +41,21 @@ public class BounceUI implements CommandListener {
   
   public int mSavedScore;
   
-  public int I;
+  public int mSavedTileX;
   
-  public int H;
+  public int mSavedTileY;
   
   public int mSavedXSpeed;
   
   public int mSavedYSpeed;
   
-  public int y;
+  public int mSavedGlobalBallX;
   
-  public int M;
+  public int mSavedGlobalBallY;
   
   public int mSavedRespawnX;
   
-  public int b;
+  public int mSavedRespawnY;
   
   public int mSavedSpeedBonus;
   
@@ -75,191 +75,190 @@ public class BounceUI implements CommandListener {
   
   public long o;
   
-  private Command iOK;
+  private Command mOkayCmd;
   
-  private Command BACK;
+  private Command mBackCmd;
   
   private Command EXIT;
   
   private Command OK;
   
-  private List mainMenu;
+  private List mMainMenu;
   
-  private List F;
+  private List mNewGameMenu;
   
-  private Form displayForm;
+  private Form mTextPage;
   
-  private int N;
+  private int mSavedMenuItem;
   
-  private String[] menu = new String[4];
+  private String[] mMainMenuItems = new String[4];
   
   public BounceUI(Bounce paramBounce) {
     this.mIDlet = paramBounce;
     ReadRMS();
     this.mCanvas = new BounceCanvas(this, 1);
-    this.mCanvas.d();
-    this.m = Display.getDisplay(this.mIDlet);
-    this.m.setCurrent((Displayable)this.mCanvas);
+    this.mCanvas.start();
+    this.mDisplay = Display.getDisplay(this.mIDlet);
+    this.mDisplay.setCurrent((Displayable)this.mCanvas);
     e();
   }
   
   public synchronized void e() {
-    this.menu[0] = Local.getText(4); // Continue
-    this.menu[1] = Local.getText(11); // New Game
-    this.menu[2] = Local.getText(7);// High Score
-    this.menu[3] = Local.getText(8); // Instructions
+    this.mMainMenuItems[0] = Local.getText(4); // Continue
+    this.mMainMenuItems[1] = Local.getText(11); // New Game
+    this.mMainMenuItems[2] = Local.getText(7);// High Score
+    this.mMainMenuItems[3] = Local.getText(8); // Instructions
   }
   
   public synchronized void displayMainMenu() {
 	
-    this.mainMenu = new List(Local.getText(0), 3); // 0 = Bounce
-    if (this.BACK == null) {
-      this.BACK = new Command(Local.getText(2), 2, 1); // 2 = Back
+    this.mMainMenu = new List(Local.getText(0), 3); // 0 = Bounce
+    if (this.mBackCmd == null) {
+      this.mBackCmd = new Command(Local.getText(2), 2, 1); // 2 = Back
       this.EXIT = new Command(Local.getText(5), 7, 1); // 5 = Exit
     } 
-    if (this.K == 1 || this.J == 1 || this.J == 2)
-      this.mainMenu.append(this.menu[0], null); 
-    for (byte b = 1; b < this.menu.length; b++)
-      this.mainMenu.append(this.menu[b], null); 
-    this.mainMenu.addCommand(this.EXIT);
-    this.mainMenu.setCommandListener(this);
+    if (this.mState == 1 || this.mSavedValid == 1 || this.mSavedValid == 2)
+      this.mMainMenu.append(this.mMainMenuItems[0], null); 
+    for (byte b = 1; b < this.mMainMenuItems.length; b++)
+      this.mMainMenu.append(this.mMainMenuItems[b], null); 
+    this.mMainMenu.addCommand(this.EXIT);
+    this.mMainMenu.setCommandListener(this);
     if (this.mCanvas.mSplashIndex != -1) {
       this.mCanvas.mSplashIndex = -1;
       this.mCanvas.mSplashImage = null;
     } 
-    if (this.K == 1 || this.J == 1 || this.J == 2) {
-      this.mainMenu.setSelectedIndex(0, true);
+    if (this.mState == 1 || this.mSavedValid == 1 || this.mSavedValid == 2) {
+      this.mMainMenu.setSelectedIndex(0, true);
     } else {
-      this.mainMenu.setSelectedIndex(this.N, true);
+      this.mMainMenu.setSelectedIndex(this.mSavedMenuItem, true);
     } 
     this.mCanvas.stop();
-    this.m.setCurrent((Displayable)this.mainMenu);
+    this.mDisplay.setCurrent((Displayable)this.mMainMenu);
   }
   
   // su kien khi nhan vao new game
-  public void g() {
+  public void displayNewGameMenu() {
     String[] arrayOfString1 = new String[this.unlockedLevel];  // arrayOfString1 = danh sach level da hoan thanh, unlockedLevel la level đã vượt qua 
     String[] arrayOfString2 = new String[1];
     for (byte b = 0; b < this.unlockedLevel; b++) {
       arrayOfString2[0] = String.valueOf(b + 1);
       arrayOfString1[b] = Local.getText(9, arrayOfString2);
     } 
-    this.F = new List(Local.getText(11), 3, arrayOfString1, null); // 11 = New game
-    this.F.addCommand(this.BACK);
-    this.F.setCommandListener(this);
+    this.mNewGameMenu = new List(Local.getText(11), 3, arrayOfString1, null); // 11 = New game
+    this.mNewGameMenu.addCommand(this.mBackCmd);
+    this.mNewGameMenu.setCommandListener(this);
     // F la List Control
-    this.m.setCurrent((Displayable)this.F);
+    this.mDisplay.setCurrent((Displayable)this.mNewGameMenu);
   }
   
-  public void a(boolean paramBoolean, int paramInt) {
+  public void displayGame(boolean paramBoolean, int paramInt) {
     if (paramBoolean) {
-      this.isNewHighScore = false;
+      this.mNewBestScore = false;
       this.mCanvas.a(paramInt, 0, 3);
     } 
-    this.mCanvas.d();
+    this.mCanvas.start();
     this.mCanvas.mBall.resetDirections();
-    this.m.setCurrent((Displayable)this.mCanvas);
-    this.K = 1;
+    this.mDisplay.setCurrent((Displayable)this.mCanvas);
+    this.mState = 1;
   }
   
   // su kien khi click vao high score
-  // h la diem so
-  public void c() {
-    this.displayForm = new Form(Local.getText(7)); // 7 = High score
-    this.displayForm.append(String.valueOf(this.highScore));
-    this.displayForm.addCommand(this.BACK);
-    this.displayForm.setCommandListener(this);
-    this.m.setCurrent((Displayable)this.displayForm);
+  public void displayHighScore() {
+    this.mTextPage = new Form(Local.getText(7)); // 7 = High score
+    this.mTextPage.append(String.valueOf(this.highScore));
+    this.mTextPage.addCommand(this.mBackCmd);
+    this.mTextPage.setCommandListener(this);
+    this.mDisplay.setCurrent((Displayable)this.mTextPage);
   }
   
   // su kien khi nhan vao Instructions
-  public void b() {
-    this.displayForm = new Form(Local.getText(8)); // 8 = Instructions
+  public void displayInstructions() {
+    this.mTextPage = new Form(Local.getText(8)); // 8 = Instructions
     String[] arrayOfString = { 
     		this.mCanvas.getKeyName(this.mCanvas.getKeyCode(2)), // 2 = LEFT
     		this.mCanvas.getKeyName(this.mCanvas.getKeyCode(5)),  // 5 = RIGHT
     		this.mCanvas.getKeyName(this.mCanvas.getKeyCode(1)) // 1 = UP
     };
-    this.displayForm.append(Local.getText(1, arrayOfString));
-    this.displayForm.addCommand(this.BACK);
-    this.displayForm.setCommandListener(this);
-    this.m.setCurrent((Displayable)this.displayForm);
-    this.displayForm = null;
+    this.mTextPage.append(Local.getText(1, arrayOfString));
+    this.mTextPage.addCommand(this.mBackCmd);
+    this.mTextPage.setCommandListener(this);
+    this.mDisplay.setCurrent((Displayable)this.mTextPage);
+    this.mTextPage = null;
   }
   
-  public void a(boolean paramBoolean) {
+  public void displayGameOver(boolean paramBoolean) {
     this.mCanvas.stop();
-    if (this.iOK == null)
-      this.iOK = new Command(Local.getText(13), 4, 1);  // 13 = OK
-    this.displayForm = new Form(Local.getText(6)); // 6 = Game over
+    if (this.mOkayCmd == null)
+      this.mOkayCmd = new Command(Local.getText(13), 4, 1);  // 13 = OK
+    this.mTextPage = new Form(Local.getText(6)); // 6 = Game over
     if (paramBoolean) {
-      this.displayForm.append(Local.getText(3)); // 3 = Congrats!
+      this.mTextPage.append(Local.getText(3)); // 3 = Congrats!
     } else {
-      this.displayForm.append(Local.getText(6)); // 6 = Game over
+      this.mTextPage.append(Local.getText(6)); // 6 = Game over
     } 
-    this.displayForm.append("\n\n");
-    if (this.isNewHighScore) {
-      this.displayForm.append(Local.getText(12)); // 12 = New high score!
-      this.displayForm.append("\n\n");
+    this.mTextPage.append("\n\n");
+    if (this.mNewBestScore) {
+      this.mTextPage.append(Local.getText(12)); // 12 = New high score!
+      this.mTextPage.append("\n\n");
     } 
-    this.displayForm.append(String.valueOf(this.sessionScore));
-    this.displayForm.addCommand(this.iOK);
-    this.displayForm.setCommandListener(this);
-    this.m.setCurrent((Displayable)this.displayForm);
-    this.displayForm = null;
+    this.mTextPage.append(String.valueOf(this.mLastScore));
+    this.mTextPage.addCommand(this.mOkayCmd);
+    this.mTextPage.setCommandListener(this);
+    this.mDisplay.setCurrent((Displayable)this.mTextPage);
+    this.mTextPage = null;
   }
   
   // su kiem continue khi end 1 level
   public void displayLevelComplete() {
     this.mCanvas.stop();
-    a(false, 0);
-    this.K = 5;
+    displayGame(false, 0);
+    this.mState = 5;
     if (this.OK == null)
       this.OK = new Command(Local.getText(4), 4, 1); // 4 = Continue
-    this.displayForm = new Form("");
-    this.displayForm.append(this.mCanvas.levelCompletedText);
-    this.displayForm.append("\n\n");
-    this.displayForm.append("" + this.sessionScore + "\n");
-    this.displayForm.addCommand(this.OK);
-    this.displayForm.setCommandListener(this);
-    this.m.setCurrent((Displayable)this.displayForm);
-    this.displayForm = null;
+    this.mTextPage = new Form("");
+    this.mTextPage.append(this.mCanvas.levelCompletedText);
+    this.mTextPage.append("\n\n");
+    this.mTextPage.append("" + this.mLastScore + "\n");
+    this.mTextPage.addCommand(this.OK);
+    this.mTextPage.setCommandListener(this);
+    this.mDisplay.setCurrent((Displayable)this.mTextPage);
+    this.mTextPage = null;
   }
   
   public void commandAction(Command paramCommand, Displayable paramDisplayable) {
     if (paramCommand == List.SELECT_COMMAND) {
     	// nếu màn hình là màn chọn level
-      if (paramDisplayable == this.F) {
-        a(true, this.F.getSelectedIndex() + 1);
+      if (paramDisplayable == this.mNewGameMenu) {
+        displayGame(true, this.mNewGameMenu.getSelectedIndex() + 1);
       } else {
-        String str = this.mainMenu.getString(this.mainMenu.getSelectedIndex());
-        this.N = this.mainMenu.getSelectedIndex();
-        if (str.equals(this.menu[0])) {
-          if (this.K == 1) {
-            a(false, this.mCanvas.mLevelNum);
-          } else if (this.J != 0) {
-            this.m.setCurrent((Displayable)this.mCanvas);
-            if (this.J == 1) {
-              this.mCanvas.a(this.y, this.M);
+        String str = this.mMainMenu.getString(this.mMainMenu.getSelectedIndex());
+        this.mSavedMenuItem = this.mMainMenu.getSelectedIndex();
+        if (str.equals(this.mMainMenuItems[0])) {
+          if (this.mState == 1) {
+            displayGame(false, this.mCanvas.mLevelNum);
+          } else if (this.mSavedValid != 0) {
+            this.mDisplay.setCurrent((Displayable)this.mCanvas);
+            if (this.mSavedValid == 1) {
+              this.mCanvas.a(this.mSavedGlobalBallX, this.mSavedGlobalBallY);
             } else {
               this.mCanvas.tileNotSavedAsActive(this.mSavedLevel, this.mSavedScore, this.mSavedLives);
             } 
             this.mSavedTiles = null;
-            this.mCanvas.d();
-            this.K = 1;
+            this.mCanvas.start();
+            this.mState = 1;
           } 
-        } else if (str.equals(this.menu[1])) {
-          if (this.K != 4)
+        } else if (str.equals(this.mMainMenuItems[1])) {
+          if (this.mState != 4)
             if (this.unlockedLevel > 1) {
-              g();
+              displayNewGameMenu();
             } else {
-              this.K = 4;
-              a(true, 1);
+              this.mState = 4;
+              displayGame(true, 1);
             }  
-        } else if (str.equals(this.menu[2])) {
-          c();
-        } else if (str.equals(this.menu[3])) {
-          b();
+        } else if (str.equals(this.mMainMenuItems[2])) {
+          displayHighScore();
+        } else if (str.equals(this.mMainMenuItems[3])) {
+          displayInstructions();
         } else if (str.equals("Read RMS")) {
         	ReadRMS();
         } else if (str.equals("Write RMS")) {
@@ -268,16 +267,16 @@ public class BounceUI implements CommandListener {
         	saveGameData(3);
         } 
       } 
-    } else if (paramCommand == this.BACK || paramCommand == this.EXIT || paramCommand == this.iOK) {
-      if (this.m.getCurrent() == this.mainMenu) {
+    } else if (paramCommand == this.mBackCmd || paramCommand == this.EXIT || paramCommand == this.mOkayCmd) {
+      if (this.mDisplay.getCurrent() == this.mMainMenu) {
         this.mIDlet.destroyApp(true);
         this.mIDlet.notifyDestroyed();
       } else {
     	  displayMainMenu();
       } 
     } else if (paramCommand == this.OK) {
-      this.K = 1;
-      this.m.setCurrent((Displayable)this.mCanvas);
+      this.mState = 1;
+      this.mDisplay.setCurrent((Displayable)this.mCanvas);
     } 
   }
   
@@ -305,22 +304,22 @@ public class BounceUI implements CommandListener {
         byteArrayInputStream = new ByteArrayInputStream(arrayOfByte3);
         dataInputStream = new DataInputStream(byteArrayInputStream);
         this.o = dataInputStream.readLong();
-        this.J = dataInputStream.readByte();
+        this.mSavedValid = dataInputStream.readByte();
         this.mSavedLives = dataInputStream.readByte();
         this.mSavedRings = dataInputStream.readByte();
         this.mSavedLevel = dataInputStream.readByte();
         this.mSavedSize = dataInputStream.readByte();
         this.mSavedScore = dataInputStream.readInt();
-        this.I = dataInputStream.readInt();
-        this.H = dataInputStream.readInt();
-        this.y = dataInputStream.readInt();
-        this.M = dataInputStream.readInt();
+        this.mSavedTileX = dataInputStream.readInt();
+        this.mSavedTileY = dataInputStream.readInt();
+        this.mSavedGlobalBallX = dataInputStream.readInt();
+        this.mSavedGlobalBallY = dataInputStream.readInt();
         this.mSavedXSpeed = dataInputStream.readInt();
         this.mSavedYSpeed = dataInputStream.readInt();
         dataInputStream.readInt();
         dataInputStream.readInt();
         this.mSavedRespawnX = dataInputStream.readInt();
-        this.b = dataInputStream.readInt();
+        this.mSavedRespawnY = dataInputStream.readInt();
         this.mSavedSpeedBonus = dataInputStream.readInt();
         this.mSavedGravBonus = dataInputStream.readInt();
         this.mSavedJumpBonus = dataInputStream.readInt();
@@ -341,11 +340,11 @@ public class BounceUI implements CommandListener {
           this.mSavedSpikeDirection[b2][1] = dataInputStream.readShort();
         } 
         if (dataInputStream.readLong() != -559038737L)
-          this.J = 0; 
+          this.mSavedValid = 0; 
       } 
       recordStore.closeRecordStore();
     } catch (Exception exception) {
-      this.J = 0;
+      this.mSavedValid = 0;
     } 
   }
   
@@ -372,9 +371,9 @@ public class BounceUI implements CommandListener {
           if (this.mCanvas == null || this.mCanvas.mBall == null)
             return; 
           b1 = 0;
-          if (this.K == 1) {
+          if (this.mState == 1) {
             b1 = 1;
-          } else if (this.K == 5) {
+          } else if (this.mState == 5) {
             b1 = 2;
           } 
           dataOutputStream.writeLong(System.currentTimeMillis());
@@ -440,16 +439,16 @@ public class BounceUI implements CommandListener {
     } 
     if (this.mCanvas.mScore > this.highScore) {
       this.highScore = this.mCanvas.mScore;
-      this.isNewHighScore = true;
+      this.mNewBestScore = true;
       saveGameData(2);
     } 
-    this.sessionScore = this.mCanvas.mScore;
+    this.mLastScore = this.mCanvas.mScore;
   }
   
   public void gameOver(boolean paramBoolean) {
-    this.K = 3;
-    this.J = 0;
+    this.mState = 3;
+    this.mSavedValid = 0;
     this.mCanvas.mIncomingCall = false;
-    a(paramBoolean);
+    displayGameOver(paramBoolean);
   }
 }

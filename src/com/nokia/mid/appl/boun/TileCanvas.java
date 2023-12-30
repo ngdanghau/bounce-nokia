@@ -757,7 +757,7 @@ public abstract class TileCanvas extends FullCanvas {
   
   public abstract void run();
   
-  public synchronized void d() {
+  public synchronized void start() {
     if (this.ab != null)
       return; 
     this.ab = new com.nokia.mid.appl.boun.g(this, this);

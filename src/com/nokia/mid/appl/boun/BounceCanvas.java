@@ -64,7 +64,7 @@ public class BounceCanvas extends TileCanvas {
   private long mLastTimeRepainted = System.currentTimeMillis();
   
   public BounceCanvas(BounceUI parama, int paramInt) {
-    super(parama.m);
+    super(parama.mDisplay);
     this.mUI = parama;
     this.mSoundHoop = loadSound("/sounds/up.ott");
     this.mSoundPickup = loadSound("/sounds/pickup.ott");
@@ -76,7 +76,7 @@ public class BounceCanvas extends TileCanvas {
     } catch (IOException iOException) {
       this.mSplashImage = Image.createImage(1, 1);
     } 
-    d();
+    start();
   }
   
   public void a(int paramInt1, int paramInt2, int paramInt3) {
@@ -101,11 +101,11 @@ public class BounceCanvas extends TileCanvas {
     resetSpikes();
     this.mLevelDisCntr = 120;
     this.mPaintUIFlag = true;
-    if (this.mUI.mSavedRespawnX != this.mStartCol && this.mUI.b != this.mStartRow)
-      this.tileMap[this.mUI.b][this.mUI.mSavedRespawnX] = (short)(0x8 | this.tileMap[this.mUI.b][this.mUI.mSavedRespawnX] & 0x40); 
+    if (this.mUI.mSavedRespawnX != this.mStartCol && this.mUI.mSavedRespawnY != this.mStartRow)
+      this.tileMap[this.mUI.mSavedRespawnY][this.mUI.mSavedRespawnX] = (short)(0x8 | this.tileMap[this.mUI.mSavedRespawnY][this.mUI.mSavedRespawnX] & 0x40); 
     createBufferFocused(paramInt1, paramInt2, this.mUI.mSavedSize, this.mUI.mSavedXSpeed, this.mUI.mSavedYSpeed);
     synchronized (this.mBall) {
-      this.mBall.setRespawn(this.mUI.mSavedRespawnX, this.mUI.b);
+      this.mBall.setRespawn(this.mUI.mSavedRespawnX, this.mUI.mSavedRespawnY);
       this.mBall.speedBonusCntr = this.mUI.mSavedSpeedBonus;
       this.mBall.gravBonusCntr = this.mUI.mSavedGravBonus;
       this.mBall.jumpBonusCntr = this.mUI.mSavedJumpBonus;
